@@ -131,7 +131,7 @@ void play_sound(char *file)
 }
 
 static const char *it_msg =
-    "\brThe Powder Toy - http://powdertoy.co.uk, irc.freenode.net #powder\n"
+    "\brPowder Sim - http://powdertoy.co.uk, irc.freenode.net #powder\n"
     "\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\n"
     "\n"
     "\bgControl+C/V/X are Copy, Paste and cut respectively.\n"
@@ -581,7 +581,7 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 				airMode = ((c[3]>>4)&0x07);// | ((c[3]>>4)&0x02) | ((c[3]>>4)&0x01);
 			}
 			if (ver>=49 && replace) {
-				tempGrav = ((c[3]>>7)&0x01);		
+				tempGrav = ((c[3]>>7)&0x01);
 			}
 		} else {
 			if (c[3]==1||c[3]==0) {
@@ -957,7 +957,7 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 				parts[i-1].temp = ptypes[parts[i-1].type].heat;
 			}
 		}
-	} 
+	}
 	for (j=0; j<w*h; j++)
 	{
 		int gnum = 0;
@@ -1034,7 +1034,7 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 			stop_grav_async();
 	}
 	#endif
-	
+
 	gravity_mask();
 
 	if (p >= size)
@@ -1410,7 +1410,7 @@ int set_scale(int scale, int kiosk){
 	}
 	return 1;
 }
-				
+
 void* update_grav_async(void* unused)
 {
 	int done = 0;
@@ -1427,18 +1427,18 @@ void* update_grav_async(void* unused)
 			update_grav();
 			done = 1;
 			pthread_mutex_lock(&gravmutex);
-			
+
 			grav_ready = done;
 			thread_done = gravthread_done;
-			
+
 			pthread_mutex_unlock(&gravmutex);
 		} else {
 			pthread_mutex_lock(&gravmutex);
 			pthread_cond_wait(&gravcv, &gravmutex);
-		    
+
 			done = grav_ready;
 			thread_done = gravthread_done;
-			
+
 			pthread_mutex_unlock(&gravmutex);
 		}
 	}
@@ -1480,7 +1480,7 @@ int main(int argc, char *argv[])
 	unsigned char c[3];
 	char ppmfilename[256], ptifilename[256], ptismallfilename[256];
 	FILE *f;
-	
+
 	cmode = CM_FIRE;
 	sys_pause = 1;
 	parts = calloc(sizeof(particle), NPART);
@@ -1491,19 +1491,19 @@ int main(int argc, char *argv[])
 
 	pers_bg = calloc((XRES+BARSIZE)*YRES, PIXELSIZE);
 	fire_bg = calloc(XRES*YRES, PIXELSIZE);
-	
+
 	prepare_alpha(4, 1.0f);
 	player[2] = player2[2] = PT_DUST;
 
 	sprintf(ppmfilename, "%s.ppm", argv[2]);
 	sprintf(ptifilename, "%s.pti", argv[2]);
 	sprintf(ptismallfilename, "%s-small.pti", argv[2]);
-	
+
 	if(load_data && load_size){
 		int parsestate = 0;
 		//parsestate = parse_save(load_data, load_size, 1, 0, 0);
 		parsestate = parse_save(load_data, load_size, 1, 0, 0, bmap, fvx, fvy, signs, parts, pmap);
-		
+
 		for(i=0; i<30; i++){
 			memset(vid_buf, 0, (XRES+BARSIZE)*YRES*PIXELSIZE);
 			draw_walls(vid_buf);
@@ -1511,9 +1511,9 @@ int main(int argc, char *argv[])
 			draw_parts(vid_buf);
 			render_fire(vid_buf);
 		}
-		
+
 		render_signs(vid_buf);
-		
+
 		if(parsestate>0){
 			//return 0;
 			info_box(vid_buf, "Save file invalid or from newer version");
@@ -1555,10 +1555,10 @@ int main(int argc, char *argv[])
 			vid_buf+=XRES+BARSIZE;
 		}
 		fclose(f);
-		
+
 		return 1;
 	}
-	
+
 	return 0;
 }
 #else
@@ -1574,7 +1574,7 @@ int main(int argc, char *argv[])
 	char heattext[256] = "";
 	char coordtext[128] = "";
 	int currentTime = 0;
-	int FPS = 0, pastFPS = 0, elapsedTime = 0; 
+	int FPS = 0, pastFPS = 0, elapsedTime = 0;
 	void *http_ver_check, *http_session_check = NULL;
 	char *ver_data=NULL, *check_data=NULL, *tmp;
 	//char console_error[255] = "";
@@ -1798,7 +1798,7 @@ int main(int argc, char *argv[])
 			bsy = 1180;
 		if (bsy<0)
 			bsy = 0;
-		
+
 		if(ngrav_enable && drawgrav_enable)
 			draw_grav(vid_buf);
 		draw_walls(part_vbuf);
@@ -1806,7 +1806,7 @@ int main(int argc, char *argv[])
 		draw_parts(part_vbuf); //draw particles
 		if(sl == WL_GRAV+100 || sr == WL_GRAV+100)
 			draw_grav_zones(part_vbuf);
-		
+
 		if(ngrav_enable){
 			pthread_mutex_lock(&gravmutex);
 			result = grav_ready;
@@ -1874,7 +1874,7 @@ int main(int argc, char *argv[])
 		clearrect(vid_buf, XRES-1, 0, BARSIZE+1, YRES);
 
 		draw_svf_ui(vid_buf, sdl_mod & (KMOD_LCTRL|KMOD_RCTRL));
-		
+
 		if(debug_flags)
 		{
 			draw_debug_info(vid_buf, lm, lx, ly, x, y, line_x, line_y);
@@ -2798,7 +2798,7 @@ int main(int argc, char *argv[])
 
 		if (dae > 0) //Fade away selected elements
 			dae --;
-		
+
 		if (!sdl_zoom_trig && zoom_en==1)
 			zoom_en = 0;
 
@@ -2964,7 +2964,7 @@ int main(int argc, char *argv[])
 						if (x>=37 && x<=187)
 						{
 							save_filename_ui(vid_buf);
-									
+
 						}
 						if (x>=1 && x<=17)
 						{
@@ -3359,12 +3359,12 @@ int main(int argc, char *argv[])
 #endif
 			drawrect(vid_buf, XRES-19-old_ver_len, YRES-22, old_ver_len+5, 13, 255, 216, 32, 255);
 		}
-		
+
 		if (svf_messages)
 		{
 			sprintf(new_message_msg, "You have %d new message%s, Click to view", svf_messages, (svf_messages>1)?"s":"");
 			new_message_len = textwidth(new_message_msg);
-			
+
 			clearrect(vid_buf, XRES-21-new_message_len, YRES-39, new_message_len+9, 17);
 			drawtext(vid_buf, XRES-16-new_message_len, YRES-34, new_message_msg, 255, 186, 32, 255);
 			drawrect(vid_buf, XRES-19-new_message_len, YRES-37, new_message_len+5, 13, 255, 186, 32, 255);
