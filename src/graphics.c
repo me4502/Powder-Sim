@@ -35,12 +35,12 @@ pixel *pers_bg;
 
 void *ptif_pack(pixel *src, int w, int h, int *result_size){
 	int i = 0, datalen = (w*h)*3, cx = 0, cy = 0;
-	unsigned char *red_chan = calloc(1, w*h); 
-	unsigned char *green_chan = calloc(1, w*h); 
-	unsigned char *blue_chan = calloc(1, w*h); 
+	unsigned char *red_chan = calloc(1, w*h);
+	unsigned char *green_chan = calloc(1, w*h);
+	unsigned char *blue_chan = calloc(1, w*h);
 	unsigned char *data = malloc(((w*h)*3)+8);
 	unsigned char *result = malloc(((w*h)*3)+8);
-	
+
 	for(cx = 0; cx<w; cx++){
 		for(cy = 0; cy<h; cy++){
 			red_chan[w*(cy)+(cx)] = PIXR(src[w*(cy)+(cx)]);
@@ -48,14 +48,14 @@ void *ptif_pack(pixel *src, int w, int h, int *result_size){
 			blue_chan[w*(cy)+(cx)] = PIXB(src[w*(cy)+(cx)]);
 		}
 	}
-	
+
 	memcpy(data, red_chan, w*h);
 	memcpy(data+(w*h), green_chan, w*h);
 	memcpy(data+((w*h)*2), blue_chan, w*h);
 	free(red_chan);
 	free(green_chan);
 	free(blue_chan);
-	
+
 	result[0] = 'P';
 	result[1] = 'T';
 	result[2] = 'i';
@@ -64,15 +64,15 @@ void *ptif_pack(pixel *src, int w, int h, int *result_size){
 	result[5] = w>>8;
 	result[6] = h;
 	result[7] = h>>8;
-	
+
 	i -= 8;
-	
+
 	if(BZ2_bzBuffToBuffCompress((char *)(result+8), (unsigned *)&i, (char *)data, datalen, 9, 0, 0) != BZ_OK){
 		free(data);
 		free(result);
 		return NULL;
 	}
-	
+
 	*result_size = i+8;
 	free(data);
 	return result;
@@ -96,14 +96,14 @@ pixel *ptif_unpack(void *datain, int size, int *w, int *h){
 	}
 	width = data[4]|(data[5]<<8);
 	height = data[6]|(data[7]<<8);
-	
+
 	i = (width*height)*3;
 	undata = calloc(1, (width*height)*3);
-	red_chan = calloc(1, width*height); 
-	green_chan = calloc(1, width*height); 
-	blue_chan = calloc(1, width*height); 
+	red_chan = calloc(1, width*height);
+	green_chan = calloc(1, width*height);
+	blue_chan = calloc(1, width*height);
 	result = calloc(width*height, PIXELSIZE);
-	
+
 	resCode = BZ2_bzBuffToBuffDecompress((char *)undata, (unsigned *)&i, (char *)(data+8), size-8, 0, 0);
 	if (resCode){
 		printf("Decompression failure, %d\n", resCode);
@@ -124,13 +124,13 @@ pixel *ptif_unpack(void *datain, int size, int *w, int *h){
 	memcpy(red_chan, undata, width*height);
 	memcpy(green_chan, undata+(width*height), width*height);
 	memcpy(blue_chan, undata+((width*height)*2), width*height);
-	
+
 	for(cx = 0; cx<width; cx++){
 		for(cy = 0; cy<height; cy++){
 			result[width*(cy)+(cx)] = PIXRGB(red_chan[width*(cy)+(cx)], green_chan[width*(cy)+(cx)], blue_chan[width*(cy)+(cx)]);
 		}
 	}
-	
+
 	*w = width;
 	*h = height;
 	free(red_chan);
@@ -187,7 +187,7 @@ pixel *resample_img(pixel *src, int sw, int sh, int rw, int rh)
 					(int)(((((float)PIXR(tl))*(1.0f-fxc))+(((float)PIXR(tr))*(fxc)))*(1.0f-fyc) + ((((float)PIXR(bl))*(1.0f-fxc))+(((float)PIXR(br))*(fxc)))*(fyc)),
 					(int)(((((float)PIXG(tl))*(1.0f-fxc))+(((float)PIXG(tr))*(fxc)))*(1.0f-fyc) + ((((float)PIXG(bl))*(1.0f-fxc))+(((float)PIXG(br))*(fxc)))*(fyc)),
 					(int)(((((float)PIXB(tl))*(1.0f-fxc))+(((float)PIXB(tr))*(fxc)))*(1.0f-fyc) + ((((float)PIXB(bl))*(1.0f-fxc))+(((float)PIXB(br))*(fxc)))*(fyc))
-					);				
+					);
 			}
 	} else {
 		//Stairstepping
@@ -228,7 +228,7 @@ pixel *resample_img(pixel *src, int sw, int sh, int rw, int rh)
 						(int)(((((float)PIXR(tl))*(1.0f-fxc))+(((float)PIXR(tr))*(fxc)))*(1.0f-fyc) + ((((float)PIXR(bl))*(1.0f-fxc))+(((float)PIXR(br))*(fxc)))*(fyc)),
 						(int)(((((float)PIXG(tl))*(1.0f-fxc))+(((float)PIXG(tr))*(fxc)))*(1.0f-fyc) + ((((float)PIXG(bl))*(1.0f-fxc))+(((float)PIXG(br))*(fxc)))*(fyc)),
 						(int)(((((float)PIXB(tl))*(1.0f-fxc))+(((float)PIXB(tr))*(fxc)))*(1.0f-fyc) + ((((float)PIXB(bl))*(1.0f-fxc))+(((float)PIXB(br))*(fxc)))*(fyc))
-						);				
+						);
 				}
 			free(oq);
 			oq = q;
@@ -769,7 +769,7 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 						vid_buf[(XRES+BARSIZE)*(y+j)+(x+i)] = pc;
 					else if  (i%CELL == (j%CELL)+1 || (i%CELL == 0 && j%CELL == CELL-1))
 						vid_buf[(XRES+BARSIZE)*(y+j)+(x+i)] = gc;
-					else 
+					else
 						vid_buf[(XRES+BARSIZE)*(y+j)+(x+i)] = PIXPACK(0x202020);
 		}
 		else
@@ -1056,10 +1056,10 @@ int drawtext_outline(pixel *vid, int x, int y, const char *s, int r, int g, int 
 {
 	drawtext(vid, x-1, y-1, s, or, og, ob, oa);
 	drawtext(vid, x+1, y+1, s, or, og, ob, oa);
-	
+
 	drawtext(vid, x-1, y+1, s, or, og, ob, oa);
 	drawtext(vid, x+1, y-1, s, or, og, ob, oa);
-	
+
 	return drawtext(vid, x, y, s, r, g, b, a);
 }
 int drawtextwrap(pixel *vid, int x, int y, int w, const char *s, int r, int g, int b, int a)
@@ -1485,7 +1485,7 @@ void draw_grav_zones(pixel * vid)
 					for (i=0; i<CELL; i++)
 						if(i == j)
 							drawpixel(vid, x*CELL+i, y*CELL+j, 255, 200, 0, 120);
-						else 
+						else
 							drawpixel(vid, x*CELL+i, y*CELL+j, 32, 32, 32, 120);
 			}
 		}
@@ -1789,7 +1789,7 @@ void draw_parts(pixel *vid)
 				if ((parts[i].ctype&7) == 7)
 					draw_line(vid, nx, ny, (int)(parts[parts[i].tmp].x+0.5f), (int)(parts[parts[i].tmp].y+0.5f), 245, 245, 220, XRES+BARSIZE);
 			}
-			
+
 			if(t==PT_WIRE)
 			{
 			if (parts[i].ctype==0)
@@ -1798,7 +1798,7 @@ void draw_parts(pixel *vid)
 			    blendpixel(vid, nx, ny, 0, 0, 255, 255);
 			else
 			    blendpixel(vid, nx, ny, 255, 255, 255, 255);
-			
+
 			continue;
 			}
 
@@ -2702,7 +2702,7 @@ void draw_parts(pixel *vid)
 						cr *= x;
 						cg *= x;
 						cb *= x;
-						vid[ny*(XRES+BARSIZE)+nx] = PIXRGB(cr>255?255:cr,cg>255?255:cg,cb>255?255:cb);						
+						vid[ny*(XRES+BARSIZE)+nx] = PIXRGB(cr>255?255:cr,cg>255?255:cg,cb>255?255:cb);
 						cr >>= 4;
 						cg >>= 4;
 						cb >>= 4;
@@ -2743,7 +2743,7 @@ void draw_parts(pixel *vid)
 							}
 							else
 							{
-								vid[ny*(XRES+BARSIZE)+nx] = PIXRGB(cr, cg, cb);	
+								vid[ny*(XRES+BARSIZE)+nx] = PIXRGB(cr, cg, cb);
 							}
 						} else {
 							blendpixel(vid, nx, ny, cr, cg, cb, 192);
@@ -3520,16 +3520,16 @@ void draw_parts(pixel *vid)
 					cr = PIXR(ptypes[t].pcolors);
 					cg = PIXG(ptypes[t].pcolors);
 					cb = PIXB(ptypes[t].pcolors);
-					
+
 					cr += parts[i].tmp2;
 					cg += parts[i].tmp2;
 					cb += parts[i].tmp2;
-					
-					
+
+
 					cr += sin(frequency*q) * 226;
 					cg += sin(frequency*q*4.55 +3.14) * 34;
 					cb += sin(frequency*q*2.22 +3.14) * 64;
-					
+
 					if (cr>=255)
 						cr = 255;
 					if (cg>=255)
@@ -3548,7 +3548,7 @@ void draw_parts(pixel *vid)
 					cr = PIXR(ptypes[t].pcolors);
 					cg = PIXG(ptypes[t].pcolors);
 					//cb = PIXB(ptypes[t].pcolors);
-					
+
 					cr += (parts[i].tmp2-295.15f)/3;
 					//cg += (parts[i].tmp2-273.15f)/3;
 					//cb += (parts[i].tmp2-273.15f)/3;
@@ -3556,19 +3556,19 @@ void draw_parts(pixel *vid)
 						cr = 170;
 					if (cr<=cg)
 						cr = cg;
-						
+
 					cg = cb = cr;
-					
+
 					if((parts[i].temp-295.15f) > 300.0f-200.0f)
 					{
 						float frequency = 3.1415/(2*300.0f-(300.0f-200.0f));
 						int q = ((parts[i].temp-295.15f)>300.0f)?300.0f-(300.0f-200.0f):(parts[i].temp-295.15f)-(300.0f-200.0f);
-					
+
 						cr += sin(frequency*q) * 226;
 						cg += sin(frequency*q*4.55 +3.14) * 34;
 						cb += sin(frequency*q*2.22 +3.14) * 64;
 					}
-					
+
 					if (cr>=255)
 						cr = 255;
 					if (cg>=255)
@@ -3698,13 +3698,13 @@ void draw_parts(pixel *vid)
 					cr = (parts[i].dcolour>>16)&0xFF;
 					cg = (parts[i].dcolour>>8)&0xFF;
 					cb = (parts[i].dcolour)&0xFF;
-					
+
 					if(parts[i].life<10){
 						cr /= 10-parts[i].life;
 						cg /= 10-parts[i].life;
 						cb /= 10-parts[i].life;
 					}
-					
+
 					/*cr = cr>255?255:cr;
 					cg = cg>255?255:cg;
 					cb = cb>255?255:cb;*/
@@ -3762,7 +3762,7 @@ void draw_walls(pixel *vid)
 								vid[(y*CELL+j)*(XRES+BARSIZE)+(x*CELL+i)] = pc;
 							else if  (i == j+1 || (i == 0 && j == CELL-1))
 								vid[(y*CELL+j)*(XRES+BARSIZE)+(x*CELL+i)] = gc;
-							else 
+							else
 								vid[(y*CELL+j)*(XRES+BARSIZE)+(x*CELL+i)] = PIXPACK(0x202020);
 				}
 
@@ -3813,7 +3813,7 @@ void draw_walls(pixel *vid)
 								vid[(y*CELL+j)*(XRES+BARSIZE)+(x*CELL+i)] = PIXPACK(0x242424);
 					}
 				}
-				
+
 				if (cmode==CM_BLOB)
 				{
 					// when in blob view, draw some blobs...
@@ -3843,7 +3843,7 @@ void draw_walls(pixel *vid)
 									drawblob(vid, (x*CELL+i), (y*CELL+j), PIXR(pc), PIXG(pc), PIXB(pc));
 								else if  (i == j+1 || (i == 0 && j == CELL-1))
 									drawblob(vid, (x*CELL+i), (y*CELL+j), PIXR(gc), PIXG(gc), PIXB(gc));
-								else 
+								else
 									drawblob(vid, (x*CELL+i), (y*CELL+j), 0x20, 0x20, 0x20);
 					}
 					if (bmap[y][x]==WL_EWALL)
@@ -3907,7 +3907,7 @@ void draw_walls(pixel *vid)
 					cb = fire_b[y][x] + PIXB(pc);
 					if (cb > 255) cb = 255;
 					fire_b[y][x] = cb;
-					
+
 				}
 			}
 }
@@ -4734,7 +4734,7 @@ int sdl_open(void)
 		fprintf(stderr, "Creating window: %s\n", SDL_GetError());
 		return 0;
 	}
-	SDL_WM_SetCaption("The Powder Toy", "Powder Toy");
+	SDL_WM_SetCaption("Powder Sim", "Powder Sim");
 	sdl_seticon();
 	SDL_EnableUNICODE(1);
 	//SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
@@ -4759,19 +4759,19 @@ int draw_debug_info(pixel* vid, int lm, int lx, int ly, int cx, int cy, int line
 		{
 			blend_line(vid, 0, line_y, XRES, line_y, 255, 255, 255, 120);
 			blend_line(vid, line_x, 0, line_x, YRES, 255, 255, 255, 120);
-	
+
 			blend_line(vid, 0, ly, XRES, ly, 255, 255, 255, 120);
 			blend_line(vid, lx, 0, lx, YRES, 255, 255, 255, 120);
-			
+
 			sprintf(infobuf, "%d x %d", lx, ly);
 			drawtext_outline(vid, lx+(lx>line_x?3:-textwidth(infobuf)-3), ly+(ly<line_y?-10:3), infobuf, 255, 255, 255, 200, 0, 0, 0, 120);
-			
+
 			sprintf(infobuf, "%d x %d", line_x, line_y);
 			drawtext_outline(vid, line_x+(lx<line_x?3:-textwidth(infobuf)-2), line_y+(ly>line_y?-10:3), infobuf, 255, 255, 255, 200, 0, 0, 0, 120);
-			
+
 			sprintf(infobuf, "%d", abs(line_x-lx));
 			drawtext_outline(vid, (line_x+lx)/2-textwidth(infobuf)/2, line_y+(ly>line_y?-10:3), infobuf, 255, 255, 255, 200, 0, 0, 0, 120);
-			
+
 			sprintf(infobuf, "%d", abs(line_y-ly));
 			drawtext_outline(vid, line_x+(lx<line_x?3:-textwidth(infobuf)-2), (line_y+ly)/2-3, infobuf, 255, 255, 255, 200, 0, 0, 0, 120);
 		}
@@ -4800,13 +4800,13 @@ int draw_debug_info(pixel* vid, int lm, int lx, int ly, int cx, int cy, int line
 		draw_line(vid, 0, lpy, XRES, lpy, 0, 255, 120, XRES+BARSIZE);
 		draw_line(vid, lpx, 0, lpx, YRES, 0, 255, 120, XRES+BARSIZE);
 		drawpixel(vid, lpx, lpy, 255, 50, 50, 220);
-				
+
 		drawpixel(vid, lpx+1, lpy, 255, 50, 50, 120);
 		drawpixel(vid, lpx-1, lpy, 255, 50, 50, 120);
 		drawpixel(vid, lpx, lpy+1, 255, 50, 50, 120);
 		drawpixel(vid, lpx, lpy-1, 255, 50, 50, 120);
-		
-		fillrect(vid, 7, YRES-26, textwidth(infobuf)+5, 14, 0, 0, 0, 180);		
+
+		fillrect(vid, 7, YRES-26, textwidth(infobuf)+5, 14, 0, 0, 0, 180);
 		drawtext(vid, 10, YRES-22, infobuf, 255, 255, 255, 255);
 	}
 }
