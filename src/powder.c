@@ -301,7 +301,7 @@ int try_move(int i, int x, int y, int nx, int ny)
 				player[27] = 0;
 			}
 			if (parts[i].type == PT_STKM2)
-			{	
+			{
 				player2[27] = 0;
 			}
 			parts[i].type=PT_NONE;
@@ -653,7 +653,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 
 	int t = tv & 0xFF;
 	int v = (tv >> 8) & 0xFF;
-	
+
 	if (x<0 || y<0 || x>=XRES || y>=YRES || ((t<0 || t>=PT_NUM)&&t!=SPC_HEAT&&t!=SPC_COOL&&t!=SPC_AIR&&t!=SPC_VACUUM&&t!=SPC_PGRV&&t!=SPC_NGRV))
 		return -1;
 	if (t>=0 && t<PT_NUM && !ptypes[t].enabled)
@@ -838,6 +838,11 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].tmp = -1;
 		parts[i].tmp2 = -1;
 	}
+	if (t==PT_VIRS)
+	{
+	    parts[i].ctype = PT_ACID;
+	    parts[i].disease = rand()%100+50;
+	}
 	//now set various properties that we want at spawn.
 	if (t==PT_ACID)
 	{
@@ -866,7 +871,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].tmp = grule[v+1][9] - 1;
 		parts[i].ctype = v;
 	}
-	
+
 	if (t==PT_DEUT)
 		parts[i].life = 10;
 	if (t==PT_MERC)
@@ -1272,20 +1277,20 @@ void create_arc(int sx, int sy, int dx, int dy, int midpoints, int variance, int
 	xmid[midpoints+1] = dx;
 	ymid[0] = sy;
 	ymid[midpoints+1] = dy;
-	
+
 	for(i = 1; i <= midpoints; i++)
 	{
 		ymid[i] = ymid[i-1]+yint;
 		xmid[i] = xmid[i-1]+xint;
 	}
-	
+
 	for(i = 0; i <= midpoints; i++)
 	{
 		if(i!=midpoints)
 		{
 			xmid[i+1] += (rand()%variance)-voffset;
 			ymid[i+1] += (rand()%variance)-voffset;
-		}	
+		}
 		create_line(xmid[i], ymid[i], xmid[i+1], ymid[i+1], 0, 0, type, flags);
 	}
 	free(xmid);
@@ -1756,7 +1761,7 @@ void update_particles_i(pixel *vid, int start, int inc)
 						pt = (c_heat+parts[i].temp*96.645)/(c_Cm+96.645);
 					else
 						pt = (c_heat+parts[i].temp*96.645/ptypes[t].hconduct*fabs(ptypes[t].weight))/(c_Cm+96.645/ptypes[t].hconduct*fabs(ptypes[t].weight));
-					
+
 #else
 					pt = parts[i].temp = (c_heat+parts[i].temp)/(h_count+1);
 #endif
@@ -1965,6 +1970,17 @@ void update_particles_i(pixel *vid, int start, int inc)
 					goto killed;
 				}
 			}
+
+			//VIRS changing
+            if (parts[i].type==PT_VIRS && parts[i].disease == 0)
+            {
+                parts[i].type = parts[i].ctype;
+                parts[i].ctype = parts[i].tmp2;
+                parts[i].disease = rand()%50+50;
+            }
+
+            if (parts[i].disease > 0)
+                parts[i].disease--;
 
 			//call the particle update function, if there is one
 			if (ptypes[t].update_func)
@@ -3129,7 +3145,7 @@ void gravity_mask()
 				}
 			}
 		}
-		c_mask_el = c_mask_el->next;	
+		c_mask_el = c_mask_el->next;
 	}
 	mask_free(t_mask_el);
 }
