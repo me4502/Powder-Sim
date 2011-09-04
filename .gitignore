@@ -11,3 +11,7 @@ utils/*
 build/*
 src/python/stdlib/*
 *.cbp
+bin/*
+obj/*
+*.layout
+*.depend
