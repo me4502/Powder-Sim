@@ -955,12 +955,8 @@ static wall_type wtypes[] =
 	{PIXPACK(0xFFEE00), PIXPACK(0xAA9900), 4, "Gravity wall"},
 	{PIXPACK(0x0000BB), PIXPACK(0x000000), -1, "Postive gravity tool."},
 	{PIXPACK(0x000099), PIXPACK(0x000000), -1, "Negative gravity tool."},
-<<<<<<< HEAD
-
-=======
 	{PIXPACK(0xFFAA00), PIXPACK(0xAA5500), 4, "Energy wall, allows only energy type particles to pass"},
 	
->>>>>>> 63dd1cf... Add energy-only wall and make STOR show when it's holding a particle
 };
 
 #define CHANNELS ((int)(MAX_TEMP-73)/100+2)
