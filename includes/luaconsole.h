@@ -24,11 +24,14 @@
 #define LUACON_KUP 2
 #define LUACON_CREATE 1
 #define LUACON_BCREATE 2
+#define LUACON_ERASE 1
+#define LUACON_BERASE 2
 
 void luacon_open();
 int luacon_step(int mx, int my, int selectl, int selectr);
 int luacon_mouseevent(int mx, int my, int mb, int event);
 int luacon_createevent(int x, int y, int type, int event);
+int luacon_eraseevent(int x, int y, int type, int event);
 int luacon_keyevent(int key, int modifier, int event);
 int luacon_eval(char *command);
 char *luacon_geterror();
@@ -69,6 +72,8 @@ int luatpt_register_keypress(lua_State* l);
 int luatpt_unregister_keypress(lua_State* l);
 int luatpt_register_createevent(lua_State* l);
 int luatpt_unregister_createevent(lua_State* l);
+int luatpt_register_eraseevent(lua_State* l);
+int luatpt_unregister_eraseevent(lua_State* l);
 int luatpt_input(lua_State* l);
 int luatpt_message_box(lua_State* l);
 int luatpt_get_numOfParts(lua_State* l);
@@ -88,4 +93,5 @@ int luatpt_setdebug(lua_State* l);
 int luatpt_setfpscap(lua_State* l);
 int luatpt_getscript(lua_State* l);
 int luatpt_setwindowsize(lua_State* l);
+int luatpt_showcursor(lua_State* l);
 #endif

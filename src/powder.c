@@ -578,6 +578,10 @@ void kill_part(int i)//kills particle number i
 
 	x = (int)(parts[i].x+0.5f);
 	y = (int)(parts[i].y+0.5f);
+#ifdef LUACONSOLE
+		if(!luacon_eraseevent(x, y, parts[i].type, LUACON_ERASE))
+			return 0;
+#endif
 	if (parts[i].type == PT_STKM)
 	{
 		player[27] = 0;
@@ -660,8 +664,9 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		return -1;	//Prop tool works on a mouse click basic, make sure it doesn't do anything here
 	}
 #ifdef LUACONSOLE
-    if(!luacon_createevent(x, y, t, LUACON_CREATE))
-        return 0;
+    if (t!=0)
+        if(!luacon_createevent(x, y, t, LUACON_CREATE))
+            return 0;
 #endif
 	if (t==SPC_HEAT||t==SPC_COOL)
 	{
@@ -1110,6 +1115,11 @@ inline void delete_part(int x, int y, int flags)//calls kill_part with the parti
 
 	if (!i)
 		return;
+
+#ifdef LUACONSOLE
+		if(!luacon_eraseevent(x, y, parts[i>>8].type, LUACON_BERASE))
+			return 0;
+#endif
 	if (!(flags&BRUSH_SPECIFIC_DELETE) || parts[i>>8].type==SLALT || SLALT==0)//specific deletiom
 	{
 		kill_part(i>>8);
@@ -1117,6 +1127,7 @@ inline void delete_part(int x, int y, int flags)//calls kill_part with the parti
 	else if (ptypes[parts[i>>8].type].menusection==SEC)//specific menu deletion
 	{
 		kill_part(i>>8);
+
 	}
 	else
 		return;
@@ -2786,6 +2797,7 @@ int flood_water(int x, int y, int i, int originaly, int check)
 int create_parts(int x, int y, int rx, int ry, int c, int flags)
 {
 #ifdef LUACONSOLE
+    if (c!=0)
 		if(!luacon_createevent(x, y, c, LUACON_BCREATE))
 			return 0;
 #endif
