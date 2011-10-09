@@ -39,6 +39,7 @@
 #define GRAPHIC_FUNC_ARGS int i, int nx, int ny, pixel *vid
 
 int graphics_O2(GRAPHIC_FUNC_ARGS);
+int graphics_ACID(GRAPHIC_FUNC_ARGS);
 
 extern unsigned cmode;
 extern SDL_Surface *sdl_scrn;
