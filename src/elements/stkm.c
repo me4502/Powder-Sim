@@ -17,6 +17,8 @@ int run_stickman(float* playerp, UPDATE_FUNC_ARGS) {
 	int r, rx, ry;
 	float pp, d;
 	float dt = 0.9;///(FPSB*FPSB);  //Delta time in square
+	float gvx, gvy;
+	float gx, gy, dl, dr;
 
 	if ((parts[i].ctype>0 && parts[i].ctype<PT_NUM && ptypes[parts[i].ctype].falldown>0) || parts[i].ctype==SPC_AIR || parts[i].ctype == PT_NEUT || parts[i].ctype == PT_PHOT)
 		playerp[2] = parts[i].ctype;
@@ -42,7 +44,6 @@ int run_stickman(float* playerp, UPDATE_FUNC_ARGS) {
 	}
 
 	//Follow gravity
-	float gvx, gvy;
 	gvx = gvy = 0.0f;
 	switch (gravityMode)
 	{
@@ -110,13 +111,11 @@ int run_stickman(float* playerp, UPDATE_FUNC_ARGS) {
 	playerp[25] = 0;
 	playerp[26] = 0;
 
-	float gx, gy, dl, dr;
-
 	gx = (playerp[7] + playerp[15])/2 - gvy;
 	gy = (playerp[8] + playerp[16])/2 + gvx;
 	dl = pow(gx - playerp[7], 2) + pow(gy - playerp[8], 2);
 	dr = pow(gx - playerp[15], 2) + pow(gy - playerp[16], 2);
-	
+
 	//Go left
 	if (((int)(playerp[0])&0x01) == 0x01)
 	{
@@ -168,7 +167,7 @@ int run_stickman(float* playerp, UPDATE_FUNC_ARGS) {
 	}
 
 	//Jump
-	if (((int)(playerp[0])&0x04) == 0x04 && 
+	if (((int)(playerp[0])&0x04) == 0x04 &&
 			(!eval_move(PT_DUST, playerp[7], playerp[8], NULL) || !eval_move(PT_DUST, playerp[15], playerp[16], NULL)))
 	{
 		parts[i].vy -= 4*gvy;
@@ -193,7 +192,7 @@ int run_stickman(float* playerp, UPDATE_FUNC_ARGS) {
 
 				if (!r && !bmap[(y+ry)/CELL][(x+rx)/CELL])
 					continue;
-				
+
 				if (ptypes[r&0xFF].falldown!=0 || (r&0xFF) == PT_NEUT || (r&0xFF) == PT_PHOT)
 				{
 					playerp[2] = r&0xFF;  //Current element
@@ -386,7 +385,7 @@ void STKM_interact(float* playerp, int i, int x, int y)
 
 		if ((r&0xFF)==PT_PLUT)  //If on plut
 			parts[i].life -= 1;
-			
+
 		if (ptypes[r&0xFF].properties&PROP_DEADLY)
 			parts[i].life -= 1;
 

@@ -10,7 +10,8 @@
 //VersionInfoStart
 #define SAVE_VERSION 0
 #define MINOR_VERSION 0
-#define BETA
+//#define BETA
+#define BUILD_NUM 0
 //VersionInfoEnd
 
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter.
@@ -21,6 +22,8 @@
 #define LOCAL_SAVE_DIR "Saves"
 
 #define LOCAL_LUA_DIR "Lua"
+
+#define APPDATA_SUBDIR "\\HardWIRED"
 
 #define THUMB_CACHE_SIZE 256
 
@@ -160,6 +163,7 @@ extern int decorations_enable;
 extern int hud_enable;
 extern int debug_flags;
 int limitFPS;
+int water_equal_test;
 
 extern int active_menu;
 
@@ -220,7 +224,7 @@ extern int legacy_enable; //Used to disable new features such as heat, will be s
 extern int framerender;
 extern pixel *vid_buf;
 
-extern unsigned char last_major, last_minor, update_flag;
+extern unsigned char last_major, last_minor, update_flag, last_build;
 
 extern char http_proxy_string[256];
 

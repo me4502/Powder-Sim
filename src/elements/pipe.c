@@ -11,7 +11,7 @@ void pushParticle(int i, int count, int original)
 	x = (int)(parts[i].x+0.5f);
 	y = (int)(parts[i].y+0.5f);
 	if( !(parts[i].tmp&0x200) )
-	{ 
+	{
 		//normal random push
 		rndstore = rand();
 		// RAND_MAX is at least 32767 on all platforms i.e. pow(8,5)-1
@@ -45,7 +45,7 @@ void pushParticle(int i, int count, int original)
 	}
 	else //predefined 1 pixel thick pipe movement
 	{
-		int coords = 7 - (parts[i].tmp>>10);
+		int coords = 7 - ((parts[i].tmp>>10)&7);
 		r = pmap[y+ pos_1_ry[coords]][x+ pos_1_rx[coords]];
 		if (!r)
 		{

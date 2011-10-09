@@ -140,5 +140,4 @@ int graphics_BOMB(GRAPHIC_FUNC_ARGS)
         blendpixel(vid, nx, ny, 255, 255, 255, 255);
     }
     return 0;
-
 }

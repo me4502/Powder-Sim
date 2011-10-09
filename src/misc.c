@@ -12,6 +12,8 @@
 #include <icondoc.h>
 #include <update.h>
 #if defined WIN32
+#include <shlobj.h>
+#include <shlwapi.h>
 #include <windows.h>
 #else
 #include <unistd.h>
@@ -19,12 +21,17 @@
 #ifdef MACOSX
 #include <ApplicationServices/ApplicationServices.h>
 #endif
+#include "cJSON.h"
 
 char *clipboard_text = NULL;
 
 //Signum function
 #if defined(WIN32) && !defined(__GNUC__)
+<<<<<<< HEAD
 _inline int isign(float i)
+=======
+int isign(float i)
+>>>>>>> upstream/master
 #else
 inline int isign(float i)
 #endif
@@ -37,7 +44,11 @@ inline int isign(float i)
 }
 
 #if defined(WIN32) && !defined(__GNUC__)
+<<<<<<< HEAD
 _inline unsigned clamp_flt(float f, float min, float max)
+=======
+unsigned clamp_flt(float f, float min, float max)
+>>>>>>> upstream/master
 #else
 inline unsigned clamp_flt(float f, float min, float max)
 #endif
@@ -50,7 +61,11 @@ inline unsigned clamp_flt(float f, float min, float max)
 }
 
 #if defined(WIN32) && !defined(__GNUC__)
+<<<<<<< HEAD
 _inline float restrict_flt(float f, float min, float max)
+=======
+float restrict_flt(float f, float min, float max)
+>>>>>>> upstream/master
 #else
 inline float restrict_flt(float f, float min, float max)
 #endif
@@ -106,7 +121,7 @@ void clean_text(char *text, int vwidth)
 {
 	int i = 0;
 	if(textwidth(text) > vwidth){
-		text[textwidthx(text, vwidth)] = 0;	
+		text[textwidthx(text, vwidth)] = 0;
 	}
 	for(i = 0; i < strlen(text); i++){
 		if(! (text[i]>=' ' && text[i]<127)){
@@ -117,8 +132,58 @@ void clean_text(char *text, int vwidth)
 
 void save_presets(int do_update)
 {
-	FILE *f=fopen("powder.def", "wb");
-	unsigned char sig[4] = {0x50, 0x44, 0x65, 0x67};
+	char * outputdata;
+	cJSON *root, *userobj, *versionobj;
+	root = cJSON_CreateObject();
+
+	cJSON_AddStringToObject(root, "Powder Toy Preferences", "Don't modify this file unless you know what you're doing. P.S: editing the admin/mod fields in your user info doesn't give you magical powers");
+
+	//User Info
+	if(svf_login){
+		cJSON_AddItemToObject(root, "user", userobj=cJSON_CreateObject());
+		cJSON_AddStringToObject(userobj, "name", svf_user);
+		cJSON_AddStringToObject(userobj, "id", svf_user_id);
+		cJSON_AddStringToObject(userobj, "session_id", svf_session_id);
+		if(svf_admin){
+			cJSON_AddTrueToObject(userobj, "admin");
+			cJSON_AddFalseToObject(userobj, "mod");
+		} else if(svf_mod){
+			cJSON_AddFalseToObject(userobj, "admin");
+			cJSON_AddTrueToObject(userobj, "mod");
+		} else {
+			cJSON_AddFalseToObject(userobj, "admin");
+			cJSON_AddFalseToObject(userobj, "mod");
+		}
+	}
+
+	//Version Info
+	cJSON_AddItemToObject(root, "version", versionobj=cJSON_CreateObject());
+	cJSON_AddNumberToObject(versionobj, "major", SAVE_VERSION);
+	cJSON_AddNumberToObject(versionobj, "minor", MINOR_VERSION);
+	cJSON_AddNumberToObject(versionobj, "build", BUILD_NUM);
+	if(do_update){
+		cJSON_AddTrueToObject(versionobj, "update");
+	} else {
+		cJSON_AddFalseToObject(versionobj, "update");
+	}
+
+	//General settings
+	cJSON_AddStringToObject(root, "proxy", http_proxy_string);
+	cJSON_AddNumberToObject(root, "cmode", cmode);
+	cJSON_AddNumberToObject(root, "scale", sdl_scale);
+
+	outputdata = cJSON_Print(root);
+	cJSON_Delete(root);
+
+	FILE *f = fopen("powder.pref", "wb");
+	if(!f)
+		return;
+	fwrite(outputdata, 1, strlen(outputdata), f);
+	fclose(f);
+	//Old format, don't bother with this
+	/*FILE *f=fopen("powder.def", "wb");
+	unsigned char sig[4] = {0x50, 0x44, 0x65, 0x68};
+>>>>>>> upstream/master
 	unsigned char tmp = sdl_scale;
 	if (!f)
 		return;
@@ -139,9 +204,16 @@ void save_presets(int do_update)
 	fwrite(&tmp, 1, 1, f);
 	tmp = MINOR_VERSION;
 	fwrite(&tmp, 1, 1, f);
+<<<<<<< HEAD
 	tmp = do_update;
 	fwrite(&tmp, 1, 1, f);
 	fclose(f);
+=======
+	tmp = BUILD_NUM;
+	fwrite(&tmp, 1, 1, f);
+	tmp = do_update;
+	fwrite(&tmp, 1, 1, f);
+	fclose(f);*/
 }
 
 int sregexp(const char *str, char *pattern)
@@ -157,68 +229,135 @@ int sregexp(const char *str, char *pattern)
 
 void load_presets(void)
 {
-	FILE *f=fopen("powder.def", "rb");
-	unsigned char sig[4], tmp;
-	if (!f)
-		return;
-	fread(sig, 1, 4, f);
-	if (sig[0]!=0x50 || sig[1]!=0x44 || sig[2]!=0x65)
+	int prefdatasize = 0;
+	char * prefdata = file_load("powder.pref", &prefdatasize);
+	if(prefdata)
 	{
-		if (sig[0]==0x4D && sig[1]==0x6F && sig[2]==0x46 && sig[3]==0x6F)
-		{
-			if (fseek(f, -3, SEEK_END))
-			{
-				remove("powder.def");
-				return;
+		cJSON *root, *userobj, *versionobj, *tmpobj;
+		root = cJSON_Parse(prefdata);
+
+		//Read user data
+		userobj = cJSON_GetObjectItem(root, "user");
+		if(userobj){
+			svf_login = 1;
+			if((tmpobj = cJSON_GetObjectItem(userobj, "name")) && tmpobj->type == cJSON_String) strncpy(svf_user, tmpobj->valuestring, 63); else svf_user[0] = 0;
+			if((tmpobj = cJSON_GetObjectItem(userobj, "id")) && tmpobj->type == cJSON_String) strncpy(svf_user_id, tmpobj->valuestring, 63); else svf_user_id[0] = 0;
+			if((tmpobj = cJSON_GetObjectItem(userobj, "session_id")) && tmpobj->type == cJSON_String) strncpy(svf_session_id, tmpobj->valuestring, 63); else svf_session_id[0] = 0;
+			if((tmpobj = cJSON_GetObjectItem(userobj, "admin")) && tmpobj->type == cJSON_True) {
+				svf_admin = 1;
+				svf_mod = 0;
+			} else if((tmpobj = cJSON_GetObjectItem(userobj, "mod")) && tmpobj->type == cJSON_True) {
+				svf_mod = 1;
+				svf_admin = 0;
+			} else {
+				svf_admin = 0;
+				svf_mod = 0;
 			}
-			if (fread(sig, 1, 3, f) != 3)
-			{
-				remove("powder.def");
-				goto fail;
-			}
-			last_major = sig[0];
-			last_minor = sig[1];
-			update_flag = sig[2];
+		} else {
+			svf_login = 0;
+			svf_user[0] = 0;
+			svf_user_id[0] = 0;
+			svf_session_id[0] = 0;
+			svf_admin = 0;
+			svf_mod = 0;
 		}
+
+		//Read version data
+		versionobj = cJSON_GetObjectItem(root, "version");
+		if(versionobj){
+			if(tmpobj = cJSON_GetObjectItem(versionobj, "major")) last_major = tmpobj->valueint;
+			if(tmpobj = cJSON_GetObjectItem(versionobj, "minor")) last_minor = tmpobj->valueint;
+			if(tmpobj = cJSON_GetObjectItem(versionobj, "build")) last_build = tmpobj->valueint;
+			if((tmpobj = cJSON_GetObjectItem(versionobj, "update")) && tmpobj->type == cJSON_True)
+				update_flag = 1;
+			else
+				update_flag = 0;
+		} else {
+			last_major = 0;
+			last_minor = 0;
+			last_build = 0;
+			update_flag = 0;
+		}
+
+		//Read general settings
+		if((tmpobj = cJSON_GetObjectItem(root, "proxy")) && tmpobj->type == cJSON_String) strncpy(http_proxy_string, tmpobj->valuestring, 255); else http_proxy_string[0] = 0;
+		if(tmpobj = cJSON_GetObjectItem(root, "cmode")) cmode = tmpobj->valueint;
+		if(tmpobj = cJSON_GetObjectItem(root, "scale")) sdl_scale = tmpobj->valueint;
+
+		cJSON_Delete(root);
+	} else { //Fallback and read from old def file
+		FILE *f=fopen("powder.def", "rb");
+		unsigned char sig[4], tmp;
+		if (!f)
+			return;
+		fread(sig, 1, 4, f);
+		if (sig[0]!=0x50 || sig[1]!=0x44 || sig[2]!=0x65)
+		{
+			if (sig[0]==0x4D && sig[1]==0x6F && sig[2]==0x46 && sig[3]==0x6F)
+			{
+				if (fseek(f, -3, SEEK_END))
+				{
+					remove("powder.def");
+					return;
+				}
+				if (fread(sig, 1, 3, f) != 3)
+				{
+					remove("powder.def");
+					goto fail;
+				}
+				//last_major = sig[0];
+				//last_minor = sig[1];
+				last_build = 0;
+				update_flag = sig[2];
+			}
+			fclose(f);
+			remove("powder.def");
+			return;
+		}
+		if (sig[3]==0x66) {
+			if (load_string(f, svf_user, 63))
+				goto fail;
+			if (load_string(f, svf_pass, 63))
+				goto fail;
+		} else {
+			if (load_string(f, svf_user, 63))
+				goto fail;
+			if (load_string(f, svf_user_id, 63))
+				goto fail;
+			if (load_string(f, svf_session_id, 63))
+				goto fail;
+		}
+		svf_login = !!svf_session_id[0];
+		if (fread(&tmp, 1, 1, f) != 1)
+			goto fail;
+		sdl_scale = (tmp == 2) ? 2 : 1;
+		if (fread(&tmp, 1, 1, f) != 1)
+			goto fail;
+		cmode = tmp%CM_COUNT;
+		if (fread(&tmp, 1, 1, f) != 1)
+			goto fail;
+		svf_admin = tmp;
+		if (fread(&tmp, 1, 1, f) != 1)
+			goto fail;
+		svf_mod = tmp;
+		if (load_string(f, http_proxy_string, 255))
+			goto fail;
+
+		if (sig[3]!=0x68) { //Pre v64 format
+			if (fread(sig, 1, 3, f) != 3)
+				goto fail;
+			last_build = 0;
+		} else {
+			if (fread(sig, 1, 4, f) != 4)
+				goto fail;
+			last_build = sig[3];
+		}
+		last_major = sig[0];
+		last_minor = sig[1];
+		update_flag = sig[2];
+	fail:
 		fclose(f);
-		remove("powder.def");
-		return;
 	}
-	if (sig[3]==0x66) {
-		if (load_string(f, svf_user, 63))
-			goto fail;
-		if (load_string(f, svf_pass, 63))
-			goto fail;
-	} else {
-		if (load_string(f, svf_user, 63))
-			goto fail;
-		if (load_string(f, svf_user_id, 63))
-			goto fail;
-		if (load_string(f, svf_session_id, 63))
-			goto fail;
-	}
-	svf_login = !!svf_session_id[0];
-	if (fread(&tmp, 1, 1, f) != 1)
-		goto fail;
-	sdl_scale = (tmp == 2) ? 2 : 1;
-	if (fread(&tmp, 1, 1, f) != 1)
-		goto fail;
-	cmode = tmp%CM_COUNT;
-	if (fread(&tmp, 1, 1, f) != 1)
-		goto fail;
-	svf_admin = tmp;
-	if (fread(&tmp, 1, 1, f) != 1)
-		goto fail;
-	svf_mod = tmp;
-	if (load_string(f, http_proxy_string, 255))
-		goto fail;
-	if (fread(sig, 1, 3, f) != 3)
-		goto fail;
-	last_major = sig[0];
-	last_minor = sig[1];
-	update_flag = sig[2];
-fail:
-	fclose(f);
 }
 
 void save_string(FILE *f, char *str)
@@ -467,76 +606,119 @@ char * clipboard_pull_text()
 int register_extension()
 {
 #if defined WIN32
+	int returnval;
 	LONG rresult;
 	HKEY newkey;
 	char *currentfilename = exe_name();
-	char *iconname;
-	char *opencommand;
+	char *iconname = NULL;
+	char *opencommand = NULL;
+	//char AppDataPath[MAX_PATH];
+	char *AppDataPath = NULL;
 	iconname = malloc(strlen(currentfilename)+6);
-	opencommand = malloc(strlen(currentfilename)+13);
 	sprintf(iconname, "%s,-102", currentfilename);
-	sprintf(opencommand, "\"%s\" open \"%%1\"", currentfilename);
+
+	//Create Roaming application data folder
+	/*if(!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA|CSIDL_FLAG_CREATE, NULL, 0, AppDataPath)))
+	{
+		returnval = 0;
+		goto finalise;
+	}*/
+
+	AppDataPath = _getcwd(NULL, 0);
+
+	//Move Game executable into application data folder
+	//TODO: Implement
+
+	opencommand = malloc(strlen(currentfilename)+53+strlen(AppDataPath));
+	/*if((strlen(AppDataPath)+strlen(APPDATA_SUBDIR "\\Powder Toy"))<MAX_PATH)
+	{
+		strappend(AppDataPath, APPDATA_SUBDIR);
+		_mkdir(AppDataPath);
+		strappend(AppDataPath, "\\Powder Toy");
+		_mkdir(AppDataPath);
+	} else {
+		returnval = 0;
+		goto finalise;
+	}*/
+	sprintf(opencommand, "\"%s\" open \"%%1\" ddir \"%s\"", currentfilename, AppDataPath);
 
 	//Create extension entry
 	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\.cps", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
 	if (rresult != ERROR_SUCCESS) {
-		return 0;
+		returnval = 0;
+		goto finalise;
 	}
 	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"PowderToySave", strlen("PowderToySave")+1);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
-		return 0;
+		returnval = 0;
+		goto finalise;
 	}
 	RegCloseKey(newkey);
 
 	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\.stm", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
 	if (rresult != ERROR_SUCCESS) {
-		return 0;
+		returnval = 0;
+		goto finalise;
 	}
 	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"PowderToySave", strlen("PowderToySave")+1);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
-		return 0;
+		returnval = 0;
+		goto finalise;
 	}
 	RegCloseKey(newkey);
 
 	//Create program entry
 	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\PowderToySave", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
 	if (rresult != ERROR_SUCCESS) {
-		return 0;
+		returnval = 0;
+		goto finalise;
 	}
 	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"Powder Toy Save", strlen("Powder Toy Save")+1);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
-		return 0;
+		returnval = 0;
+		goto finalise;
 	}
 	RegCloseKey(newkey);
 
 	//Set DefaultIcon
 	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\PowderToySave\\DefaultIcon", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
 	if (rresult != ERROR_SUCCESS) {
-		return 0;
+		returnval = 0;
+		goto finalise;
 	}
 	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)iconname, strlen(iconname)+1);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
-		return 0;
+		returnval = 0;
+		goto finalise;
 	}
 	RegCloseKey(newkey);
 
 	//Set Launch command
 	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\PowderToySave\\shell\\open\\command", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
 	if (rresult != ERROR_SUCCESS) {
-		return 0;
+		returnval = 0;
+		goto finalise;
 	}
 	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)opencommand, strlen(opencommand)+1);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
-		return 0;
+		returnval = 0;
+		goto finalise;
 	}
 	RegCloseKey(newkey);
 
-	return 1;
+	returnval = 1;
+	finalise:
+
+	if(iconname) free(iconname);
+	if(opencommand) free(opencommand);
+	if(currentfilename) free(currentfilename);
+
+	return returnval;
 #elif defined(LIN32) || defined(LIN64)
 	char *currentfilename = exe_name();
 	FILE *f;
