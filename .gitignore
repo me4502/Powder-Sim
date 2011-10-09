@@ -9,9 +9,13 @@ build/stamps/*
 utils/*
 *.log
 build/*
+<<<<<<< HEAD
 src/python/stdlib/*
 *.cbp
 bin/*
 obj/*
 *.layout
 *.depend
+=======
+src/python/stdlib/*
+>>>>>>> upstream/master

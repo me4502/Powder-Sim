@@ -51,7 +51,7 @@ static menu_section msections[] = //doshow does not do anything currently.
 	{"\xC6", "Radioactive", 0, 1},
 	{"\xCC", "Special", 0, 1},
 	{"\xD2", "Life", 0, 1},
-	{"\xD8", "Tools", 0, 1},
+	{"\xD7", "Tools", 0, 1},
 	{"\xD2", "More Life", 0, 1},
 	{"\xC8", "", 0, 0},
 	{"\xC8", "Cracker", 0, 0},
@@ -60,9 +60,10 @@ static menu_section msections[] = //doshow does not do anything currently.
 
 static menu_section colorsections[] = //doshow does not do anything currently.
 {
-	{"\xD1", "Colors", 7, 1},
-	{"\xC5", "Tools", 0, 1},
+	{"\xC4", "Colors", 7, 1},
+	{"\xD7", "Tools", 0, 1},
 };
+#define DECO_SECTIONS 2
 
 static menu_wall colorlist[] =
 {
@@ -73,6 +74,17 @@ static menu_wall colorlist[] =
 	{PIXPACK(0xFF00FF), "Pink"},
 	{PIXPACK(0x00FFFF), "Cyan"},
 	{PIXPACK(0xFFFFFF), "White"},
+};
+
+#define DECO_DRAW 0
+#define DECO_LIGHTEN 1
+#define DECO_DARKEN 2
+
+static menu_wall toollist[] =
+{
+	{PIXPACK(0xFF0000), "Draw"},
+	{PIXPACK(0xDDDDDD), "Lighten"},
+	{PIXPACK(0x111111), "Darken"},
 };
 
 struct ui_edit
@@ -193,6 +205,8 @@ extern int drawgrav_enable;
 
 void menu_count(void);
 
+void prop_edit_ui(pixel *vid_buf, int x, int y);
+
 void get_sign_pos(int i, int *x0, int *y0, int *w, int *h);
 
 void add_sign_ui(pixel *vid_buf, int mx, int my);
@@ -243,7 +257,7 @@ void menu_ui(pixel *vid_buf, int i, int *sl, int *sr);
 
 void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq, int mx, int my);
 
-int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int bq, int mx, int my);
+int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int bq, int mx, int my, int * tool);
 
 int sdl_poll(void);
 

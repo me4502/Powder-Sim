@@ -24,7 +24,7 @@
 #define LUACON_KUP 2
 
 void luacon_open();
-int luacon_step(int mx, int my);
+int luacon_step(int mx, int my, int selectl, int selectr);
 int luacon_mouseevent(int mx, int my, int mb, int event);
 int luacon_keyevent(int key, int modifier, int event);
 int luacon_eval(char *command);
@@ -40,6 +40,7 @@ int luatpt_drawtext(lua_State* l);
 int luatpt_create(lua_State* l);
 int luatpt_setpause(lua_State* l);
 int luatpt_togglepause(lua_State* l);
+int luatpt_togglewater(lua_State* l);
 int luatpt_setconsole(lua_State* l);
 int luatpt_log(lua_State* l);
 int luatpt_set_pressure(lua_State* l);
@@ -52,6 +53,7 @@ int luatpt_get_property(lua_State* l);
 int luatpt_drawpixel(lua_State* l);
 int luatpt_drawrect(lua_State* l);
 int luatpt_fillrect(lua_State* l);
+int luatpt_drawline(lua_State* l);
 int luatpt_textwidth(lua_State* l);
 int luatpt_get_name(lua_State* l);
 int luatpt_set_shortcuts(lua_State* l);
