@@ -25,7 +25,7 @@
 
 #define UI_WALLSTART 222
 #define UI_ACTUALSTART 122
-#define UI_WALLCOUNT 24
+#define UI_WALLCOUNT 25
 
 #define WL_WALLELEC	122
 #define WL_EWALL	123
@@ -50,6 +50,7 @@
 #define SPC_WIND 241
 #define SPC_PGRV 243
 #define SPC_NGRV 244
+#define SPC_PROP 246
 
 #define WL_ALLOWGAS	140
 #define WL_GRAV		142
@@ -142,6 +143,7 @@
 #define PT_STOR 83
 #define PT_PVOD 84
 #define PT_CONV 85
+#define PT_CAUS 86
 
 #define PT_SPNG 90
 #define PT_RIME 91
@@ -332,6 +334,7 @@ int update_BIZR(UPDATE_FUNC_ARGS);
 int update_PVOD(UPDATE_FUNC_ARGS);
 int update_CONV(UPDATE_FUNC_ARGS);
 int update_VIRS(UPDATE_FUNC_ARGS);
+int update_CAUS(UPDATE_FUNC_ARGS);
 
 int update_MISC(UPDATE_FUNC_ARGS);
 int update_legacy_PYRO(UPDATE_FUNC_ARGS);
@@ -500,7 +503,7 @@ static const part_type ptypes[PT_NUM] =
 	{"STOR",	PIXPACK(0x50DFDF),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	1,	1,	1,	100,    1.0f,	SC_POWERED,		R_TEMP+0.0f	+273.15f,	251,	"Solid. Stores a single particle, releases when charged with PSCN, also passes to PIPE", ST_NONE, TYPE_SOLID, &update_STOR},
 	{"PVOD",	PIXPACK(0x792020),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	1,	1,	1,	100,    1.0f,	SC_POWERED,		R_TEMP+0.0f	+273.15f,	251,	"Solid. When activated, destroys entering particles", ST_NONE, TYPE_SOLID, &update_PVOD},
 	{"CONV",	PIXPACK(0x0AAB0A),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	1,	1,	1,	100,    1.0f,	SC_SPECIAL,		R_TEMP+0.0f	+273.15f,	251,	"Solid. Converts whatever touches it into its ctype.", ST_NONE, TYPE_SOLID, &update_CONV},
-	/*FREE*/{"DMOE",	PIXPACK(0x500000),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	0,	0,	0,	100,  1.0f,	SC_LIFE,		9000.0f,				40,		"Diamoeba! B35678/S5678", ST_NONE, TYPE_SOLID|PROP_LIFE, NULL},
+	{"CAUS",	PIXPACK(0x80FFA0),	2.0f,   0.00f * CFDS,   0.99f,	0.30f,	-0.1f,	0.0f,	1.50f,	0.000f	* CFDS,	0,	0,  	0,	0,	0,	1,	1,	1,  1.0f,  		SC_GAS,		 	R_TEMP+0.0f	+273.15f,   70,		"Caustic Gas, acts like Acid", ST_GAS, TYPE_GAS, &update_CAUS},
 	/*FREE*/{"34",		PIXPACK(0x500050),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	0,	0,	0,	100,  1.0f,	SC_LIFE,		9000.0f,				40,		"34! B34/S34)", ST_NONE, TYPE_SOLID|PROP_LIFE, NULL},
 	/*FREE*/{"LLIF",	PIXPACK(0x505050),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	0,	0,	0,	100,  1.0f,	SC_LIFE,		9000.0f,				40,		"Long Life! B345/S5", ST_NONE, TYPE_SOLID|PROP_LIFE, NULL},
 	/*FREE*/{"STAN",	PIXPACK(0x5000FF),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	0,	0,	0,	100,  1.0f,	SC_LIFE,		9000.0f,				40,		"Stains! B3678/S235678", ST_NONE, TYPE_SOLID|PROP_LIFE, NULL},
@@ -743,7 +746,7 @@ static part_transition ptransitions[PT_NUM] =
 	/* PBCN */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
 	/* GPMP */ {IPL,    NT,         IPH,    NT,         ITL,    NT,         ITH,	NT},
 	/* CLST */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			1256.0f,	PT_LAVA},
-	/* WIRE */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT, PT_WIRE},
+	/* WIRE */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
 	/* GBMB */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
 };
 #undef IPL
@@ -958,7 +961,7 @@ static wall_type wtypes[] =
 	{PIXPACK(0x0000BB), PIXPACK(0x000000), -1, "Postive gravity tool."},
 	{PIXPACK(0x000099), PIXPACK(0x000000), -1, "Negative gravity tool."},
 	{PIXPACK(0xFFAA00), PIXPACK(0xAA5500), 4, "Energy wall, allows only energy type particles to pass"},
-
+	{PIXPACK(0xFFAA00), PIXPACK(0xAA5500), -1, "Property edit tool"},
 };
 
 #define CHANNELS ((int)(MAX_TEMP-73)/100+2)
@@ -1004,6 +1007,8 @@ static void create_cherenkov_photon(int pp);
 static void create_gain_photon(int pp);
 
 void kill_part(int i);
+
+int flood_prop(int x, int y, size_t propoffset, void * propvalue, int proptype);
 
 void detach(int i);
 

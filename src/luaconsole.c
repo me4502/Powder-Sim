@@ -30,6 +30,7 @@ void luacon_open(){
 		{"drawpixel", &luatpt_drawpixel},
 		{"drawrect", &luatpt_drawrect},
 		{"fillrect", &luatpt_fillrect},
+		{"drawline", &luatpt_drawline},
 		{"textwidth", &luatpt_textwidth},
 		{"get_name", &luatpt_get_name},
 		{"set_shortcuts", &luatpt_set_shortcuts},
@@ -63,19 +64,24 @@ void luacon_open(){
 		{"setfpscap",&luatpt_setfpscap},
 		{"getscript",&luatpt_getscript},
 		{"setwindowsize",&luatpt_setwindowsize},
+		{"watertest",&luatpt_togglewater},
 		{NULL,NULL}
 	};
 
 	l = lua_open();
 	luaL_openlibs(l);
 	luaL_register(l, "tpt", tptluaapi);
-	
+
 	tptProperties = lua_gettop(l);
-	
+
 	lua_pushinteger(l, 0);
 	lua_setfield(l, tptProperties, "mousex");
 	lua_pushinteger(l, 0);
 	lua_setfield(l, tptProperties, "mousey");
+	lua_pushinteger(l, 0);
+	lua_setfield(l, tptProperties, "selectedl");
+	lua_pushinteger(l, 0);
+	lua_setfield(l, tptProperties, "selectedr");
 }
 int luacon_keyevent(int key, int modifier, int event){
 	int i = 0, kpcontinue = 1;
@@ -114,12 +120,16 @@ int luacon_mouseevent(int mx, int my, int mb, int event){
 	}
 	return mpcontinue;
 }
-int luacon_step(int mx, int my){
+int luacon_step(int mx, int my, int selectl, int selectr){
 	int tempret = 0, tempb, i, callret;
+	lua_pushinteger(l, selectr);
+	lua_pushinteger(l, selectl);
 	lua_pushinteger(l, my);
 	lua_pushinteger(l, mx);
 	lua_setfield(l, tptProperties, "mousex");
 	lua_setfield(l, tptProperties, "mousey");
+	lua_setfield(l, tptProperties, "selectedl");
+	lua_setfield(l, tptProperties, "selectedr");
 	if(step_functions[0]){
 		//Set mouse globals
 		for(i = 0; i<6; i++){
@@ -265,6 +275,12 @@ int luatpt_setpause(lua_State* l)
 int luatpt_togglepause(lua_State* l)
 {
 	sys_pause=!sys_pause;
+	return 0;
+}
+
+int luatpt_togglewater(lua_State* l)
+{
+	water_equal_test=!water_equal_test;
 	return 0;
 }
 
@@ -464,6 +480,9 @@ int luatpt_set_property(lua_State* l)
 	} else if (strcmp(prop,"y")==0){
 		offset = offsetof(particle, y);
 		format = 2;
+	} else if (strcmp(prop,"dcolour")==0){
+		offset = offsetof(particle, dcolour);
+		format = 1;
 	} else {
 		return luaL_error(l, "Invalid property '%s'", prop);
 	}
@@ -612,6 +631,10 @@ int luatpt_get_property(lua_State* l)
 			lua_pushnumber(l, parts[i].y);
 			return 1;
 		}
+		if (strcmp(prop,"dcolour")==0){
+			lua_pushinteger(l, parts[i].dcolour);
+			return 1;
+		}
 		if (strcmp(prop,"id")==0){
 			lua_pushnumber(l, i);
 			return 1;
@@ -666,9 +689,9 @@ int luatpt_drawrect(lua_State* l)
 
 	if (x<0 || y<0 || x>=XRES+BARSIZE || y>=YRES+MENUSIZE)
 		return luaL_error(l, "Screen coordinates out of range (%d,%d)", x, y);
-	if(x+w > XRES)
+	if(x+w > XRES+BARSIZE)
 		w = XRES-x;
-	if(y+h > YRES)
+	if(y+h > YRES+MENUSIZE)
 		h = YRES-y;
 	if (r<0) r = 0;
 	if (r>255) r = 255;
@@ -700,9 +723,9 @@ int luatpt_fillrect(lua_State* l)
 
 	if (x<0 || y<0 || x>=XRES+BARSIZE || y>=YRES+MENUSIZE)
 		return luaL_error(l, "Screen coordinates out of range (%d,%d)", x, y);
-	if(x+w > XRES)
+	if(x+w > XRES+BARSIZE)
 		w = XRES-x;
-	if(y+h > YRES)
+	if(y+h > YRES+MENUSIZE)
 		h = YRES-y;
 	if (r<0) r = 0;
 	if (r>255) r = 255;
@@ -715,6 +738,35 @@ int luatpt_fillrect(lua_State* l)
 	if (vid_buf!=NULL)
 	{
 		fillrect(vid_buf, x, y, w, h, r, g, b, a);
+		return 0;
+	}
+	return luaL_error(l, "Screen buffer does not exist");
+}
+
+int luatpt_drawline(lua_State* l)
+{
+	int x1,y1,x2,y2,r,g,b,a;
+	x1 = luaL_optint(l, 1, 0);
+	y1 = luaL_optint(l, 2, 0);
+	x2 = luaL_optint(l, 3, 10);
+	y2 = luaL_optint(l, 4, 10);
+	r = luaL_optint(l, 5, 255);
+	g = luaL_optint(l, 6, 255);
+	b = luaL_optint(l, 7, 255);
+	a = luaL_optint(l, 8, 255);
+
+	//Don't need to check coordinates, as they are checked in blendpixel
+	if (r<0) r = 0;
+	if (r>255) r = 255;
+	if (g<0) g = 0;
+	if (g>255) g = 255;
+	if (b<0) b = 0;
+	if (b>255) b = 255;
+	if (a<0) a = 0;
+	if (a>255) a = 255;
+	if (vid_buf!=NULL)
+	{
+		blend_line(vid_buf, x1, y1, x2, y2, r, g, b, a);
 		return 0;
 	}
 	return luaL_error(l, "Screen buffer does not exist");
@@ -1044,10 +1096,10 @@ int luatpt_decorations_enable(lua_State* l)
 
 int luatpt_heat(lua_State* l)
 {
-	int heatstate;	
-	heatstate = luaL_optint(l, 1, 0);	
+	int heatstate;
+	heatstate = luaL_optint(l, 1, 0);
 	legacy_enable = (heatstate==1?0:1);
-	return 0;	
+	return 0;
 }
 int luatpt_cmode_set(lua_State* l)
 {
@@ -1091,9 +1143,9 @@ int luatpt_getscript(lua_State* l)
 
 	fileuri = malloc(strlen(SCRIPTSERVER)+strlen(fileauthor)+strlen(fileid)+44);
 	sprintf(fileuri, "http://" SCRIPTSERVER "/GetScript.api?Author=%s&Filename=%s", fileauthor, fileid);
-	
+
 	filedata = http_auth_get(fileuri, svf_user_id, NULL, svf_session_id, &ret, &len);
-	
+
 	if(len <= 0 || !filedata)
 	{
 		lastError = "Server did not return data.";
@@ -1104,16 +1156,16 @@ int luatpt_getscript(lua_State* l)
 		lastError = http_ret_text(ret);
 		goto fin;
 	}
-	
+
 	filename = malloc(strlen(fileauthor)+strlen(fileid)+strlen(PATH_SEP)+strlen(LOCAL_LUA_DIR)+6);
 	sprintf(filename, LOCAL_LUA_DIR PATH_SEP "%s_%s.lua", fileauthor, fileid);
-	
+
 #ifdef WIN32
 	_mkdir(LOCAL_LUA_DIR);
 #else
 	mkdir(LOCAL_LUA_DIR, 0755);
 #endif
-	
+
 	outputfile = fopen(filename, "r");
 	if(outputfile)
 	{
@@ -1132,14 +1184,14 @@ int luatpt_getscript(lua_State* l)
 	{
 		outputfile = fopen(filename, "w");
 	}
-	
+
 	if(!outputfile)
 	{
 		lastError = "Unable to write to file";
 		goto fin;
 	}
-	
-	
+
+
 	fputs(filedata, outputfile);
 	fclose(outputfile);
 	outputfile = NULL;
@@ -1149,7 +1201,7 @@ int luatpt_getscript(lua_State* l)
     sprintf(luacommand,"dofile(\"%s\")",filename);
     luacon_eval(luacommand);
     }
-    
+
 fin:
 	if(fileid) free(fileid);
 	if(filedata) free(filedata);
@@ -1158,7 +1210,7 @@ fin:
 	if(filename) free(filename);
 	if(luacommand) free(luacommand);
 	luacommand = NULL;
-		
+
 	if(lastError) return luaL_error(l, lastError);
 	return 0;
 }

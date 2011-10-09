@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+#ifdef FONTEDITOR
+
+>>>>>>> upstream/master
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -106,4 +111,10 @@ int main(int argc, char *argv[])
     fclose(f);
 
     return 0;
+<<<<<<< HEAD
 }
+=======
+}
+
+#endif
+>>>>>>> upstream/master

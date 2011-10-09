@@ -39,6 +39,16 @@ int update_PHOT(UPDATE_FUNC_ARGS) {
 					pv[y/CELL][x/CELL] -= 15.0f * CFDS;
 				}
 			}
+	r = pmap[y][x];
+	if((r&0xFF) == PT_QRTZ && r)// && parts[i].ctype==0x3FFFFFFF)
+	{
+		float a = (rand()%360)*3.14159f/180.0f;
+		parts[i].vx = 3.0f*cosf(a);
+		parts[i].vy = 3.0f*sinf(a);
+		if(parts[i].ctype == 0x3FFFFFFF)
+			parts[i].ctype = 0x1F<<(rand()%26);
+		parts[i].life++; //Delay death
+	}
 	//r = pmap[y][x];
 	//rt = r&0xFF;
 	/*if (rt==PT_CLNE || rt==PT_PCLN || rt==PT_BCLN || rt==PT_PBCN) {
