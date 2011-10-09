@@ -31,8 +31,6 @@ int update_O2(UPDATE_FUNC_ARGS)
 
 int graphics_O2(GRAPHIC_FUNC_ARGS)
 {
-    int x,y,cr,cg,cb;
-    int t = parts[i].type;
     if (cmode == CM_FIRE||cmode==CM_BLOB || cmode==CM_FANCY)
     {
         x = nx/CELL;

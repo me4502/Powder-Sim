@@ -842,7 +842,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 	}
 	if (t==PT_VIRS)
 	{
-	    parts[i].ctype = PT_ACID;
+	    parts[i].ctype = PT_VIRS;
 	    parts[i].disease = rand()%100+50;
 	}
 	//now set various properties that we want at spawn.
