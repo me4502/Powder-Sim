@@ -3189,12 +3189,19 @@ void draw_parts(pixel *vid)
                 {
                     if (!(*(ptypes[t].graphic_func))(i,nx,ny,vid,cr,cg,cb,t,x,y,fr,fg,fb))
                     {
+                        if (parts[i].dcolour != NULL)
+                        {
+                            vid[ny*(XRES+BARSIZE)+nx] = parts[i].dcolour;
+                        }
                         continue;
+                    }
+                    else if (parts[i].dcolour != NULL)
+                    {
+                        vid[ny*(XRES+BARSIZE)+nx] = parts[i].dcolour;
                     }
                     else
                     {
                         vid[ny*(XRES+BARSIZE)+nx] = ptypes[t].pcolors;
-                        continue;
                     }
                 }
 				else //if no special effect, draw a simple pixel
@@ -4458,6 +4465,7 @@ int draw_debug_info(pixel* vid, int lm, int lx, int ly, int cx, int cy, int line
 		drawpixel(vid, lpx-1, lpy, 255, 50, 50, 120);
 		drawpixel(vid, lpx, lpy+1, 255, 50, 50, 120);
 		drawpixel(vid, lpx, lpy-1, 255, 50, 50, 120);
+
 
 		fillrect(vid, 7, YRES-26, textwidth(infobuf)+5, 14, 0, 0, 0, 180);
 		drawtext(vid, 10, YRES-22, infobuf, 255, 255, 255, 255);
