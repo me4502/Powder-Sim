@@ -41,6 +41,7 @@
 int graphics_O2(GRAPHIC_FUNC_ARGS);
 int graphics_ACID(GRAPHIC_FUNC_ARGS);
 int graphics_BCOL(GRAPHIC_FUNC_ARGS);
+int graphics_CAUS(GRAPHIC_FUNC_ARGS);
 int graphics_COAL(GRAPHIC_FUNC_ARGS);
 int graphics_BIZR(GRAPHIC_FUNC_ARGS);
 int graphics_BOMB(GRAPHIC_FUNC_ARGS);
@@ -53,6 +54,11 @@ int graphics_FIRW(GRAPHIC_FUNC_ARGS);
 int graphics_DUST(GRAPHIC_FUNC_ARGS);
 int graphics_GBMB(GRAPHIC_FUNC_ARGS);
 int graphics_GPMP(GRAPHIC_FUNC_ARGS);
+int graphics_H2(GRAPHIC_FUNC_ARGS);
+int graphics_HSWC(GRAPHIC_FUNC_ARGS);
+int graphics_LCRY(GRAPHICS_FUNC_ARGS);
+int graphics_NEUT(GRAPHICS_FUNC_ARGS);
+int graphics_PHOT(GRAPHIC_FONT_ARGS);
 
 
 extern unsigned cmode;
