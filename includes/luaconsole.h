@@ -22,10 +22,13 @@
 #define LUACON_MPRESS 3
 #define LUACON_KDOWN 1
 #define LUACON_KUP 2
+#define LUACON_CREATE 1
+#define LUACON_BCREATE 2
 
 void luacon_open();
 int luacon_step(int mx, int my, int selectl, int selectr);
 int luacon_mouseevent(int mx, int my, int mb, int event);
+int luacon_createevent(int x, int y, int type, int event);
 int luacon_keyevent(int key, int modifier, int event);
 int luacon_eval(char *command);
 char *luacon_geterror();
