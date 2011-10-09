@@ -12,6 +12,8 @@ int mouseclick_function_count = 0;
 int *mouseclick_functions = NULL;
 int create_function_count = 0;
 int *create_functions = NULL;
+int erase_function_count = 0;
+int *erase_functions = NULL;
 int tptProperties; //Table for some TPT properties
 void luacon_open(){
 	const static struct luaL_reg tptluaapi [] = {
@@ -49,6 +51,8 @@ void luacon_open(){
 		{"unregister_keyevent", &luatpt_unregister_keypress},
 		{"register_create", &luatpt_register_createevent},
 		{"unregister_create", &luatpt_unregister_createevent},
+		{"register_erase", &luatpt_register_eraseevent},
+		{"unregister_erase", &luatpt_unregister_eraseevent},
 		{"input", &luatpt_input},
 		{"message_box", &luatpt_message_box},
 		{"get_numOfParts", &luatpt_get_numOfParts},
@@ -69,6 +73,7 @@ void luacon_open(){
 		{"getscript",&luatpt_getscript},
 		{"setwindowsize",&luatpt_setwindowsize},
 		{"watertest",&luatpt_togglewater},
+		{"showcursor",&luatpt_showcursor},
 		{NULL,NULL}
 	};
 
@@ -86,6 +91,12 @@ void luacon_open(){
 	lua_setfield(l, tptProperties, "selectedl");
 	lua_pushinteger(l, 0);
 	lua_setfield(l, tptProperties, "selectedr");
+	lua_pushinteger(l, 0);
+	lua_setfield(l, tptProperties, "width");
+	lua_pushinteger(l, 0);
+	lua_setfield(l, tptProperties, "height");
+	lua_pushinteger(l, 0);
+	lua_setfield(l, tptProperties, "elements");
 }
 int luacon_keyevent(int key, int modifier, int event){
 	int i = 0, kpcontinue = 1;
@@ -142,8 +153,29 @@ int luacon_createevent(int x, int y, int type, int event){
 	}
 	return ccontinue;
 }
+int luacon_eraseevent(int x, int y, int type, int event){
+	int i = 0, econtinue = 1;
+	if(erase_function_count){
+		for(i = 0; i < erase_function_count && econtinue; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, erase_functions[i]);
+			lua_pushinteger(l, x);
+			lua_pushinteger(l, y);
+			lua_pushinteger(l, type);
+			lua_pushinteger(l, event);
+			lua_pcall(l, 4, 1, 0);
+			if(lua_isboolean(l, -1)){
+				econtinue = lua_toboolean(l, -1);
+			}
+			lua_pop(l, 1);
+		}
+	}
+	return econtinue;
+}
 int luacon_step(int mx, int my, int selectl, int selectr){
 	int tempret = 0, tempb, i, callret;
+	lua_pushinteger(l, PT_NUM);
+	lua_pushinteger(l, YRES);
+	lua_pushinteger(l, XRES);
 	lua_pushinteger(l, selectr);
 	lua_pushinteger(l, selectl);
 	lua_pushinteger(l, my);
@@ -152,6 +184,10 @@ int luacon_step(int mx, int my, int selectl, int selectr){
 	lua_setfield(l, tptProperties, "mousey");
 	lua_setfield(l, tptProperties, "selectedl");
 	lua_setfield(l, tptProperties, "selectedr");
+	lua_setfield(l, tptProperties, "width");
+	lua_setfield(l, tptProperties, "height");
+	lua_setfield(l, tptProperties, "elements");
+
 	if(step_functions[0]){
 		//Set mouse globals
 		for(i = 0; i<6; i++){
@@ -993,6 +1029,61 @@ int luatpt_unregister_createevent(lua_State* l)
 	}
 	return 0;
 }
+int luatpt_register_eraseevent(lua_State* l)
+{
+	int *newfunctions, i;
+	if(lua_isfunction(l, 1)){
+		for(i = 0; i<erase_function_count; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, erase_functions[i]);
+			if(lua_equal(l, 1, lua_gettop(l))){
+				lua_pop(l, 1);
+				return luaL_error(l, "Function already registered");
+			}
+			lua_pop(l, 1);
+		}
+		newfunctions = calloc(erase_function_count+1, sizeof(int));
+		if(erase_functions){
+			memcpy(newfunctions, erase_functions, erase_function_count*sizeof(int));
+			free(erase_functions);
+		}
+		newfunctions[erase_function_count] = luaL_ref(l, LUA_REGISTRYINDEX);
+		erase_function_count++;
+		erase_functions = newfunctions;
+	}
+	return 0;
+}
+int luatpt_unregister_eraseevent(lua_State* l)
+{
+	int *newfunctions, i, functionindex = -1;
+	if(lua_isfunction(l, 1)){
+		for(i = 0; i<erase_function_count; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, erase_functions[i]);
+			if(lua_equal(l, 1, lua_gettop(l))){
+				functionindex = i;
+			}
+			lua_pop(l, 1);
+		}
+	}
+	if(functionindex != -1){
+		luaL_unref(l, LUA_REGISTRYINDEX, erase_functions[functionindex]);
+		if(functionindex != erase_function_count-1){
+			memmove(erase_functions+functionindex+1, erase_functions+functionindex+1, (erase_function_count-functionindex-1)*sizeof(int));
+		}
+		if(erase_function_count-1 > 0){
+			newfunctions = calloc(erase_function_count-1, sizeof(int));
+			memcpy(newfunctions, erase_functions, (erase_function_count-1)*sizeof(int));
+			free(erase_functions);
+			erase_functions = newfunctions;
+		} else {
+			free(erase_functions);
+			erase_functions = NULL;
+		}
+		erase_function_count--;
+	} else {
+		return luaL_error(l, "Function not registered");
+	}
+	return 0;
+}
 int luatpt_register_mouseclick(lua_State* l)
 {
 	int *newfunctions, i;
@@ -1301,5 +1392,13 @@ int luatpt_setwindowsize(lua_State* l)
 	lua_pushnumber(l, result);
 	return 1;
 }
-
+int luatpt_showcursor(lua_State* l)
+{
+    int cursor = luaL_optint(l, 1, 0);
+    if (cursor==0)
+        SDL_ShowCursor(SDL_DISABLE);
+    else
+        SDL_ShowCursor(SDL_ENABLE);
+    return 0;
+}
 #endif
