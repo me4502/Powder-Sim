@@ -1914,7 +1914,8 @@ void draw_parts(pixel *vid)
 				         t!=PT_LCRY && t!=PT_SWCH && t!=PT_PCLN &&
 				         t!=PT_PUMP && t!=PT_HSWC && t!=PT_FILT &&
 				         t!=PT_GPMP && t!=PT_PBCN && t!=PT_LIFE &&
-						 t!=PT_O2 && t!=PT_H2 && t!=PT_PVOD)
+					 t!=PT_O2   && t!=PT_H2   && t!=PT_PVOD &&
+					 t!=PT_CO2  /*&& t!=PT_CAUS*/)
 				{
 					if (ptypes[parts[i].type].properties&TYPE_LIQUID) //special effects for liquids in fancy mode
 					{
@@ -2905,6 +2906,76 @@ void draw_parts(pixel *vid)
 						}
 					}
 				}
+				/*else if (t==PT_CAUS)
+				{
+					if (cmode == CM_FIRE||cmode==CM_BLOB || cmode==CM_FANCY)
+					{
+						x = nx/CELL;
+						y = ny/CELL;
+						cg = PIXG(ptypes[t].pcolors)/3;
+						cb = PIXB(ptypes[t].pcolors)/3;
+						cr = PIXR(ptypes[t].pcolors)/3;
+						cg += fire_g[y][x];
+						if (cg > PIXG(ptypes[t].pcolors)/2) cg = PIXG(ptypes[t].pcolors)/2;
+						fire_g[y][x] = cg;
+						cb += fire_b[y][x];
+						if (cb > PIXB(ptypes[t].pcolors)/2) cb = PIXB(ptypes[t].pcolors)/2;
+						fire_b[y][x] = cb;
+						cr += fire_r[y][x];
+						if (cr > PIXR(ptypes[t].pcolors)/2) cr = PIXR(ptypes[t].pcolors)/2;
+						fire_r[y][x] = cr;
+					}
+					else
+					{
+						for (x=-3; x<4; x++)
+						{
+							for (y=-3; y<4; y++)
+							{
+								if (abs(x)+abs(y) <2 && !(abs(x)==2||abs(y)==2))
+									blendpixel(vid,x+nx,y+ny, PIXR(ptypes[t].pcolors)/1.6, PIXG(ptypes[t].pcolors)/1.6, PIXB(ptypes[t].pcolors)/1.6, 30);
+								if (abs(x)+abs(y) <=3 && abs(x)+abs(y))
+									blendpixel(vid,x+nx,y+ny, PIXR(ptypes[t].pcolors)/1.6, PIXG(ptypes[t].pcolors)/1.6, PIXB(ptypes[t].pcolors)/1.6, 10);
+								if (abs(x)+abs(y) == 2)
+									blendpixel(vid,x+nx,y+ny, PIXR(ptypes[t].pcolors)/1.6, PIXG(ptypes[t].pcolors)/1.6, PIXB(ptypes[t].pcolors)/1.6, 20);
+							}
+						}
+					}
+				}*/
+				else if (t==PT_CO2)
+				{
+					if (cmode == CM_FIRE||cmode==CM_BLOB || cmode==CM_FANCY)
+					{
+						x = nx/CELL;
+						y = ny/CELL;
+						cg = PIXG(ptypes[t].pcolors)/4;
+						cb = PIXB(ptypes[t].pcolors)/4;
+						cr = PIXR(ptypes[t].pcolors)/4;
+						cg += fire_g[y][x];
+						if (cg > PIXG(ptypes[t].pcolors)/2) cg = PIXG(ptypes[t].pcolors)/2;
+						fire_g[y][x] = cg;
+						cb += fire_b[y][x];
+						if (cb > PIXB(ptypes[t].pcolors)/2) cb = PIXB(ptypes[t].pcolors)/2;
+						fire_b[y][x] = cb;
+						cr += fire_r[y][x];
+						if (cr > PIXR(ptypes[t].pcolors)/2) cr = PIXR(ptypes[t].pcolors)/2;
+						fire_r[y][x] = cr;
+					}
+					else
+					{
+						for (x=-3; x<4; x++)
+						{
+							for (y=-3; y<4; y++)
+							{
+								if (abs(x)+abs(y) <2 && !(abs(x)==2||abs(y)==2))
+									blendpixel(vid,x+nx,y+ny, PIXR(ptypes[t].pcolors)/1.6, PIXG(ptypes[t].pcolors)/1.6, PIXB(ptypes[t].pcolors)/1.6, 30);
+								if (abs(x)+abs(y) <=3 && abs(x)+abs(y))
+									blendpixel(vid,x+nx,y+ny, PIXR(ptypes[t].pcolors)/1.6, PIXG(ptypes[t].pcolors)/1.6, PIXB(ptypes[t].pcolors)/1.6, 10);
+								if (abs(x)+abs(y) == 2)
+									blendpixel(vid,x+nx,y+ny, PIXR(ptypes[t].pcolors)/1.6, PIXG(ptypes[t].pcolors)/1.6, PIXB(ptypes[t].pcolors)/1.6, 20);
+							}
+						}
+					}
+				}
 				else if (t==PT_THDR)
 				{
 					if (cmode == CM_FIRE||cmode==CM_BLOB || cmode==CM_FANCY)
@@ -3676,7 +3747,7 @@ void draw_parts(pixel *vid)
 				}
 			}
 			//blob view!
-			if (cmode == CM_BLOB&&t!=PT_FIRE&&t!=PT_PLSM&&t!=PT_HFLM&&t!=PT_NONE&&t!=PT_ACID&&t!=PT_LCRY&&t!=PT_GLOW&&t!=PT_SWCH&&t!=PT_SMKE&&t!=PT_WTRV&&!(t==PT_FIRW&&parts[i].tmp==3)&&t!=PT_LIFE&&t!=PT_H2&&t!=PT_O2)
+			if (cmode == CM_BLOB&&t!=PT_FIRE&&t!=PT_PLSM&&t!=PT_HFLM&&t!=PT_NONE&&t!=PT_ACID&&t!=PT_LCRY&&t!=PT_GLOW&&t!=PT_SWCH&&t!=PT_SMKE&&t!=PT_WTRV&&!(t==PT_FIRW&&parts[i].tmp==3)&&t!=PT_LIFE&&t!=PT_H2&&t!=PT_O2&& t!=PT_CO2  /*&& t!=PT_CAUS*/)
 			{
 				if (t==PT_PHOT) {
 					cg = 0;
