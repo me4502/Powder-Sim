@@ -47,6 +47,8 @@ void luacon_open(){
 		{"unregister_mouseevent", &luatpt_unregister_mouseclick},
 		{"register_keyevent", &luatpt_register_keypress},
 		{"unregister_keyevent", &luatpt_unregister_keypress},
+		{"register_create", &luatpt_register_createevent},
+		{"unregister_create", &luatpt_unregister_createevent},
 		{"input", &luatpt_input},
 		{"message_box", &luatpt_message_box},
 		{"get_numOfParts", &luatpt_get_numOfParts},
@@ -931,6 +933,61 @@ int luatpt_unregister_keypress(lua_State* l)
 			keypress_functions = NULL;
 		}
 		keypress_function_count--;
+	} else {
+		return luaL_error(l, "Function not registered");
+	}
+	return 0;
+}
+int luatpt_register_createevent(lua_State* l)
+{
+	int *newfunctions, i;
+	if(lua_isfunction(l, 1)){
+		for(i = 0; i<create_function_count; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, create_functions[i]);
+			if(lua_equal(l, 1, lua_gettop(l))){
+				lua_pop(l, 1);
+				return luaL_error(l, "Function already registered");
+			}
+			lua_pop(l, 1);
+		}
+		newfunctions = calloc(create_function_count+1, sizeof(int));
+		if(create_functions){
+			memcpy(newfunctions, create_functions, create_function_count*sizeof(int));
+			free(create_functions);
+		}
+		newfunctions[create_function_count] = luaL_ref(l, LUA_REGISTRYINDEX);
+		create_function_count++;
+		create_functions = newfunctions;
+	}
+	return 0;
+}
+int luatpt_unregister_createevent(lua_State* l)
+{
+	int *newfunctions, i, functionindex = -1;
+	if(lua_isfunction(l, 1)){
+		for(i = 0; i<create_function_count; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, create_functions[i]);
+			if(lua_equal(l, 1, lua_gettop(l))){
+				functionindex = i;
+			}
+			lua_pop(l, 1);
+		}
+	}
+	if(functionindex != -1){
+		luaL_unref(l, LUA_REGISTRYINDEX, create_functions[functionindex]);
+		if(functionindex != create_function_count-1){
+			memmove(create_functions+functionindex+1, create_functions+functionindex+1, (create_function_count-functionindex-1)*sizeof(int));
+		}
+		if(create_function_count-1 > 0){
+			newfunctions = calloc(create_function_count-1, sizeof(int));
+			memcpy(newfunctions, create_functions, (create_function_count-1)*sizeof(int));
+			free(create_functions);
+			create_functions = newfunctions;
+		} else {
+			free(create_functions);
+			create_functions = NULL;
+		}
+		create_function_count--;
 	} else {
 		return luaL_error(l, "Function not registered");
 	}

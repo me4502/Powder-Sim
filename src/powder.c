@@ -4,6 +4,7 @@
 #include <powder.h>
 #include <air.h>
 #include <misc.h>
+#include <luaconsole.h>
 
 int gravwl_timeout = 0;
 
