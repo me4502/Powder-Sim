@@ -658,7 +658,10 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 	if(t==SPC_PROP) {
 		return -1;	//Prop tool works on a mouse click basic, make sure it doesn't do anything here
 	}
-
+#ifdef LUACONSOLE
+    if(!luacon_createevent(x, y, t, LUACON_CREATE))
+        return 0;
+#endif
 	if (t==SPC_HEAT||t==SPC_COOL)
 	{
 		if ((pmap[y][x]&0xFF)!=PT_NONE&&(pmap[y][x]&0xFF)<PT_NUM)
@@ -2781,6 +2784,10 @@ int flood_water(int x, int y, int i, int originaly, int check)
 //this creates particles from a brush, don't use if you want to create one particle
 int create_parts(int x, int y, int rx, int ry, int c, int flags)
 {
+#ifdef LUACONSOLE
+		if(!luacon_createevent(x, y, c, LUACON_BCREATE))
+			return 0;
+#endif
 	int i, j, r, f = 0, u, v, oy, ox, b = 0, dw = 0, stemp = 0;//n;
 
 	int wall = c - 100;

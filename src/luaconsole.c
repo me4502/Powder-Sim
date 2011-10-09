@@ -10,6 +10,8 @@ int keypress_function_count = 0;
 int *keypress_functions = NULL;
 int mouseclick_function_count = 0;
 int *mouseclick_functions = NULL;
+int create_function_count = 0;
+int *create_functions = NULL;
 int tptProperties; //Table for some TPT properties
 void luacon_open(){
 	const static struct luaL_reg tptluaapi [] = {
@@ -119,6 +121,24 @@ int luacon_mouseevent(int mx, int my, int mb, int event){
 		}
 	}
 	return mpcontinue;
+}
+int luacon_createevent(int x, int y, int type, int event){
+	int i = 0, ccontinue = 1;
+	if(create_function_count){
+		for(i = 0; i < create_function_count && ccontinue; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, create_functions[i]);
+			lua_pushinteger(l, x);
+			lua_pushinteger(l, y);
+			lua_pushinteger(l, type);
+			lua_pushinteger(l, event);
+			lua_pcall(l, 4, 1, 0);
+			if(lua_isboolean(l, -1)){
+				ccontinue = lua_toboolean(l, -1);
+			}
+			lua_pop(l, 1);
+		}
+	}
+	return ccontinue;
 }
 int luacon_step(int mx, int my, int selectl, int selectr){
 	int tempret = 0, tempb, i, callret;
