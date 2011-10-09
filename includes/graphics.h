@@ -36,10 +36,24 @@
 #endif
 #endif
 
-#define GRAPHIC_FUNC_ARGS int i, int nx, int ny, pixel *vid
+#define GRAPHIC_FUNC_ARGS int i, int nx, int ny, pixel *vid, int cr, int cg, int cb, int t, int x, int y, int fr, int fg, int fb
 
 int graphics_O2(GRAPHIC_FUNC_ARGS);
 int graphics_ACID(GRAPHIC_FUNC_ARGS);
+int graphics_BCOL(GRAPHIC_FUNC_ARGS);
+int graphics_COAL(GRAPHIC_FUNC_ARGS);
+int graphics_BIZR(GRAPHIC_FUNC_ARGS);
+int graphics_BOMB(GRAPHIC_FUNC_ARGS);
+int graphics_CBNW(GRAPHIC_FUNC_ARGS);
+int graphics_CLST(GRAPHIC_FUNC_ARGS);
+int graphics_CO2(GRAPHIC_FUNC_ARGS);
+int graphics_DEUT(GRAPHIC_FUNC_ARGS);
+int graphics_DLAY(GRAPHIC_FUNC_ARGS);
+int graphics_FIRW(GRAPHIC_FUNC_ARGS);
+int graphics_DUST(GRAPHIC_FUNC_ARGS);
+int graphics_GBMB(GRAPHIC_FUNC_ARGS);
+int graphics_GPMP(GRAPHIC_FUNC_ARGS);
+
 
 extern unsigned cmode;
 extern SDL_Surface *sdl_scrn;

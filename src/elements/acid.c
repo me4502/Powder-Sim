@@ -70,7 +70,7 @@ int update_ACID(UPDATE_FUNC_ARGS)
 
 int graphics_ACID(GRAPHIC_FUNC_ARGS)
 {
-    int s,cr,cg,cb;
+    int s;
     if (parts[i].life>75) parts[i].life = 75;
     if (parts[i].life<49) parts[i].life = 49;
     s = (parts[i].life-49)*3;
@@ -100,4 +100,5 @@ int graphics_ACID(GRAPHIC_FUNC_ARGS)
         blendpixel(vid, nx+1, ny+1, cr, cg, cb, 112);
         blendpixel(vid, nx-1, ny+1, cr, cg, cb, 112);
     }
+    return 0;
 }
