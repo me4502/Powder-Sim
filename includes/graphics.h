@@ -36,6 +36,10 @@
 #endif
 #endif
 
+#define GRAPHIC_FUNC_ARGS int i, int nx, int ny, pixel *vid
+
+int graphics_O2(GRAPHIC_FUNC_ARGS);
+
 extern unsigned cmode;
 extern SDL_Surface *sdl_scrn;
 extern int sdl_scale;
