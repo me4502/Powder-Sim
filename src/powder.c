@@ -1234,11 +1234,7 @@ void set_emap(int x, int y)
 }
 
 #if defined(WIN32) && !defined(__GNUC__)
-<<<<<<< HEAD
-_inline int parts_avg(int ci, int ni,int t)//t is the particle you are looking for, returns the particle between two particles
-=======
 int parts_avg(int ci, int ni,int t)//t is the particle you are looking for, returns the particle between two particles
->>>>>>> upstream/master
 #else
 inline int parts_avg(int ci, int ni,int t)
 #endif
@@ -1786,11 +1782,7 @@ void update_particles_i(pixel *vid, int start, int inc)
 						pt = (c_heat+parts[i].temp*96.645)/(c_Cm+96.645);
 					else
 						pt = (c_heat+parts[i].temp*96.645/ptypes[t].hconduct*fabs(ptypes[t].weight))/(c_Cm+96.645/ptypes[t].hconduct*fabs(ptypes[t].weight));
-<<<<<<< HEAD
 
-=======
-
->>>>>>> upstream/master
 #else
 					pt = parts[i].temp = (c_heat+parts[i].temp)/(h_count+1);
 #endif
@@ -3184,11 +3176,7 @@ void *transform_save(void *odata, int *size, matrix2d transform, vector2d transl
 }
 
 #if defined(WIN32) && !defined(__GNUC__)
-<<<<<<< HEAD
-_inline void orbitalparts_get(int block1, int block2, int resblock1[], int resblock2[])
-=======
 void orbitalparts_get(int block1, int block2, int resblock1[], int resblock2[])
->>>>>>> upstream/master
 #else
 inline void orbitalparts_get(int block1, int block2, int resblock1[], int resblock2[])
 #endif
@@ -3205,11 +3193,7 @@ inline void orbitalparts_get(int block1, int block2, int resblock1[], int resblo
 }
 
 #if defined(WIN32) && !defined(__GNUC__)
-<<<<<<< HEAD
-_inline void orbitalparts_set(int *block1, int *block2, int resblock1[], int resblock2[])
-=======
 void orbitalparts_set(int *block1, int *block2, int resblock1[], int resblock2[])
->>>>>>> upstream/master
 #else
 inline void orbitalparts_set(int *block1, int *block2, int resblock1[], int resblock2[])
 #endif

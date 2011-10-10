@@ -27,11 +27,7 @@ char *clipboard_text = NULL;
 
 //Signum function
 #if defined(WIN32) && !defined(__GNUC__)
-<<<<<<< HEAD
-_inline int isign(float i)
-=======
 int isign(float i)
->>>>>>> upstream/master
 #else
 inline int isign(float i)
 #endif
@@ -44,11 +40,7 @@ inline int isign(float i)
 }
 
 #if defined(WIN32) && !defined(__GNUC__)
-<<<<<<< HEAD
-_inline unsigned clamp_flt(float f, float min, float max)
-=======
 unsigned clamp_flt(float f, float min, float max)
->>>>>>> upstream/master
 #else
 inline unsigned clamp_flt(float f, float min, float max)
 #endif
@@ -61,11 +53,7 @@ inline unsigned clamp_flt(float f, float min, float max)
 }
 
 #if defined(WIN32) && !defined(__GNUC__)
-<<<<<<< HEAD
-_inline float restrict_flt(float f, float min, float max)
-=======
 float restrict_flt(float f, float min, float max)
->>>>>>> upstream/master
 #else
 inline float restrict_flt(float f, float min, float max)
 #endif
@@ -183,7 +171,6 @@ void save_presets(int do_update)
 	//Old format, don't bother with this
 	/*FILE *f=fopen("powder.def", "wb");
 	unsigned char sig[4] = {0x50, 0x44, 0x65, 0x68};
->>>>>>> upstream/master
 	unsigned char tmp = sdl_scale;
 	if (!f)
 		return;
@@ -204,11 +191,6 @@ void save_presets(int do_update)
 	fwrite(&tmp, 1, 1, f);
 	tmp = MINOR_VERSION;
 	fwrite(&tmp, 1, 1, f);
-<<<<<<< HEAD
-	tmp = do_update;
-	fwrite(&tmp, 1, 1, f);
-	fclose(f);
-=======
 	tmp = BUILD_NUM;
 	fwrite(&tmp, 1, 1, f);
 	tmp = do_update;
