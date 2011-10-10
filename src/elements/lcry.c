@@ -39,7 +39,7 @@ int graphics_LCRY(GRAPHIC_FUNC_ARGS)
                 cr = (parts[i].dcolour>>16)&0xFF;
                 cg = (parts[i].dcolour>>8)&0xFF;
                 cb = (parts[i].dcolour)&0xFF;
-                vid[ny*(XRES+BARSIZE)+nx] = parts[i].dcolour;
+                vid[ny*(XRES+BARSIZE)+nx] = PIXRGB(cr,cg,cb);
                 x = nx/CELL;
                 y = ny/CELL;
                 fire_g[y][x] = cg;
@@ -77,5 +77,5 @@ int graphics_LCRY(GRAPHIC_FUNC_ARGS)
         vid[ny*(XRES+BARSIZE)+nx] = PIXRGB(GR, GR, GR);
     }
 
-    return 0;
+    return 3;
 }

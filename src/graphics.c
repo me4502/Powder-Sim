@@ -2943,15 +2943,24 @@ void draw_parts(pixel *vid)
 				}
 				else if (ptypes[t].graphic_func)
                 {
-                    if (!(*(ptypes[t].graphic_func))(i,nx,ny,vid,cr,cg,cb,t,x,y,fr,fg,fb))
+                    cr = 0;
+				    cb = 0;
+				    cg = 0;
+				    x = 0;
+				    y = 0;
+				    fr = 0;
+				    fg = 0;
+				    fb = 0;
+                    int result = (*(ptypes[t].graphic_func))(i,nx,ny,vid,cr,cg,cb,t,x,y,fr,fg,fb);
+                    if (!result || result==3)
                     {
-                        if (parts[i].dcolour != NULL && decorations_enable)
+                        if (parts[i].dcolour != NULL && decorations_enable && parts[i].dcolour != ptypes[t].pcolors && result!=3)
                         {
                             vid[ny*(XRES+BARSIZE)+nx] = parts[i].dcolour;
                         }
                         continue;
                     }
-                    else if (parts[i].dcolour != NULL && decorations_enable)
+                    else if (parts[i].dcolour != NULL && decorations_enable && parts[i].dcolour != ptypes[t].pcolors && result!=3)
                     {
                         vid[ny*(XRES+BARSIZE)+nx] = parts[i].dcolour;
                     }
@@ -2960,7 +2969,7 @@ void draw_parts(pixel *vid)
                         vid[ny*(XRES+BARSIZE)+nx] = ptypes[t].pcolors;
                     }
                 }
-                else if (parts[i].dcolour != NULL && decorations_enable)
+                else if (parts[i].dcolour != NULL && decorations_enable && parts[i].dcolour != ptypes[t].pcolors)
                 {
                     vid[ny*(XRES+BARSIZE)+nx] = parts[i].dcolour;
                 }
