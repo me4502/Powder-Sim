@@ -2943,14 +2943,6 @@ void draw_parts(pixel *vid)
 				}
 				else if (ptypes[t].graphic_func)
                 {
-                    cr = 0;
-				    cb = 0;
-				    cg = 0;
-				    x = 0;
-				    y = 0;
-				    fr = 0;
-				    fg = 0;
-				    fb = 0;
                     int result = (*(ptypes[t].graphic_func))(i,nx,ny,vid,cr,cg,cb,t,x,y,fr,fg,fb);
                     if (!result || result==3)
                     {
