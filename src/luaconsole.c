@@ -14,6 +14,8 @@ int create_function_count = 0;
 int *create_functions = NULL;
 int erase_function_count = 0;
 int *erase_functions = NULL;
+int load_function_count = 0;
+int *load_functions = NULL;
 int tptProperties; //Table for some TPT properties
 void luacon_open(){
 	const static struct luaL_reg tptluaapi [] = {
@@ -53,6 +55,8 @@ void luacon_open(){
 		{"unregister_create", &luatpt_unregister_createevent},
 		{"register_erase", &luatpt_register_eraseevent},
 		{"unregister_erase", &luatpt_unregister_eraseevent},
+		{"register_load", &luatpt_register_loadevent},
+		{"unregister_load", &luatpt_unregister_loadevent},
 		{"input", &luatpt_input},
 		{"message_box", &luatpt_message_box},
 		{"get_numOfParts", &luatpt_get_numOfParts},
@@ -170,6 +174,21 @@ int luacon_eraseevent(int x, int y, int type, int event){
 		}
 	}
 	return econtinue;
+}
+int luacon_loadevent(int event){
+	int i = 0, rcontinue = 1;
+	if(load_function_count){
+		for(i = 0; i < load_function_count && rcontinue; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, load_functions[i]);
+			lua_pushinteger(l, event);
+			lua_pcall(l, 4, 1, 0);
+			if(lua_isboolean(l, -1)){
+				rcontinue = lua_toboolean(l, -1);
+			}
+			lua_pop(l, 1);
+		}
+	}
+	return rcontinue;
 }
 int luacon_step(int mx, int my, int selectl, int selectr){
 	int tempret = 0, tempb, i, callret;
@@ -1084,6 +1103,62 @@ int luatpt_unregister_eraseevent(lua_State* l)
 	}
 	return 0;
 }
+int luatpt_register_loadevent(lua_State* l)
+{
+	int *newfunctions, i;
+	if(lua_isfunction(l, 1)){
+		for(i = 0; i<load_function_count; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, load_functions[i]);
+			if(lua_equal(l, 1, lua_gettop(l))){
+				lua_pop(l, 1);
+				return luaL_error(l, "Function already registered");
+			}
+			lua_pop(l, 1);
+		}
+		newfunctions = calloc(load_function_count+1, sizeof(int));
+		if(load_functions){
+			memcpy(newfunctions, load_functions, load_function_count*sizeof(int));
+			free(load_functions);
+		}
+		newfunctions[load_function_count] = luaL_ref(l, LUA_REGISTRYINDEX);
+		load_function_count++;
+		load_functions = newfunctions;
+	}
+	return 0;
+}
+int luatpt_unregister_loadevent(lua_State* l)
+{
+	int *newfunctions, i, functionindex = -1;
+	if(lua_isfunction(l, 1)){
+		for(i = 0; i<load_function_count; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, load_functions[i]);
+			if(lua_equal(l, 1, lua_gettop(l))){
+				functionindex = i;
+			}
+			lua_pop(l, 1);
+		}
+	}
+	if(functionindex != -1){
+		luaL_unref(l, LUA_REGISTRYINDEX, load_functions[functionindex]);
+		if(functionindex != load_function_count-1){
+			memmove(load_functions+functionindex+1, load_functions+functionindex+1, (load_function_count-functionindex-1)*sizeof(int));
+		}
+		if(load_function_count-1 > 0){
+			newfunctions = calloc(load_function_count-1, sizeof(int));
+			memcpy(newfunctions, load_functions, (load_function_count-1)*sizeof(int));
+			free(load_functions);
+			load_functions = newfunctions;
+		} else {
+			free(load_functions);
+			load_functions = NULL;
+		}
+		load_function_count--;
+	} else {
+		return luaL_error(l, "Function not registered");
+	}
+	return 0;
+}
+
 int luatpt_register_mouseclick(lua_State* l)
 {
 	int *newfunctions, i;
