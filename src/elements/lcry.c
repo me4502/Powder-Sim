@@ -47,13 +47,13 @@ int graphics_LCRY(GRAPHIC_FUNC_ARGS)
             }
             x = nx/CELL;
             y = ny/CELL;
-            cg += fire_g[y][x];
+            //cg += fire_g[y][x];
             if (cg > 255) cg = 255;
             fire_g[y][x] = cg;
-            cb += fire_b[y][x];
+            //cb += fire_b[y][x];
             if (cb > 255) cb = 255;
             fire_b[y][x] = cb;
-            cr += fire_r[y][x];
+            //cr += fire_r[y][x];
             if (cr > 255) cr = 255;
             fire_r[y][x] = cr;
         }
