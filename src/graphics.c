@@ -2936,49 +2936,6 @@ void draw_parts(pixel *vid)
 						fire_b[y][x] = cb;
 					}
 				}
-				/*else if((t==PT_COAL || t==PT_BCOL) && parts[i].tmp2 > 100.0f-80.0f){
-					float frequency = 3.1415/(2*100.0f-(100.0f-80.0f));
-					int q = (parts[i].tmp2>100.0f)?100.0f-(100.0f-80.0f):parts[i].tmp2-(100.0f-80.0f);
-					cr = PIXR(ptypes[t].pcolors);
-					cg = PIXG(ptypes[t].pcolors);
-					cb = PIXB(ptypes[t].pcolors);
-<<<<<<< HEAD
-
-					cr += parts[i].tmp2;
-					cg += parts[i].tmp2;
-					cb += parts[i].tmp2;
-
-
-					cr += sin(frequency*q) * 226;
-					cg += sin(frequency*q*4.55 +3.14) * 34;
-					cb += sin(frequency*q*2.22 +3.14) * 64;
-
-=======
-
-					cr += parts[i].tmp2;
-					cg += parts[i].tmp2;
-					cb += parts[i].tmp2;
-
-
-					cr += sin(frequency*q) * 226;
-					cg += sin(frequency*q*4.55 +3.14) * 34;
-					cb += sin(frequency*q*2.22 +3.14) * 64;
-
->>>>>>> upstream/master
-					if (cr>=255)
-						cr = 255;
-					if (cg>=255)
-						cg = 255;
-					if (cb>=255)
-						cb = 255;
-					if (cr<=0)
-						cr = 0;
-					if (cg<=0)
-						cg = 0;
-					if (cb<=0)
-						cb = 0;
-					blendpixel(vid, nx, ny, cr, cg, cb, 255);
-				}*/
 				else if (ptypes[t].graphic_func)
                 {
                     if (!(*(ptypes[t].graphic_func))(i,nx,ny,vid,cr,cg,cb,t,x,y,fr,fg,fb))
@@ -2997,6 +2954,10 @@ void draw_parts(pixel *vid)
                     {
                         vid[ny*(XRES+BARSIZE)+nx] = ptypes[t].pcolors;
                     }
+                }
+                else if (parts[i].dcolour != NULL && decorations_enable)
+                {
+                    vid[ny*(XRES+BARSIZE)+nx] = parts[i].dcolour;
                 }
 				else //if no special effect, draw a simple pixel
 					vid[ny*(XRES+BARSIZE)+nx] = ptypes[t].pcolors;
