@@ -1479,11 +1479,7 @@ int main(int argc, char *argv[])
 	unsigned char c[3];
 	char ppmfilename[256], ptifilename[256], ptismallfilename[256];
 	FILE *f;
-<<<<<<< HEAD
 
-=======
-
->>>>>>> upstream/master
 	cmode = CM_FIRE;
 	sys_pause = 1;
 	parts = calloc(sizeof(particle), NPART);
@@ -1494,31 +1490,19 @@ int main(int argc, char *argv[])
 
 	pers_bg = calloc((XRES+BARSIZE)*YRES, PIXELSIZE);
 	fire_bg = calloc(XRES*YRES, PIXELSIZE);
-<<<<<<< HEAD
 
-=======
-
->>>>>>> upstream/master
 	prepare_alpha(4, 1.0f);
 	player[2] = player2[2] = PT_DUST;
 
 	sprintf(ppmfilename, "%s.ppm", argv[2]);
 	sprintf(ptifilename, "%s.pti", argv[2]);
 	sprintf(ptismallfilename, "%s-small.pti", argv[2]);
-<<<<<<< HEAD
 
-=======
-
->>>>>>> upstream/master
 	if(load_data && load_size){
 		int parsestate = 0;
 		//parsestate = parse_save(load_data, load_size, 1, 0, 0);
 		parsestate = parse_save(load_data, load_size, 1, 0, 0, bmap, fvx, fvy, signs, parts, pmap);
-<<<<<<< HEAD
 
-=======
-
->>>>>>> upstream/master
 		for(i=0; i<30; i++){
 			memset(vid_buf, 0, (XRES+BARSIZE)*YRES*PIXELSIZE);
 			draw_walls(vid_buf);
@@ -1526,15 +1510,9 @@ int main(int argc, char *argv[])
 			draw_parts(vid_buf);
 			render_fire(vid_buf);
 		}
-<<<<<<< HEAD
 
 		render_signs(vid_buf);
 
-=======
-
-		render_signs(vid_buf);
-
->>>>>>> upstream/master
 		if(parsestate>0){
 			//return 0;
 			info_box(vid_buf, "Save file invalid or from newer version");
