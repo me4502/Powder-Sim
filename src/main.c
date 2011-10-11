@@ -153,7 +153,7 @@ static const char *it_msg =
     "\n"
     "Contributors: \bgStanislaw K Skowronek (\brhttp://powder.unaligned.org\bg, \bbirc.unaligned.org #wtf\bg),\n"
     "\bgSimon Robertshaw, Skresanov Savely, cracker64, Catelite, Bryan Hoyle, Nathan Cousins, jacksonmj,\n"
-	"\bgLieuwe Mosch, Anthony Boot, Madeline Miller\n"
+	"\bgLieuwe Mosch, Anthony Boot, Madeline Miller, MaksProg\n"
     "\n"
     "\bgTo use online features such as saving, you need to register at: \brhttp://powdertoy.co.uk/Register.html"
     ;
@@ -1818,6 +1818,7 @@ int main(int argc, char *argv[])
 		draw_walls(part_vbuf);
 		update_particles(part_vbuf); //update everything
 		draw_parts(part_vbuf); //draw particles
+		draw_other(part_vbuf);
 		if(sl == WL_GRAV+100 || sr == WL_GRAV+100)
 			draw_grav_zones(part_vbuf);
 		if(ngrav_enable){
@@ -2627,13 +2628,13 @@ int main(int argc, char *argv[])
 				}
 				if (DEBUG_MODE)
 				{
-					sprintf(heattext, "%s, Pressure: %3.2f, Temp: %4.2f C, Life: %d", nametext, pv[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL], parts[cr>>8].temp-273.15f, parts[cr>>8].life);
+					sprintf(heattext, "%s, Pressure: %3.2f, Temp: %4.2f C, Life: %d, Tmp:%d", nametext, pv[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL], parts[cr>>8].temp-273.15f, parts[cr>>8].life, parts[cr>>8].tmp);
 					sprintf(coordtext, "#%d, X:%d Y:%d", cr>>8, x/sdl_scale, y/sdl_scale);
 				}
 				else
 				{
 #ifdef BETA
-					sprintf(heattext, "%s, Pressure: %3.2f, Temp: %4.2f C, Life: %d", nametext, pv[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL], parts[cr>>8].temp-273.15f, parts[cr>>8].life);
+					sprintf(heattext, "%s, Pressure: %3.2f, Temp: %4.2f C, Life: %d, Tmp:%d", nametext, pv[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL], parts[cr>>8].temp-273.15f, parts[cr>>8].life, parts[cr>>8].tmp);
 #else
 					sprintf(heattext, "%s, Pressure: %3.2f, Temp: %4.2f C", nametext, pv[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL], parts[cr>>8].temp-273.15f);
 #endif
