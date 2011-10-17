@@ -187,8 +187,13 @@ int frameidx = 0;
 //int CGOL = 0;
 //int GSPEED = 1;//causes my .exe to crash..
 int sound_enable = 0;
-int debug_flags = 0;
 
+int debug_flags = 0;
+int debug_perf_istart = 1;
+int debug_perf_iend = 0;
+long debug_perf_frametime[DEBUG_PERF_FRAMECOUNT];
+long debug_perf_partitime[DEBUG_PERF_FRAMECOUNT];
+long debug_perf_time = 0;
 
 sign signs[MAXSIGNS];
 
@@ -1115,7 +1120,6 @@ void clear_sim(void)
 	player[27] = 0;
 	player2[27] = 0;
 	memset(pers_bg, 0, (XRES+BARSIZE)*YRES*PIXELSIZE);
-	memset(fire_bg, 0, XRES*YRES*PIXELSIZE);
 	memset(fire_r, 0, sizeof(fire_r));
 	memset(fire_g, 0, sizeof(fire_g));
 	memset(fire_b, 0, sizeof(fire_b));
@@ -1452,6 +1456,7 @@ void start_grav_async()
 {
 	if(!ngrav_enable){
 		gravthread_done = 0;
+		grav_ready = 0;
 		pthread_mutex_init (&gravmutex, NULL);
 		pthread_cond_init(&gravcv, NULL);
 		pthread_create(&gravthread, NULL, update_grav_async, NULL); //Start asynchronous gravity simulation
@@ -1493,10 +1498,15 @@ int main(int argc, char *argv[])
 	pfree = 0;
 
 	pers_bg = calloc((XRES+BARSIZE)*YRES, PIXELSIZE);
+<<<<<<< HEAD
 	fire_bg = calloc(XRES*YRES, PIXELSIZE);
 
+=======
+	
+>>>>>>> upstream/master
 	prepare_alpha(4, 1.0f);
 	player[2] = player2[2] = PT_DUST;
+	player[28] = player2[28] = 0;
 
 	sprintf(ppmfilename, "%s.ppm", argv[2]);
 	sprintf(ptifilename, "%s.pti", argv[2]);
@@ -1634,7 +1644,6 @@ int main(int argc, char *argv[])
 	menu_count();
 	parts = calloc(sizeof(particle), NPART);
 	cb_parts = calloc(sizeof(particle), NPART);
-	fire_bg=calloc(XRES*YRES, PIXELSIZE);
 	init_can_move();
 	clear_sim();
 
@@ -1816,9 +1825,53 @@ int main(int argc, char *argv[])
 		if(ngrav_enable && drawgrav_enable)
 			draw_grav(vid_buf);
 		draw_walls(part_vbuf);
+		
+		if(debug_flags & (DEBUG_PERFORMANCE_CALC|DEBUG_PERFORMANCE_FRAME))
+		{
+			#ifdef WIN32
+			#elif defined(MACOSX)
+			#else
+				struct timespec ts;
+				clock_gettime(CLOCK_REALTIME, &ts);
+				debug_perf_time = ts.tv_nsec;
+			#endif
+		}
+		
 		update_particles(part_vbuf); //update everything
+			
+		if(debug_flags & (DEBUG_PERFORMANCE_CALC|DEBUG_PERFORMANCE_FRAME))
+		{
+			#ifdef WIN32
+			#elif defined(MACOSX)
+			#else
+				struct timespec ts;
+				clock_gettime(CLOCK_REALTIME, &ts);
+				
+				debug_perf_partitime[debug_perf_iend]  = ts.tv_nsec - debug_perf_time;
+				
+				debug_perf_time = ts.tv_nsec;
+			#endif
+		}
+		
 		draw_parts(part_vbuf); //draw particles
 		draw_other(part_vbuf);
+		
+		if(debug_flags & (DEBUG_PERFORMANCE_CALC|DEBUG_PERFORMANCE_FRAME))
+		{
+			#ifdef WIN32
+			#elif defined(MACOSX)
+			#else
+				struct timespec ts;
+				clock_gettime(CLOCK_REALTIME, &ts);
+				
+				debug_perf_frametime[debug_perf_iend]  = ts.tv_nsec - debug_perf_time;
+			#endif
+			debug_perf_iend++;
+			debug_perf_iend %= DEBUG_PERF_FRAMECOUNT;
+			debug_perf_istart++;
+			debug_perf_istart %= DEBUG_PERF_FRAMECOUNT;
+		}
+		
 		if(sl == WL_GRAV+100 || sr == WL_GRAV+100)
 			draw_grav_zones(part_vbuf);
 		if(ngrav_enable){
@@ -1827,9 +1880,9 @@ int main(int argc, char *argv[])
 			if(result) //Did the gravity thread finish?
 			{
 				memcpy(th_gravmap, gravmap, sizeof(gravmap)); //Move our current gravmap to be processed other thread
-				memcpy(gravy, th_gravy, sizeof(gravy));	//Hmm, Gravy
-				memcpy(gravx, th_gravx, sizeof(gravx)); //Move the processed velocity maps to be used
-				memcpy(gravp, th_gravp, sizeof(gravp));
+				//memcpy(gravy, th_gravy, sizeof(gravy));	//Hmm, Gravy
+				//memcpy(gravx, th_gravx, sizeof(gravx)); //Move the processed velocity maps to be used
+				//memcpy(gravp, th_gravp, sizeof(gravp));
 
 				if (!sys_pause||framerender){ //Only update if not paused
 					//Switch the full size gravmaps, we don't really need the two above any more
@@ -2646,7 +2699,7 @@ int main(int argc, char *argv[])
 				sprintf(heattext, "Empty, Pressure: %3.2f", pv[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL]);
 				if (DEBUG_MODE)
 				{
-					sprintf(coordtext, "X:%d Y:%d. GX: %.2f GY: %.2f", x/sdl_scale, y/sdl_scale, gravx[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL], gravy[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL]);
+					sprintf(coordtext, "X:%d Y:%d. GX: %.2f GY: %.2f", x/sdl_scale, y/sdl_scale, gravxf[((y/sdl_scale)*XRES)+(x/sdl_scale)], gravyf[((y/sdl_scale)*XRES)+(x/sdl_scale)]);
 				}
 			}
 		}
@@ -3016,7 +3069,6 @@ int main(int argc, char *argv[])
 						if (x>=1 && x<=17)
 						{
 							search_ui(vid_buf);
-							memset(fire_bg, 0, XRES*YRES*PIXELSIZE);
 							memset(pers_bg, 0, (XRES+BARSIZE)*YRES*PIXELSIZE);
 							memset(fire_r, 0, sizeof(fire_r));
 							memset(fire_g, 0, sizeof(fire_g));
