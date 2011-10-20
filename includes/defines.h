@@ -17,6 +17,7 @@
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter.
 
 #define SERVER "www.google.com"//"powdertoy.co.uk"
+//#define SERVER "powdertoy.co.uk"
 #define SCRIPTSERVER "powdertoy.co.uk"
 
 #define LOCAL_SAVE_DIR "Saves"
