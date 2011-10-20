@@ -49,7 +49,7 @@ int update_SPRK(UPDATE_FUNC_ARGS) {
 		parts[i].life = rand()%150+50;
 		part_change_type(i,x,y,PT_PLSM);
 		parts[i].ctype = PT_NBLE;
-		parts[i].temp = 3500;
+		parts[i].temp = R_TEMP + 273.15;
 		pv[y/CELL][x/CELL] += 1;
 	}
 	else if (ct==PT_TESC) // tesla coil code

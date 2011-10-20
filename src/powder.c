@@ -751,6 +751,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 			return -1;
 		if (parts[pmap[y][x]>>8].life!=0)
 			return -1;
+        if (parts[pmap[y][x]>>8].type==PT_NBLE)
+            parts[pmap[y][x]>>8].tmp2 = parts[pmap[y][x]>>8].ctype;
 		parts[pmap[y][x]>>8].type = PT_SPRK;
 		parts[pmap[y][x]>>8].life = 4;
 		parts[pmap[y][x]>>8].ctype = pmap[y][x]&0xFF;
@@ -945,8 +947,12 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].life = rand()%150+50;
 	if (t==PT_LAVA)
 		parts[i].life = rand()%120+240;
-	if (t==PT_NBLE)
+	if (t==PT_NBLE && v<NNBLALT)
+	{
+	    parts[i].ctype = v;
+	    parts[i].tmp2 = v;
 		parts[i].life = 0;
+	}
 	if (t==PT_ICEI)
 		parts[i].ctype = PT_WATR;
 	if (t==PT_NEUT)

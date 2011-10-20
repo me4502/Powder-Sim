@@ -24,7 +24,7 @@
 
 #define LOCAL_LUA_DIR "Lua"
 
-#define APPDATA_SUBDIR "\\HardWIRED"
+#define APPDATA_SUBDIR "\\PowderSim"
 
 #define THUMB_CACHE_SIZE 256
 
@@ -89,6 +89,9 @@ extern unsigned char ZSIZE;
 #define STAMP_X 4
 #define STAMP_Y 4
 #define STAMP_MAX 240
+
+#define NNBL 3
+#define NNBLALT 2 //NGOL should be 24, but use this var until I find out why
 
 #define NGOL 25
 #define NGOLALT 24 //NGOL should be 24, but use this var until I find out why

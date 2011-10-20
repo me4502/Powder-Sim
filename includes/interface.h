@@ -34,9 +34,9 @@ typedef struct menu_wall menu_wall;
 #define SC_SPECIAL 9
 #define SC_LIFE 10
 #define SC_TOOL 11
-#define SC_CRACKER 13
-#define SC_CRACKER2 14
-#define SC_TOTAL 12
+#define SC_NBLE 12
+#define SC_HIDDEN 13
+#define SC_TOTAL 14
 
 static menu_section msections[] = //doshow does not do anything currently.
 {
@@ -52,10 +52,8 @@ static menu_section msections[] = //doshow does not do anything currently.
 	{"\xCC", "Special", 0, 1},
 	{"\xD2", "Life", 0, 1},
 	{"\xD7", "Tools", 0, 1},
-	{"\xD2", "More Life", 0, 1},
-	{"\xC8", "", 0, 0},
-	{"\xC8", "Cracker", 0, 0},
-	{"\xC8", "Cracker!", 0, 0},
+	{"\xC8", "Noble gases", 0, 1},
+	{"\xC8", "Hidden Elements", 0, 1},
 };
 
 static menu_section colorsections[] = //doshow does not do anything currently.
