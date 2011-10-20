@@ -5,6 +5,7 @@ int update_PYRO(UPDATE_FUNC_ARGS) {
 	if (t==PT_PLSM&&parts[i].ctype == PT_NBLE&&parts[i].life <=1)
 	{
 		t = PT_NBLE;
+		parts[i].ctype = parts[i].tmp2;
 		part_change_type(i,x,y,t);
 		parts[i].life = 0;
 	}
