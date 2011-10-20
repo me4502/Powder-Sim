@@ -27,6 +27,7 @@
 #define LUACON_ERASE 1
 #define LUACON_BERASE 2
 #define LUACON_LOAD 1
+#define LUACON_SLOAD 2
 
 
 void luacon_open();
