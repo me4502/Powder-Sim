@@ -138,7 +138,7 @@ void play_sound(char *file)
 }
 
 static const char *it_msg =
-    "\brPowder Sim - http://powdertoy.co.uk, irc.freenode.net #powdersim\n"
+    "\n\brPowder Sim - http://powdertoy.co.uk, irc.freenode.net #powdersim\n"
     "\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\n"
     "\n"
     "\bgControl+C/V/X are Copy, Paste and cut respectively.\n"
@@ -158,10 +158,11 @@ static const char *it_msg =
     "The spacebar can be used to pause physics.\n"
     "'P' will take a screenshot and save it into the current directory.\n"
     "\n"
-    "Contributors: \bgStanislaw K Skowronek (\brhttp://powder.unaligned.org\bg, \bbirc.unaligned.org #wtf\bg),\n"
+    " The Powder ToyContributors: \bgStanislaw K Skowronek (\brhttp://powder.unaligned.org\bg, \bbirc.unaligned.org #wtf\bg),\n"
     "\bgSimon Robertshaw, Skresanov Savely, cracker64, Catelite, Bryan Hoyle, Nathan Cousins, jacksonmj,\n"
     "\bgLieuwe Mosch, Anthony Boot, Madeline Miller, MaksProg\n"
-    "\n"
+    "\n\n"
+    " \boPowder Sim Contributors:\bg Madeline Miller(Me4502), Vanquish349, WiseEyes\n" 
     "\bgTo use online features such as saving, you need to register at: \brhttp://powdertoy.co.uk/Register.html"
     ;
 
