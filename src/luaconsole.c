@@ -82,6 +82,7 @@ void luacon_open(){
 		{"setwindowsize",&luatpt_setwindowsize},
 		{"watertest",&luatpt_togglewater},
 		{"showcursor",&luatpt_showcursor},
+		{"screenshot",&luatpt_screenshot},
 		{NULL,NULL}
 	};
 
@@ -1444,9 +1445,9 @@ int luatpt_setdebug(lua_State* l)
 }
 int luatpt_setfpscap(lua_State* l)
 {
-int fpscap = luaL_optint(l, 1, 0);
-limitFPS = fpscap;
-return 0;
+	int fpscap = luaL_optint(l, 1, 0);
+	limitFPS = fpscap;
+	return 0;
 }
 int luatpt_getscript(lua_State* l)
 {
@@ -1554,4 +1555,23 @@ int luatpt_showcursor(lua_State* l)
         SDL_ShowCursor(SDL_ENABLE);
     return 0;
 }
+
+int luatpt_screenshot(lua_State* l)
+{
+	int captureUI = luaL_optint(l, 1, 0);
+	if(vid_buf)
+	{
+		if(captureUI)
+		{
+			dump_frame(vid_buf, XRES+BARSIZE, YRES+MENUSIZE, XRES+BARSIZE);
+		}
+		else
+		{
+			dump_frame(vid_buf, XRES, YRES, XRES+BARSIZE);
+		}
+		return 0;
+	}
+	return luaL_error(l, "Screen buffer does not exist");
+}
+
 #endif
