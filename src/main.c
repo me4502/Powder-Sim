@@ -2751,6 +2751,8 @@ debug_perf_frametime[debug_perf_iend]  = ts.tv_nsec - debug_perf_time;
         luacon_step(x/sdl_scale, y/sdl_scale,sl,sr);
 #endif
 
+        quickoptions_menu(vid_buf, b, bq, x, y);
+
         for (i=0; i<SC_TOTAL; i++)//draw all the menu sections
         {
             draw_menu(vid_buf, i, active_menu);
