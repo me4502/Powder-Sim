@@ -30,13 +30,13 @@ typedef struct menu_wall menu_wall;
 #define SC_LIQUID 5
 #define SC_POWDERS 6
 #define SC_SOLIDS 7
-#define SC_NUCLEAR 8
-#define SC_SPECIAL 9
-#define SC_LIFE 10
-#define SC_TOOL 11
-#define SC_NBLE 12
+#define SC_NBLE 8
+#define SC_NUCLEAR 9
+#define SC_SPECIAL 10
+#define SC_LIFE 11
+#define SC_TOOL 12
 #define SC_HIDDEN 13
-#define SC_TOTAL 14
+#define SC_TOTAL 13
 
 static menu_section msections[] = //doshow does not do anything currently.
 {
@@ -48,12 +48,12 @@ static menu_section msections[] = //doshow does not do anything currently.
 	{"\xC4", "Liquids", 0, 1},
 	{"\xD0", "Powders", 0, 1},
 	{"\xD1", "Solids", 0, 1},
+    {"\xC8", "Noble gases", 0, 1},
 	{"\xC6", "Radioactive", 0, 1},
 	{"\xCC", "Special", 0, 1},
 	{"\xD2", "Life", 0, 1},
 	{"\xD7", "Tools", 0, 1},
-	{"\xC8", "Noble gases", 0, 1},
-	{"\xC8", "Hidden Elements", 0, 1},
+	{"\xC8", "Hidden Elements", 0, 0},
 };
 
 static menu_section colorsections[] = //doshow does not do anything currently.
