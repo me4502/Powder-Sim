@@ -278,6 +278,8 @@ int try_move(int i, int x, int y, int nx, int ny)
 				parts[i].ctype &= 0x1F << temp_bin; //Filter Colour
 			} else if(parts[r>>8].tmp==2){
 				parts[i].ctype |= 0x1F << temp_bin; //Add Colour
+			} else if(parts[r>>8].tmp==3){
+				parts[i].ctype &= ~(0x1F << temp_bin); //Subtract Colour
 			}
 		}
 		if (parts[i].type == PT_NEUT && (r&0xFF)==PT_GLAS) {
@@ -1848,8 +1850,9 @@ void update_particles_i(pixel *vid, int start, int inc)
 						pt = (c_heat+parts[i].temp*96.645/ptypes[t].hconduct*fabs(ptypes[t].weight))/(c_Cm+96.645/ptypes[t].hconduct*fabs(ptypes[t].weight));
 
 #else
-					pt = parts[i].temp = (c_heat+parts[i].temp)/(h_count+1);
+					pt = (c_heat+parts[i].temp)/(h_count+1);
 #endif
+					pt = parts[i].temp = restrict_flt(pt, MIN_TEMP, MAX_TEMP);
 					for (j=0; j<8; j++)
 					{
 						parts[surround_hconduct[j]].temp = pt;
