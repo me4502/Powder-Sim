@@ -90,8 +90,8 @@ extern unsigned char ZSIZE;
 #define STAMP_Y 4
 #define STAMP_MAX 240
 
-#define NNBL 3
-#define NNBLALT 2 //NGOL should be 24, but use this var until I find out why
+#define NNBL 8
+#define NNBLALT 7
 
 #define NGOL 25
 #define NGOLALT 24 //NGOL should be 24, but use this var until I find out why
