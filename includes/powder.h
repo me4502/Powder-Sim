@@ -44,9 +44,9 @@
 #define WL_EHOLE	135
 
 #define SPC_AIR 236
-#define SPC_HEAT 237
-#define SPC_COOL 238
-#define SPC_VACUUM 239
+#define SPC_VACUUM 237
+#define SPC_HEAT 238
+#define SPC_COOL 239
 #define SPC_WIND 241
 #define SPC_PGRV 243
 #define SPC_NGRV 244
@@ -985,9 +985,9 @@ static wall_type wtypes[] =
 	{PIXPACK(0xFFFF22), PIXPACK(0x101010), 2, "Conductor, allows particles, conducts electricity"},
 	{PIXPACK(0x242424), PIXPACK(0x101010), 0, "E-Hole, absorbs particles, release them when powered"},
 	{PIXPACK(0xFFFFFF), PIXPACK(0x000000), -1, "Air, creates airflow and pressure"},
+	{PIXPACK(0x303030), PIXPACK(0x000000), -1, "Vacuum, reduces air pressure."},
 	{PIXPACK(0xFFBB00), PIXPACK(0x000000), -1, "Heats the targetted element."},
 	{PIXPACK(0x00BBFF), PIXPACK(0x000000), -1, "Cools the targetted element."},
-	{PIXPACK(0x303030), PIXPACK(0x000000), -1, "Vacuum, reduces air pressure."},
 	{PIXPACK(0x579777), PIXPACK(0x000000), 1, "Wall. Indestructible. Blocks liquids and solids, allows gasses"},
 	{PIXPACK(0x000000), PIXPACK(0x000000), -1, "Drag tool"},
 	{PIXPACK(0xFFEE00), PIXPACK(0xAA9900), 4, "Gravity wall"},
