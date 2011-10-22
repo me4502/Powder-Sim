@@ -194,6 +194,9 @@ int update_SPRK(UPDATE_FUNC_ARGS) {
 					else if (parts[r>>8].life==0 && (parts[i].life<3 || ((r>>8)<i && parts[i].life<4))) {
 						parts[r>>8].life = 4;
 						parts[r>>8].ctype = rt;
+						if ((parts[i].ctype==PT_PSCN||parts[i].ctype==PT_NBLE && parts[i].tmp==64)&&parts[r>>8].type==PT_NBLE){
+                            parts[r>>8].tmp = 64;
+						}
 						part_change_type(r>>8,x+rx,y+ry,PT_SPRK);
 						if (parts[r>>8].temp+10.0f<673.0f&&!legacy_enable&&(rt==PT_METL||rt==PT_BMTL||rt==PT_BRMT||rt==PT_PSCN||rt==PT_NSCN||rt==PT_ETRD||rt==PT_NBLE||rt==PT_IRON))
 							parts[r>>8].temp = parts[r>>8].temp+10.0f;
