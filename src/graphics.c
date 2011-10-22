@@ -2838,7 +2838,8 @@ void draw_parts(pixel *vid)
                         x = nx/CELL;
                         y = ny/CELL;
                         cg += fire_g[y][x];
-                        if (cg > 255) cg = 255;
+                        
+			if (cg > 255) cg = 255;
                         fire_g[y][x] = cg;
                         cb += fire_b[y][x];
                         if (cb > 255) cb = 255;
@@ -2872,14 +2873,22 @@ void draw_parts(pixel *vid)
                             cb = PIXB(nmenu[parts[i].tmp2].colour)/3;
                             cr = PIXR(nmenu[parts[i].tmp2].colour)/3;
                             cg += fire_g[y][x];
-                            if (cg > PIXG(nmenu[parts[i].tmp2].colour)/2) cg = PIXG(nmenu[parts[i].tmp2].colour)/2;
+                            if (cg > 255) cg = 255;
+                            fire_g[y][x] = cg;
+                            cb += fire_b[y][x];
+                            if (cb > 255) cb = 255;
+                            fire_b[y][x] = cb;
+                            cr += fire_r[y][x];
+                            if (cr > 255) cr = 255;
+                            fire_r[y][x] = cr;
+			    /*if (cg > PIXG(nmenu[parts[i].tmp2].colour)/2) cg = PIXG(nmenu[parts[i].tmp2].colour)/2;
                             fire_g[y][x] = cg;
                             cb += fire_b[y][x];
                             if (cb > PIXB(nmenu[parts[i].tmp2].colour)/2) cb = PIXB(nmenu[parts[i].tmp2].colour)/2;
                             fire_b[y][x] = cb;
                             cr += fire_r[y][x];
                             if (cr > PIXR(nmenu[parts[i].tmp2].colour)/2) cr = PIXR(nmenu[parts[i].tmp2].colour)/2;
-                            fire_r[y][x] = cr;
+                            fire_r[y][x] = cr;*/
                         }
                         else
                         {
