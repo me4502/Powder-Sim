@@ -201,6 +201,8 @@ struct stamp
 };
 typedef struct stamp stamp;
 
+unsigned int decolour[XRES][YRES];
+
 int frameidx;
 int MSIGN;
 int CGOL;
