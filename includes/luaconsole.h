@@ -38,7 +38,7 @@ int luacon_createevent(int x, int y, int type, int event);
 int luacon_eraseevent(int x, int y, int type, int event);
 int luacon_loadevent(int event);
 int luacon_keyevent(int key, int modifier, int event);
-int luacon_moveevent(int i, int x, int y, int rx, int ry, int event);
+int luacon_moveevent(int t, int x, int y, int rx, int ry, int event);
 int luacon_eval(char *command);
 char *luacon_geterror();
 void luacon_close();
