@@ -1040,6 +1040,10 @@ inline void drawpixel(pixel *vid, int x, int y, int r, int g, int b, int a)
         r = (a*r + (255-a)*PIXR(t)) >> 8;
         g = (a*g + (255-a)*PIXG(t)) >> 8;
         b = (a*b + (255-a)*PIXB(t)) >> 8;
+        if (r>255) r=255;
+        if (g>255) g=255;
+        if (b>255) g=255;
+        if (a>255) a=255;
     }
     vid[y*(XRES+BARSIZE)+x] = PIXRGB(r,g,b);
 }
@@ -1448,6 +1452,9 @@ inline void blendpixel(pixel *vid, int x, int y, int r, int g, int b, int a)
         r = (a*r + (255-a)*PIXR(t)) >> 8;
         g = (a*g + (255-a)*PIXG(t)) >> 8;
         b = (a*b + (255-a)*PIXB(t)) >> 8;
+        if (r>255) r=255;
+        if (g>255) g=255;
+        if (b>255) g=255;
     }
     vid[y*(XRES+BARSIZE)+x] = PIXRGB(r,g,b);
 #endif //OpenGL
@@ -1790,6 +1797,22 @@ void draw_other(pixel *vid) // EMP effect
             {
                 drawpixel(vid, i, j, r, g, b, a);
             }
+    }
+}
+
+void draw_back(pixel *vid)
+{
+    for (int y=0; y<YRES; y++)
+    {
+        for (int x=0; x<XRES; x++)
+        {
+            int nx = (int)(x + 0.5f);
+            int ny = (int)(y + 0.5f);
+            int r = PIXR(decolour[x][y]);
+            int g = PIXG(decolour[x][y]);
+            int b = PIXB(decolour[x][y]);
+            drawpixel(vid,x,y,r,g,b,255);
+        }
     }
 }
 
@@ -3264,7 +3287,9 @@ void draw_parts(pixel *vid)
                     vid[ny*(XRES+BARSIZE)+nx] = parts[i].dcolour;
                 }
                 else //if no special effect, draw a simple pixel
+                {
                     vid[ny*(XRES+BARSIZE)+nx] = ptypes[t].pcolors;
+                }
             }
             else //heat view
             {
@@ -3596,6 +3621,13 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 {
     int rp, tr,tg,tb;
     rp = pmap[y][x];
+    if (tool == DECO_BACK)
+    {
+        if (click == 4)
+            decolour[x][y] = 0;
+        else
+            decolour[x][y] = ((255<<24)|(r<<16)|(g<<8)|b);
+    }
     if (!rp)
         return;
     if (tool == DECO_DRAW)
