@@ -194,11 +194,16 @@ int luacon_loadevent(int event){
 	}
 	return rcontinue;
 }
-int luacon_moveevent(int i, int x, int y, int rx, int ry, int event){
+int luacon_moveevent(int t, int x, int y, int rx, int ry, int event){
 	int i = 0, rcontinue = 1;
 	if(move_function_count){
 		for(i = 0; i < move_function_count && rcontinue; i++){
 			lua_rawgeti(l, LUA_REGISTRYINDEX, move_functions[i]);
+			lua_pushinteger(l, t);
+			lua_pushinteger(l, x);
+			lua_pushinteger(l, y);
+			lua_pushinteger(l, rx);
+			lua_pushinteger(l, ry);
 			lua_pushinteger(l, event);
 			lua_pcall(l, 4, 1, 0);
 			if(lua_isboolean(l, -1)){

@@ -202,19 +202,20 @@ int eval_move(int pt, int nx, int ny, unsigned *rr)
 
 int try_move(int i, int x, int y, int nx, int ny)
 {
-	unsigned r, e;
+	unsigned r, e, t;
 
 	if (x==nx && y==ny)
 		return 1;
 	if (nx<0 || ny<0 || nx>=XRES || ny>=YRES)
 		return 1;
 
+		t = parts[i].type;
+
 	e = eval_move(parts[i].type, nx, ny, &r);
 
 #ifdef LUACONSOLE
-    if (t!=0)
-        if(!luacon_moveevent(i, x, y, nx, ny,LUACON_MOVE))
-            return 0;
+    if(!luacon_moveevent(t, x, y, nx, ny,LUACON_MOVE))
+        e = 0;
 #endif
 
 	if ((r&0xFF)==PT_BOMB && parts[i].type==PT_BOMB && parts[i].tmp == 1)
