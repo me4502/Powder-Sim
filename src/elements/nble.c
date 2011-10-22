@@ -4,9 +4,17 @@ int update_NBLE(UPDATE_FUNC_ARGS) {
     int ct = parts[i].ctype;
     if (ct==NBL_HELM)
     {
-        if (rand()%2==1)
-            parts[i].vy -= 2;
-    }
+        
+	
+	if (parts[i].y > YRES -(YRES - (rand()%40 + 30)))
+	{
+	    if (rand()%2==1) 
+		parts[i].vy -= 0.5;
+	}   	
+	else 
+    	     parts[i].vy -= 0;
+
+    }	
     else if (ct==NBL_NEON||ct==NBL_ARGN||ct==NBL_KPTN||ct==NBL_RDON||ct==NBL_XNON||ct==NBL_RDON||ct==NBL_UNCM)
     {
         int p = rand()%4;
