@@ -162,7 +162,7 @@ static const char *it_msg =
     "\bgSimon Robertshaw, Skresanov Savely, cracker64, Catelite, Bryan Hoyle, Nathan Cousins, jacksonmj,\n"
     "\bgLieuwe Mosch, Anthony Boot, Matthew Miller, MaksProg\n"
     "\n\n"
-    " \boPowder Sim Contributors:\bg Matthew Miller(Me4502), Vanquish349, WiseEyes\n" 
+    " \boPowder Sim Contributors:\bg Matthew Miller(Me4502), Vanquish349, WiseEyes\n"
     "\bgTo use online features such as saving, you need to register at: \brhttp://powdertoy.co.uk/Register.html"
     ;
 
@@ -1213,6 +1213,13 @@ void clear_sim(void)
             hv[y][x] = 273.15f+22.0f; //Set to room temperature
         }
     }
+    for(x = 0; x < XRES; x++)
+    {
+        for(y = 0; y < YRES; y++)
+        {
+            decolour[x][y] = 0;
+        }
+    }
     gravity_mask();
 }
 
@@ -1612,6 +1619,7 @@ int main(int argc, char *argv[])
             memset(vid_buf, 0, (XRES+BARSIZE)*YRES*PIXELSIZE);
             draw_walls(vid_buf);
             update_particles(vid_buf);
+            draw_back(vid_buf);
             draw_parts(vid_buf);
             render_fire(vid_buf);
         }
@@ -1951,7 +1959,7 @@ debug_perf_partitime[debug_perf_iend]  = ts.tv_nsec - debug_perf_time;
 debug_perf_time = ts.tv_nsec;
 #endif
         }
-
+        draw_back(vid_buf); //draw particles
         draw_parts(part_vbuf); //draw particles
         draw_other(part_vbuf);
 
