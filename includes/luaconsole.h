@@ -28,6 +28,7 @@
 #define LUACON_BERASE 2
 #define LUACON_LOAD 1
 #define LUACON_SLOAD 2
+#define LUACON_MOVE 1
 
 
 void luacon_open();
@@ -37,6 +38,7 @@ int luacon_createevent(int x, int y, int type, int event);
 int luacon_eraseevent(int x, int y, int type, int event);
 int luacon_loadevent(int event);
 int luacon_keyevent(int key, int modifier, int event);
+int luacon_moveevent(int i, int x, int y, int rx, int ry, int event);
 int luacon_eval(char *command);
 char *luacon_geterror();
 void luacon_close();
@@ -80,6 +82,8 @@ int luatpt_register_eraseevent(lua_State* l);
 int luatpt_unregister_eraseevent(lua_State* l);
 int luatpt_register_loadevent(lua_State* l);
 int luatpt_unregister_loadevent(lua_State* l);
+int luatpt_register_moveevent(lua_State* l);
+int luatpt_unregister_moveevent(lua_State* l);
 int luatpt_input(lua_State* l);
 int luatpt_message_box(lua_State* l);
 int luatpt_get_numOfParts(lua_State* l);
