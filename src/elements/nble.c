@@ -1,20 +1,29 @@
 #include <element.h>
 
-int update_NBLE(UPDATE_FUNC_ARGS) {
+int update_NBLE(UPDATE_FUNC_ARGS)
+{
     int ct = parts[i].ctype;
     if (ct==NBL_HELM)
     {
-        
-	
-	if (parts[i].y > YRES -(YRES - (rand()%40 + 30)))
-	{
-	    if (rand()%2==1) 
-		parts[i].vy -= 0.5;
-	}   	
-	else 
-    	     parts[i].vy -= 0;
-
-    }	
+        if (parts[i].y > YRES -(YRES - (rand()%40 + 30)))
+        {
+            if (rand()%2==1)
+            {
+                parts[i].vy -= 1;
+            }
+            else
+            {
+                parts[i].vy = 0;
+            }
+        }
+        else
+        {
+            if (rand()%2==1)
+                parts[i].vy += 1;
+            else
+                parts[i].vy += 0.5;
+        }
+    }
     else if (ct==NBL_NEON||ct==NBL_ARGN||ct==NBL_KPTN||ct==NBL_RDON||ct==NBL_XNON||ct==NBL_RDON||ct==NBL_UNCM)
     {
         int p = rand()%4;
@@ -35,5 +44,5 @@ int update_NBLE(UPDATE_FUNC_ARGS) {
             parts[i].vx -= rand()%ct+1;
         }
     }
-	return 0;
+    return 0;
 }
