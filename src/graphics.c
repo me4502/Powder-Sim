@@ -2965,9 +2965,9 @@ void draw_parts(pixel *vid)
                         {
                             x = nx/CELL;
                             y = ny/CELL;
-                            cg = PIXG(nmenu[parts[i].tmp2].colour)/3;
-                            cb = PIXB(nmenu[parts[i].tmp2].colour)/3;
-                            cr = PIXR(nmenu[parts[i].tmp2].colour)/3;
+                            cg = PIXG(nmenu[parts[i].tmp2].colour)/3*pv[y/CELL][x/CELL];
+                            cb = PIXB(nmenu[parts[i].tmp2].colour)/3*pv[y/CELL][x/CELL];
+                            cr = PIXR(nmenu[parts[i].tmp2].colour)/3*pv[y/CELL][x/CELL];
                             cg += fire_g[y][x];
                             if (cg > PIXG(nmenu[parts[i].tmp2].colour)) cg = PIXG(nmenu[parts[i].tmp2].colour);
                             fire_g[y][x] = cg;
