@@ -36,10 +36,6 @@
 #endif
 #endif
 
-int graphics_LCRY(GRAPHICS_FUNC_ARGS);
-int graphics_NEUT(GRAPHICS_FUNC_ARGS);
-int graphics_PHOT(GRAPHIC_FONT_ARGS);
-
 extern int emp_decor;
 
 extern unsigned cmode;
