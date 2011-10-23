@@ -59,7 +59,7 @@ static menu_section msections[] = //doshow does not do anything currently.
 	{"\xC4", "Liquids", 0, 1},
 	{"\xD0", "Powders", 0, 1},
 	{"\xD1", "Solids", 0, 1},
-    	{"\xDA", "Noble gases", 0, 1},
+    {"\xDA", "Noble gases", 0, 1},
 	{"\xC6", "Radioactive", 0, 1},
 	{"\xCC", "Special", 0, 1},
 	{"\xD2", "Life", 0, 1},
@@ -71,6 +71,7 @@ static quick_option quickmenu[] = //doshow does not do anything currently.
 {
 	{"P", "Sand effect", QM_TOGGLE, &pretty_powder},
 	{"G", "Draw gravity grid", QM_TOGGLE, &drawgrav_enable},
+	{"D", "Show Decorations", QM_TOGGLE, &decorations_enable},
 	{NULL}
 };
 

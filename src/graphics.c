@@ -1803,17 +1803,20 @@ void draw_other(pixel *vid) // EMP effect
 
 void draw_back(pixel *vid)
 {
-    for (int y=0; y<YRES; y++)
+    if (decorations_enable)
     {
-        for (int x=0; x<XRES; x++)
+        for (int y=0; y<YRES; y++)
         {
-            int nx = (int)(x + 0.5f);
-            int ny = (int)(y + 0.5f);
-            int r = PIXR(decolour[x][y]);
-            int g = PIXG(decolour[x][y]);
-            int b = PIXB(decolour[x][y]);
-            if (r&&g&&b)
-                drawpixel(vid,x,y,r,g,b,255);
+            for (int x=0; x<XRES; x++)
+            {
+                int nx = (int)(x + 0.5f);
+                int ny = (int)(y + 0.5f);
+                int r = PIXR(decolour[x][y]);
+                int g = PIXG(decolour[x][y]);
+                int b = PIXB(decolour[x][y]);
+                if (r||g||b)
+                    drawpixel(vid,x,y,r,g,b,255);
+            }
         }
     }
 }
