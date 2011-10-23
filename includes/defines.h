@@ -46,7 +46,7 @@
 #define MENUSIZE 40
 #define BARSIZE 17
 #endif
-#define XRES	612
+#define XRES	644
 #define YRES	418
 #define NPART XRES*YRES
 
