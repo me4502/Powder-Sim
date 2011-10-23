@@ -47,11 +47,11 @@
 #define BARSIZE 17
 #endif
 #define XRES	612
-#define YRES	384
+#define YRES	418
 #define NPART XRES*YRES
 
-#define XCNTR   306
-#define YCNTR   192
+#define XCNTR   XRES/2
+#define YCNTR   YRES/2
 
 #define MAX_DISTANCE sqrt(pow(XRES, 2)+pow(YRES, 2))
 
