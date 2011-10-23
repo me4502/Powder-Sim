@@ -13,6 +13,18 @@ int update_YEST(UPDATE_FUNC_ARGS) {
 				{
 					part_change_type(i,x,y,PT_DYST);
 				}
+				else if ((r&0xFF)==PT_WATR && 1>rand()%30)
+				{
+					if (parts[r>>8].temp > 302.15) {
+						if (1 > rand()%30)
+						{
+							part_change_type(i,x,y,PT_CO2);
+						}
+						else
+							part_change_type(i,x,y,PT_ALCO);
+					}
+				}
+
 			}
 	if (parts[i].temp>303&&parts[i].temp<317) {
 		create_part(-1, x+rand()%3-1, y+rand()%3-1, PT_YEST);
