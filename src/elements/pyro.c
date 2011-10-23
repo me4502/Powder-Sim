@@ -2,12 +2,23 @@
 
 int update_PYRO(UPDATE_FUNC_ARGS) {
 	int r, rx, ry, rt, t = parts[i].type;
-	if (t==PT_PLSM&&parts[i].ctype == PT_NBLE&&parts[i].life <=1)
+	if (t==PT_PLSM&&parts[i].ctype == PT_NBLE)
 	{
-		t = PT_NBLE;
-		parts[i].ctype = parts[i].tmp2;
-		part_change_type(i,x,y,t);
-		parts[i].life = 0;
+	    if (parts[i].life <=1)
+	    {
+            t = PT_NBLE;
+            parts[i].ctype = parts[i].tmp2;
+            part_change_type(i,x,y,t);
+            parts[i].life = 0;
+	    }
+	    else if (parts[i].tmp==64)
+	    {
+	        parts[i].tmp = 0;
+	        if (parts[i].life > 100)
+                parts[i].life *= 4;
+            else
+                parts[i].life *= 6;
+	    }
 	}
 	if(t==PT_FIRE && parts[i].life <=1)
 	{

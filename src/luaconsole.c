@@ -16,6 +16,8 @@ int erase_function_count = 0;
 int *erase_functions = NULL;
 int load_function_count = 0;
 int *load_functions = NULL;
+int move_function_count = 0;
+int *move_functions = NULL;
 int tptProperties; //Table for some TPT properties
 void luacon_open(){
 	const static struct luaL_reg tptluaapi [] = {
@@ -57,6 +59,8 @@ void luacon_open(){
 		{"unregister_erase", &luatpt_unregister_eraseevent},
 		{"register_load", &luatpt_register_loadevent},
 		{"unregister_load", &luatpt_unregister_loadevent},
+		{"register_move", &luatpt_register_moveevent},
+		{"unregister_move", &luatpt_unregister_moveevent},
 		{"input", &luatpt_input},
 		{"message_box", &luatpt_message_box},
 		{"get_numOfParts", &luatpt_get_numOfParts},
@@ -78,6 +82,7 @@ void luacon_open(){
 		{"setwindowsize",&luatpt_setwindowsize},
 		{"watertest",&luatpt_togglewater},
 		{"showcursor",&luatpt_showcursor},
+		{"screenshot",&luatpt_screenshot},
 		{NULL,NULL}
 	};
 
@@ -180,6 +185,26 @@ int luacon_loadevent(int event){
 	if(load_function_count){
 		for(i = 0; i < load_function_count && rcontinue; i++){
 			lua_rawgeti(l, LUA_REGISTRYINDEX, load_functions[i]);
+			lua_pushinteger(l, event);
+			lua_pcall(l, 4, 1, 0);
+			if(lua_isboolean(l, -1)){
+				rcontinue = lua_toboolean(l, -1);
+			}
+			lua_pop(l, 1);
+		}
+	}
+	return rcontinue;
+}
+int luacon_moveevent(int t, int x, int y, int rx, int ry, int event){
+	int i = 0, rcontinue = 1;
+	if(move_function_count){
+		for(i = 0; i < move_function_count && rcontinue; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, move_functions[i]);
+			lua_pushinteger(l, t);
+			lua_pushinteger(l, x);
+			lua_pushinteger(l, y);
+			lua_pushinteger(l, rx);
+			lua_pushinteger(l, ry);
 			lua_pushinteger(l, event);
 			lua_pcall(l, 4, 1, 0);
 			if(lua_isboolean(l, -1)){
@@ -1158,7 +1183,61 @@ int luatpt_unregister_loadevent(lua_State* l)
 	}
 	return 0;
 }
-
+int luatpt_register_moveevent(lua_State* l)
+{
+	int *newfunctions, i;
+	if(lua_isfunction(l, 1)){
+		for(i = 0; i<move_function_count; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, move_functions[i]);
+			if(lua_equal(l, 1, lua_gettop(l))){
+				lua_pop(l, 1);
+				return luaL_error(l, "Function already registered");
+			}
+			lua_pop(l, 1);
+		}
+		newfunctions = calloc(move_function_count+1, sizeof(int));
+		if(move_functions){
+			memcpy(newfunctions, move_functions, move_function_count*sizeof(int));
+			free(move_functions);
+		}
+		newfunctions[move_function_count] = luaL_ref(l, LUA_REGISTRYINDEX);
+		move_function_count++;
+		move_functions = newfunctions;
+	}
+	return 0;
+}
+int luatpt_unregister_moveevent(lua_State* l)
+{
+	int *newfunctions, i, functionindex = -1;
+	if(lua_isfunction(l, 1)){
+		for(i = 0; i<move_function_count; i++){
+			lua_rawgeti(l, LUA_REGISTRYINDEX, move_functions[i]);
+			if(lua_equal(l, 1, lua_gettop(l))){
+				functionindex = i;
+			}
+			lua_pop(l, 1);
+		}
+	}
+	if(functionindex != -1){
+		luaL_unref(l, LUA_REGISTRYINDEX, move_functions[functionindex]);
+		if(functionindex != move_function_count-1){
+			memmove(move_functions+functionindex+1, move_functions+functionindex+1, (move_function_count-functionindex-1)*sizeof(int));
+		}
+		if(move_function_count-1 > 0){
+			newfunctions = calloc(move_function_count-1, sizeof(int));
+			memcpy(newfunctions, move_functions, (move_function_count-1)*sizeof(int));
+			free(move_functions);
+			move_functions = newfunctions;
+		} else {
+			free(move_functions);
+			move_functions = NULL;
+		}
+		move_function_count--;
+	} else {
+		return luaL_error(l, "Function not registered");
+	}
+	return 0;
+}
 int luatpt_register_mouseclick(lua_State* l)
 {
 	int *newfunctions, i;
@@ -1366,9 +1445,9 @@ int luatpt_setdebug(lua_State* l)
 }
 int luatpt_setfpscap(lua_State* l)
 {
-int fpscap = luaL_optint(l, 1, 0);
-limitFPS = fpscap;
-return 0;
+	int fpscap = luaL_optint(l, 1, 0);
+	limitFPS = fpscap;
+	return 0;
 }
 int luatpt_getscript(lua_State* l)
 {
@@ -1476,4 +1555,23 @@ int luatpt_showcursor(lua_State* l)
         SDL_ShowCursor(SDL_ENABLE);
     return 0;
 }
+
+int luatpt_screenshot(lua_State* l)
+{
+	int captureUI = luaL_optint(l, 1, 0);
+	if(vid_buf)
+	{
+		if(captureUI)
+		{
+			dump_frame(vid_buf, XRES+BARSIZE, YRES+MENUSIZE, XRES+BARSIZE);
+		}
+		else
+		{
+			dump_frame(vid_buf, XRES, YRES, XRES+BARSIZE);
+		}
+		return 0;
+	}
+	return luaL_error(l, "Screen buffer does not exist");
+}
+
 #endif

@@ -24,7 +24,7 @@ int update_NBLE(UPDATE_FUNC_ARGS)
                 parts[i].vy += 0.5;
         }
     }
-    else if (ct==NBL_NEON||ct==NBL_ARGN||ct==NBL_KPTN||ct==NBL_RDON||ct==NBL_XNON||ct==NBL_RDON||ct==NBL_UNCM)
+    else if ((ct==NBL_NEON||ct==NBL_ARGN||ct==NBL_KPTN||ct==NBL_RDON||ct==NBL_XNON||ct==NBL_RDON||ct==NBL_UNCM)&&parts[i].temp>273.15+R_TEMP)
     {
         int p = rand()%4;
         if (p==0)
