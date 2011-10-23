@@ -1,6 +1,7 @@
 *.*.swp
 .directory
 powder.def
+powder.pref
 gmon.out
 *.*.orig
 build/stamps/*
