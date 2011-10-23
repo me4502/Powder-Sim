@@ -35,13 +35,6 @@ int update_CLST(UPDATE_FUNC_ARGS)
 
 int graphics_CLST(GRAPHIC_FUNC_ARGS)
 {
-    int z = parts[i].tmp - 5;//speckles!
-    cr = z * 16 + PIXR(ptypes[t].pcolors);
-    cg = z * 16 + PIXG(ptypes[t].pcolors);
-    cb = z * 16 + PIXB(ptypes[t].pcolors);
-    cr = cr>255?255:cr;
-    cg = cg>255?255:cg;
-    cb = cb>255?255:cb;
-    blendpixel(vid, nx, ny, cr, cg, cb, 255);
+
     return 0;
 }
