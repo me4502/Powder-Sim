@@ -2075,7 +2075,9 @@ void update_particles_i(pixel *vid, int start, int inc)
             }
 
             if (parts[i].disease > 0)
+            {
                 parts[i].disease--;
+            }
 
 			//call the particle update function, if there is one
 			if (ptypes[t].update_func)
