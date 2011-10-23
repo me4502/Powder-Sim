@@ -1812,7 +1812,8 @@ void draw_back(pixel *vid)
             int r = PIXR(decolour[x][y]);
             int g = PIXG(decolour[x][y]);
             int b = PIXB(decolour[x][y]);
-            drawpixel(vid,x,y,r,g,b,255);
+            if (r&&g&&b)
+                drawpixel(vid,x,y,r,g,b,255);
         }
     }
 }
