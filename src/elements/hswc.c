@@ -25,22 +25,3 @@ int update_HSWC(UPDATE_FUNC_ARGS)
     }
     return 0;
 }
-
-int graphics_HSWC(GRAPHIC_FUNC_ARGS)
-{
-    uint8 GR = 0x3B+((parts[i].life>10?10:parts[i].life)*19);
-    vid[ny*(XRES+BARSIZE)+nx] = PIXRGB(GR, 10, 10);
-    if (cmode == CM_BLOB)
-    {
-        blendpixel(vid, nx+1, ny, GR, 10, 10, 223);
-        blendpixel(vid, nx-1, ny, GR, 10, 10, 223);
-        blendpixel(vid, nx, ny+1, GR, 10, 10, 223);
-        blendpixel(vid, nx, ny-1, GR, 10, 10, 223);
-
-        blendpixel(vid, nx+1, ny-1, GR, 10, 10, 112);
-        blendpixel(vid, nx-1, ny-1, GR, 10, 10, 112);
-        blendpixel(vid, nx+1, ny+1, GR, 10, 10, 112);
-        blendpixel(vid, nx-1, ny+1, GR, 10, 10, 112);
-    }
-    return 0;
-}

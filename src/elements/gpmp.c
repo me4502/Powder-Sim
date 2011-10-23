@@ -33,22 +33,3 @@ int update_GPMP(UPDATE_FUNC_ARGS)
     }
     return 0;
 }
-
-int graphics_GPMP(GRAPHIC_FUNC_ARGS)
-{
-    uint8 GR = 0x3B+((parts[i].life>10?10:parts[i].life)*19);
-    vid[ny*(XRES+BARSIZE)+nx] = PIXRGB(10, GR, GR);
-    if (cmode == CM_BLOB)
-    {
-        blendpixel(vid, nx+1, ny, 10, GR, GR, 223);
-        blendpixel(vid, nx-1, ny, 10, GR, GR, 223);
-        blendpixel(vid, nx, ny+1, 10, GR, GR, 223);
-        blendpixel(vid, nx, ny-1, 10, GR, GR, 223);
-
-        blendpixel(vid, nx+1, ny-1, 10, GR, GR, 112);
-        blendpixel(vid, nx-1, ny-1, 10, GR, GR, 112);
-        blendpixel(vid, nx+1, ny+1, 10, GR, GR, 112);
-        blendpixel(vid, nx-1, ny+1, 10, GR, GR, 112);
-    }
-    return 0;
-}
