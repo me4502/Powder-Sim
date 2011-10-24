@@ -72,7 +72,7 @@ static quick_option quickmenu[] = //doshow does not do anything currently.
 	{"P", "Sand effect", QM_TOGGLE, &pretty_powder},
 	{"G", "Draw gravity grid", QM_TOGGLE, &drawgrav_enable},
 	{"D", "Show Decorations", QM_TOGGLE, &decorations_enable},
-	{"M", "Click to show menu", QM_TOGGLE, &clickmenu_enable},
+	{"M", "Click to change menus", QM_TOGGLE, &clickmenu_enable},
 	{NULL}
 };
 
