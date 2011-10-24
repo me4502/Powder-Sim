@@ -162,6 +162,14 @@ void save_presets(int do_update)
 	cJSON_AddNumberToObject(root, "cmode", cmode);
 	cJSON_AddNumberToObject(root, "scale", sdl_scale);
 
+    int i = 0;
+
+	while(quickmenu[i].icon!=NULL)
+	{
+	    double var = (double)*quickmenu[i].variable;
+	    cJSON_AddNumberToObject(root, quickmenu[i].name, var);
+		i++;
+	}
 	outputdata = cJSON_Print(root);
 	cJSON_Delete(root);
 
@@ -267,6 +275,14 @@ void load_presets(void)
 		if((tmpobj = cJSON_GetObjectItem(root, "proxy")) && tmpobj->type == cJSON_String) strncpy(http_proxy_string, tmpobj->valuestring, 255); else http_proxy_string[0] = 0;
 		if(tmpobj = cJSON_GetObjectItem(root, "cmode")) cmode = tmpobj->valueint;
 		if(tmpobj = cJSON_GetObjectItem(root, "scale")) sdl_scale = tmpobj->valueint;
+
+        int i = 0;
+
+        while(quickmenu[i].icon!=NULL)
+        {
+            if(tmpobj = cJSON_GetObjectItem(root, quickmenu[i].name)) quickmenu[i].variable = &tmpobj->valueint;
+            i++;
+        }
 
 		cJSON_Delete(root);
 	} else { //Fallback and read from old def file
