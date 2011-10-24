@@ -8,5 +8,9 @@
 	},
 	"proxy":	"",
 	"cmode":	3,
-	"scale":	1
+	"scale":	1,
+	"Sand effect":	0,
+	"Draw gravity grid":	0,
+	"Show Decorations":	0,
+	"Click to show menu":	0
 }
