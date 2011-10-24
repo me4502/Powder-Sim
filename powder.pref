@@ -9,8 +9,8 @@
 	"proxy":	"",
 	"cmode":	3,
 	"scale":	1,
-	"Sand effect":	24893836,
-	"Draw gravity grid":	24893908,
+	"Sand effect":	0,
+	"Draw gravity grid":	0,
 	"Show Decorations":	24893988,
-	"Click to show menu":	24894068
+	"Click to show menu":	0
 }

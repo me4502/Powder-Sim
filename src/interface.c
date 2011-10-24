@@ -2585,6 +2585,7 @@ void quickoptions_menu(pixel *vid_buf, int b, int bq, int x, int y)
 				if(b && !bq)
 				{
 					*(quickmenu[i].variable) = !(*(quickmenu[i].variable));
+					save_presets(0);
 				}
 			}
 		}
