@@ -2130,52 +2130,64 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
         return;
     if (i==SC_WALL)//wall menu
     {
+        if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling
+        {
+            float overflow = fwidth-(XRES-BARSIZE), location = ((float)XRES-BARSIZE)/((float)(mx-(XRES-BARSIZE)));
+            xoff = (int)(overflow / location);
+            menlock = (int)(overflow / location);
+        }
+        else
+        {
+            if (fwidth > XRES-BARSIZE)
+                xoff = menlock;
+        }
         for (n = UI_WALLSTART; n<UI_WALLSTART+UI_WALLCOUNT; n++)
         {
             if (n!=SPC_AIR&&n!=SPC_HEAT&&n!=SPC_COOL&&n!=SPC_VACUUM&&n!=SPC_WIND&&n!=SPC_PGRV&&n!=SPC_NGRV&&n!=SPC_PROP)
             {
-                /*if (x-18<=2)
-                {
-                	x = XRES-BARSIZE-18;
-                	y += 19;
-                }*/
-                x -= draw_tool_xy(vid_buf, x, y, n, wtypes[n-UI_WALLSTART].colour)+5;
+                x -= draw_tool_xy(vid_buf, x-xoff, y, n, wtypes[n-UI_WALLSTART].colour)+5;
                 if (!bq && mx>=x+32 && mx<x+58 && my>=y && my< y+15)
                 {
-                    drawrect(vid_buf, x+30, y-1, 29, 17, 255, 55, 55, 255);
+                    drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 255, 55, 55, 255);
                     h = n;
                 }
                 if (!bq && mx>=x+32 && mx<x+58 && my>=y && my< y+15&&(sdl_mod & (KMOD_LALT) && sdl_mod & (KMOD_CTRL)))
                 {
-                    drawrect(vid_buf, x+30, y-1, 29, 17, 0, 255, 255, 255);
+                    drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 0, 255, 255, 255);
                     h = n;
                 }
                 else if (n==SLALT)
                 {
-                    drawrect(vid_buf, x+30, y-1, 29, 17, 0, 255, 255, 255);
+                    drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 0, 255, 255, 255);
                 }
                 else if (n==*sl)
                 {
-                    drawrect(vid_buf, x+30, y-1, 29, 17, 255, 55, 55, 255);
+                    drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 255, 55, 55, 255);
                 }
                 else if (n==*sr)
                 {
-                    drawrect(vid_buf, x+30, y-1, 29, 17, 55, 55, 255, 255);
+                    drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 55, 55, 255, 255);
                 }
             }
         }
     }
     else if (i==SC_TOOL)//tools menu
     {
+        if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling
+        {
+            float overflow = fwidth-(XRES-BARSIZE), location = ((float)XRES-BARSIZE)/((float)(mx-(XRES-BARSIZE)));
+            xoff = (int)(overflow / location);
+            menlock = (int)(overflow / location);
+        }
+        else
+        {
+            if (fwidth > XRES-BARSIZE)
+                xoff = menlock;
+        }
         for (n = UI_WALLSTART; n<UI_WALLSTART+UI_WALLCOUNT; n++)
         {
             if (n==SPC_AIR||n==SPC_HEAT||n==SPC_COOL||n==SPC_VACUUM||n==SPC_WIND||n==SPC_PGRV||n==SPC_NGRV||n==SPC_PROP)
             {
-                /*if (x-18<=0)
-                {
-                	x = XRES-BARSIZE-18;
-                	y += 19;
-                }*/
                 x -= draw_tool_xy(vid_buf, x-xoff, y, n, wtypes[n-UI_WALLSTART].colour)+5;
                 if (!bq && mx>=x+32-xoff && mx<x+58-xoff && my>=y && my< y+15)
                 {
@@ -2212,7 +2224,8 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
         }
         else
         {
-            xoff = menlock;
+            if (fwidth > XRES-BARSIZE)
+                xoff = menlock;
         }
         for (n = 0; n<PT_NUM; n++)
         {
@@ -2260,7 +2273,8 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
         }
         else
         {
-            xoff = menlock;
+            if (fwidth > XRES-BARSIZE)
+                xoff = menlock;
         }
         for (n2 = 0; n2<NGOLALT; n2++)
         {
@@ -2301,7 +2315,8 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
         }
         else
         {
-            xoff = menlock;
+            if (fwidth > XRES-BARSIZE)
+                xoff = menlock;
         }
         for (n2 = 0; n2<NNBLALT; n2++)
         {
