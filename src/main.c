@@ -3138,7 +3138,7 @@ else
                 it = 50;
             x /= sdl_scale;
             y /= sdl_scale;
-            if (y>=YRES+(MENUSIZE-20))//check if mouse is on menu buttons
+            if (y>=YRES+(MENUSIZE-20)||x>=XRES+BARSIZE)//check if mouse is on menu buttons
             {
                 if (!lb)//mouse is NOT held down, so it is a first click
                 {
@@ -3365,7 +3365,8 @@ else
                         }
                         else
                         {
-                            create_line(lx, ly, x, y, bsx, bsy, c, get_brush_flags());
+                            if (mx <= XRES && my<=YRES)
+                                create_line(lx, ly, x, y, bsx, bsy, c, get_brush_flags());
                         }
                         lx = x;
                         ly = y;
@@ -3395,9 +3396,11 @@ else
                         if (sdl_mod & (KMOD_CAPS))
                             c = 0;
                         if (c!=WL_STREAM+100&&c!=SPC_AIR&&c!=SPC_HEAT&&c!=SPC_COOL&&c!=SPC_VACUUM&&!REPLACE_MODE&&c!=SPC_WIND&&c!=SPC_PGRV&&c!=SPC_NGRV)
-                            flood_parts(x, y, c, -1, -1, get_brush_flags());
+                            if (mx <= XRES && my<=YRES)
+                                flood_parts(x, y, c, -1, -1, get_brush_flags());
                         if (c==SPC_HEAT || c==SPC_COOL)
-                            create_parts(x, y, bsx, bsy, c, get_brush_flags());
+                            if (mx <= XRES && my<=YRES)
+                                create_parts(x, y, bsx, bsy, c, get_brush_flags());
                         lx = x;
                         ly = y;
                         lb = 0;
@@ -3452,7 +3455,8 @@ else
                                 cb_bmap[cby][cbx] = bmap[cby][cbx];
                                 cb_emap[cby][cbx] = emap[cby][cbx];
                             }
-                        create_parts(x, y, bsx, bsy, c, get_brush_flags());
+                        if (mx <= XRES && my<=YRES)
+                            create_parts(x, y, bsx, bsy, c, get_brush_flags());
                         lx = x;
                         ly = y;
                         lb = b;
