@@ -1679,17 +1679,17 @@ int main(int argc, char *argv[])
 #else
 int main(int argc, char *argv[])
 {
-    pixel *part_vbuf; //Extra video buffer
-    pixel *part_vbuf_store;
-    char uitext[512] = "";
-    char heattext[256] = "";
-    char coordtext[128] = "";
-    int currentTime = 0;
-    int FPS = 0, pastFPS = 0, elapsedTime = 0;
-    void *http_ver_check, *http_session_check = NULL;
-    char *ver_data=NULL, *check_data=NULL, *tmp;
-    //char console_error[255] = "";
-    int result, i, j, bq, bc, fire_fc=0, do_check=0, do_s_check=0, old_version=0, http_ret=0,http_s_ret=0, major, minor, buildnum, is_beta = 0, old_ver_len, new_message_len=0;
+	pixel *part_vbuf; //Extra video buffer
+	pixel *part_vbuf_store;
+	char uitext[512] = "";
+	char heattext[256] = "";
+	char coordtext[128] = "";
+	int currentTime = 0;
+	int FPS = 0, pastFPS = 0, elapsedTime = 0;
+	void *http_ver_check, *http_session_check = NULL;
+	char *ver_data=NULL, *check_data=NULL, *tmp;
+	//char console_error[255] = "";
+	int result, i, j, bq, bc = 0, fire_fc=0, do_check=0, do_s_check=0, old_version=0, http_ret=0,http_s_ret=0, major, minor, buildnum, is_beta = 0, old_ver_len, new_message_len=0;
 #ifdef INTERNAL
     int vs = 0;
 #endif
@@ -2750,83 +2750,79 @@ debug_perf_frametime[debug_perf_iend]  = ts.tv_nsec - debug_perf_time;
         }
         luacon_step(x/sdl_scale, y/sdl_scale,sl,sr);
 #endif
+		quickoptions_menu(vid_buf, b, bq, x, y);
 
-        quickoptions_menu(vid_buf, b, bq, x, y);
+		for (i=0; i<SC_TOTAL; i++)//draw all the menu sections
+		{
+			draw_menu(vid_buf, i, active_menu);
+		}
 
-        for (i=0; i<SC_TOTAL; i++)//draw all the menu sections
-        {
-            draw_menu(vid_buf, i, active_menu);
-        }
-
-        for (i=0; i<SC_TOTAL; i++)//check mouse position to see if it is on a menu section
-        {
-            if (!b&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
-            {
-                active_menu = i;
-            }
-        }
-        menu_ui_v3(vid_buf, active_menu, &sl, &sr, &dae, b, bq, x, y); //draw the elements in the current menu
-        if (zoom_en && x>=sdl_scale*zoom_wx && y>=sdl_scale*zoom_wy //change mouse position while it is in a zoom window
-                && x<sdl_scale*(zoom_wx+ZFACTOR*ZSIZE)
-                && y<sdl_scale*(zoom_wy+ZFACTOR*ZSIZE))
-        {
-            x = (((x/sdl_scale-zoom_wx)/ZFACTOR)+zoom_x)*sdl_scale;
-            y = (((y/sdl_scale-zoom_wy)/ZFACTOR)+zoom_y)*sdl_scale;
-        }
-        if (y>0 && y<sdl_scale*YRES && x>0 && x<sdl_scale*XRES)
-        {
-            int cr; //cr is particle under mouse, for drawing HUD information
-            char nametext[50];
-            if (photons[y/sdl_scale][x/sdl_scale])
-            {
-                cr = photons[y/sdl_scale][x/sdl_scale];
-            }
-            else
-            {
-                cr = pmap[y/sdl_scale][x/sdl_scale];
-            }
-            if (cr)
-            {
-                if ((cr&0xFF)==PT_LIFE && parts[cr>>8].ctype>=0 && parts[cr>>8].ctype<NGOLALT)
-                {
-                    sprintf(nametext, "%s (%s)", ptypes[cr&0xFF].name, gmenu[parts[cr>>8].ctype].name);
-                }
-                else if ((cr&0xFF)==PT_NBLE && parts[cr>>8].ctype>=0 && parts[cr>>8].ctype<NNBLALT)
+		for (i=0; i<SC_TOTAL; i++)//check mouse position to see if it is on a menu section
+		{
+			if (!b&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+			{
+				active_menu = i;
+			}
+		}
+		menu_ui_v3(vid_buf, active_menu, &sl, &sr, &dae, b, bq, x, y); //draw the elements in the current menu
+		if (zoom_en && x>=sdl_scale*zoom_wx && y>=sdl_scale*zoom_wy //change mouse position while it is in a zoom window
+		        && x<sdl_scale*(zoom_wx+ZFACTOR*ZSIZE)
+		        && y<sdl_scale*(zoom_wy+ZFACTOR*ZSIZE))
+		{
+			x = (((x/sdl_scale-zoom_wx)/ZFACTOR)+zoom_x)*sdl_scale;
+			y = (((y/sdl_scale-zoom_wy)/ZFACTOR)+zoom_y)*sdl_scale;
+		}
+		if (y>0 && y<sdl_scale*YRES && x>0 && x<sdl_scale*XRES)
+		{
+			int cr; //cr is particle under mouse, for drawing HUD information
+			char nametext[50];
+			if (photons[y/sdl_scale][x/sdl_scale]) {
+				cr = photons[y/sdl_scale][x/sdl_scale];
+			} else {
+				cr = pmap[y/sdl_scale][x/sdl_scale];
+			}
+			if (cr)
+			{
+				if ((cr&0xFF)==PT_LIFE && parts[cr>>8].ctype>=0 && parts[cr>>8].ctype<NGOLALT)
+				{
+					sprintf(nametext, "%s (%s)", ptypes[cr&0xFF].name, gmenu[parts[cr>>8].ctype].name);
+				}
+				else if ((cr&0xFF)==PT_NBLE && parts[cr>>8].ctype>=0 && parts[cr>>8].ctype<NNBLALT)
                 {
                     sprintf(nametext, "%s (%s)", ptypes[cr&0xFF].name, nmenu[parts[cr>>8].ctype].name);
                 }
-                else if ((cr&0xFF)==PT_LAVA && parts[cr>>8].ctype > 0 && parts[cr>>8].ctype < PT_NUM )
-                {
-                    char lowername[6];
-                    int ix;
-                    strcpy(lowername, ptypes[parts[cr>>8].ctype].name);
-                    for (ix = 0; lowername[ix]; ix++)
-                        lowername[ix] = tolower(lowername[ix]);
+				else if ((cr&0xFF)==PT_LAVA && parts[cr>>8].ctype > 0 && parts[cr>>8].ctype < PT_NUM )
+				{
+					char lowername[6];
+					int ix;
+					strcpy(lowername, ptypes[parts[cr>>8].ctype].name);
+					for (ix = 0; lowername[ix]; ix++)
+						lowername[ix] = tolower(lowername[ix]);
 
-                    sprintf(nametext, "Molten %s", lowername);
-                }
-                else if (DEBUG_MODE)
-                {
-                    int tctype = parts[cr>>8].ctype;
-                    if ((cr&0xFF)==PT_PIPE)
-                    {
-                        tctype = parts[cr>>8].tmp&0xFF;
-                    }
-                    if (tctype>=PT_NUM || tctype<0 || (cr&0xFF)==PT_PHOT)
-                        tctype = 0;
-                    sprintf(nametext, "%s (%s)", ptypes[cr&0xFF].name, ptypes[tctype].name);
-                }
-                else
-                {
-                    strcpy(nametext, ptypes[cr&0xFF].name);
-                }
-                if (DEBUG_MODE)
-                {
-                    sprintf(heattext, "%s, Pressure: %3.2f, Temp: %4.2f C, Life: %d, Tmp:%d", nametext, pv[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL], parts[cr>>8].temp-273.15f, parts[cr>>8].life, parts[cr>>8].tmp);
-                    sprintf(coordtext, "#%d, X:%d Y:%d", cr>>8, x/sdl_scale, y/sdl_scale);
-                }
-                else
-                {
+					sprintf(nametext, "Molten %s", lowername);
+				}
+				else if (DEBUG_MODE)
+				{
+					int tctype = parts[cr>>8].ctype;
+					if ((cr&0xFF)==PT_PIPE)
+					{
+						tctype = parts[cr>>8].tmp&0xFF;
+					}
+					if (tctype>=PT_NUM || tctype<0 || (cr&0xFF)==PT_PHOT)
+						tctype = 0;
+					sprintf(nametext, "%s (%s)", ptypes[cr&0xFF].name, ptypes[tctype].name);
+				}
+				else
+				{
+					strcpy(nametext, ptypes[cr&0xFF].name);
+				}
+				if (DEBUG_MODE)
+				{
+					sprintf(heattext, "%s, Pressure: %3.2f, Temp: %4.2f C, Life: %d, Tmp:%d", nametext, pv[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL], parts[cr>>8].temp-273.15f, parts[cr>>8].life, parts[cr>>8].tmp);
+					sprintf(coordtext, "#%d, X:%d Y:%d", cr>>8, x/sdl_scale, y/sdl_scale);
+				}
+				else
+				{
 #ifdef BETA
                     sprintf(heattext, "%s, Pressure: %3.2f, Temp: %4.2f C, Life: %d, Tmp:%d", nametext, pv[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL], parts[cr>>8].temp-273.15f, parts[cr>>8].life, parts[cr>>8].tmp);
 #else
