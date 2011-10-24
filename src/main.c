@@ -162,7 +162,7 @@ static const char *it_msg =
     "\bgSimon Robertshaw, Skresanov Savely, cracker64, Catelite, Bryan Hoyle, Nathan Cousins, jacksonmj,\n"
     "\bgLieuwe Mosch, Anthony Boot, Matthew Miller, MaksProg\n"
     "\n\n"
-    " \boPowder Sim Contributors:\bg Matthew Miller(Me4502), Vanquish349, WiseEyes\n"
+    " \boPowder Sim Contributors:\bg Matthew Miller(Me4502), Vanquish349, Eyes\n"
     "\bgTo use online features such as saving, you need to register at: \brhttp://powdertoy.co.uk/Register.html"
     ;
 
