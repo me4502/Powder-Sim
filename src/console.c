@@ -199,7 +199,7 @@ int process_command_old(pixel *vid_buf, char *console, char *console_error)
 			if (pygood==1)
 				pyready=1;
 			else
-				strcpy(console_error, "python not ready. check stdout for more info.")
+				strcpy(console_error, "python not ready. check stdout for more info.");
 #endif
 			else if (strcmp(console2, "load")==0 && console3[0])
 			{
