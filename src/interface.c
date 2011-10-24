@@ -2341,7 +2341,8 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
         }
         else
         {
-            xoff = menlock;
+            if (fwidth > XRES-BARSIZE)
+                xoff = menlock;
         }
         for (n = 0; n<PT_NUM; n++)
         {
