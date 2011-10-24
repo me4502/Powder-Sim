@@ -17,3 +17,4 @@ obj/*
 *.layout
 *.depend
 .gitignore.*
+powder.pref
