@@ -17,4 +17,8 @@ obj/*
 *.layout
 *.depend
 .gitignore.*
-powder.pref
+*.pref
+*.cps
+*/*.cps
+*.stm
+*/*.stm

@@ -280,7 +280,7 @@ void load_presets(void)
 
         while(quickmenu[i].icon!=NULL)
         {
-            if(tmpobj = cJSON_GetObjectItem(root, quickmenu[i].name)) quickmenu[i].variable = &tmpobj->valueint;
+            if(tmpobj = cJSON_GetObjectItem(root, quickmenu[i].name)) *quickmenu[i].variable = tmpobj->valueint;
             i++;
         }
 
