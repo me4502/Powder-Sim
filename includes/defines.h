@@ -174,6 +174,8 @@ int limitFPS;
 int water_equal_test;
 extern int quickoptions_tooltip_fade;
 
+int menlock;
+
 extern int debug_flags;
 #define DEBUG_PERF_FRAMECOUNT 256
 extern int debug_perf_istart;
