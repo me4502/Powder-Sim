@@ -2126,6 +2126,8 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     x = XRES-BARSIZE-18;
     y = YRES+1;
     sy = y;
+    if (i==-1)
+        return;
     if (i==SC_WALL)//wall menu
     {
         for (n = UI_WALLSTART; n<UI_WALLSTART+UI_WALLCOUNT; n++)
