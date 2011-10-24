@@ -2204,10 +2204,15 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     }
     else if (i==SC_SPECIAL)//special menu
     {
-        if (fwidth > XRES-BARSIZE)   //fancy scrolling
+        if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling
         {
             float overflow = fwidth-(XRES-BARSIZE), location = ((float)XRES-BARSIZE)/((float)(mx-(XRES-BARSIZE)));
             xoff = (int)(overflow / location);
+            menlock = (int)(overflow / location);
+        }
+        else
+        {
+            xoff = menlock;
         }
         for (n = 0; n<PT_NUM; n++)
         {
@@ -2247,10 +2252,15 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     else if(i==SC_LIFE)
     {
         int n2;
-        if (fwidth > XRES-BARSIZE)   //fancy scrolling
+        if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling
         {
             float overflow = fwidth-(XRES-BARSIZE), location = ((float)XRES-BARSIZE)/((float)(mx-(XRES-BARSIZE)));
             xoff = (int)(overflow / location);
+            menlock = (int)(overflow / location);
+        }
+        else
+        {
+            xoff = menlock;
         }
         for (n2 = 0; n2<NGOLALT; n2++)
         {
@@ -2283,10 +2293,15 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     else if(i==SC_NBLE)
     {
         int n2;
-        if (fwidth > XRES-BARSIZE)   //fancy scrolling
+        if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling
         {
             float overflow = fwidth-(XRES-BARSIZE), location = ((float)XRES-BARSIZE)/((float)(mx-(XRES-BARSIZE)));
             xoff = (int)(overflow / location);
+            menlock = (int)(overflow / location);
+        }
+        else
+        {
+            xoff = menlock;
         }
         for (n2 = 0; n2<NNBLALT; n2++)
         {
@@ -2318,10 +2333,15 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     }
     else //all other menus
     {
-        if (fwidth > XRES-BARSIZE)   //fancy scrolling
+        if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling
         {
             float overflow = fwidth-(XRES-BARSIZE), location = ((float)XRES-BARSIZE)/((float)(mx-(XRES-BARSIZE)));
             xoff = (int)(overflow / location);
+            menlock = (int)(overflow / location);
+        }
+        else
+        {
+            xoff = menlock;
         }
         for (n = 0; n<PT_NUM; n++)
         {
