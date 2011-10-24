@@ -995,6 +995,8 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 
 void draw_menu(pixel *vid_buf, int i, int hover)
 {
+    //if (hover==-1)
+        //return;
     if (i==SEC&&SEC!=0)
         drawrect(vid_buf, (XRES+BARSIZE)-16, (i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16), 14, 14, 0, 255, 255, 255);
     else
@@ -1232,7 +1234,32 @@ void drawrect(pixel *vid, int x, int y, int w, int h, int r, int g, int b, int a
     }
 #endif
 }
-
+//draws a rectange, (x,y) are the top left coords.
+void drawrect_v2(pixel *vid, int x, int y, int w, int h, int r, int g, int b, int a)
+{
+#ifdef OpenGL
+    glBegin(GL_LINE_LOOP);
+    glColor4ub(r, g, b, a);
+    glVertex2i(x, y);
+    glVertex2i(x+w, y);
+    glVertex2i(x+w, y+h);
+    glVertex2i(x, y+h);
+    glEnd();
+#else
+    int i;
+    for (i=0; i<=w; i++)
+    {
+        drawpixel(vid, x+i, y, r, g, b, a);
+        drawpixel(vid, x+i, y+h, r, g, b, a);
+    }
+    for (i=1; i<h; i++)
+    {
+        drawpixel(vid, x, y+i, r, g, b, a);
+        drawpixel(vid, x+w, y+i, r, g, b, a);
+    }
+    fillrect(vid,x,y,w,h,r,g,b,50);
+#endif
+}
 //draws a rectangle and fills it in as well.
 void fillrect(pixel *vid, int x, int y, int w, int h, int r, int g, int b, int a)
 {
