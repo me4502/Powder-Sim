@@ -166,8 +166,7 @@ void save_presets(int do_update)
 
 	while(quickmenu[i].icon!=NULL)
 	{
-	    double var = (double)*quickmenu[i].variable;
-	    cJSON_AddNumberToObject(root, quickmenu[i].name, var);
+	    cJSON_AddNumberToObject(root, quickmenu[i].name, *quickmenu[i].variable);
 		i++;
 	}
 	outputdata = cJSON_Print(root);
