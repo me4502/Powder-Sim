@@ -169,6 +169,7 @@ extern int decorations_enable;
 extern int hud_enable;
 extern int pretty_powder;
 extern int drawgrav_enable;
+extern int clickmenu_enable;
 int limitFPS;
 int water_equal_test;
 extern int quickoptions_tooltip_fade;
