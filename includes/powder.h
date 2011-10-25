@@ -587,7 +587,7 @@ static const part_type ptypes[PT_NUM] =
 	{"GBMB",	PIXPACK(0x1144BB),	0.6f,	0.01f * CFDS,	0.98f,	0.95f,	0.0f,	0.1f,	0.00f,	0.000f	* CFDS,	1,	0,		0,	0,	20,	1,	1,	30,		1.0f,   SC_EXPLOSIVE,	R_TEMP-2.0f	+273.15f,	29,		"Sticks to first object it touches then produces strong gravity push.", ST_NONE, TYPE_PART|PROP_LIFE_DEC|PROP_LIFE_KILL_DEC, &update_GBMB},
   {"ALCO",    PIXPACK(0x02D4D4),  0.6f,   0.01f * CFDS,   0.97f,  0.96f,  0.0f,   0.9f,   0.00f,  0.000f  * CFDS, 2,  200,    0,  0,  10, 1,  1,  49,     1.0f,   SC_EXPLOSIVE,   R_TEMP+0.0  +273.15f,   250,    "Alcohol. Flammable. Evaporates at low temps. Sterile.",ST_LIQUID, TYPE_LIQUID|PROP_DEADLY|PROP_NEUTABSORB, NULL},
   {"FRAN",		PIXPACK(0xBDBDBD),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	500,	0,	0,	0,	1,	1,	100,  1.0f,	SC_EXPLOSIVE,	R_TEMP+0.0f	+273.15f,	88,		"Explosive", ST_SOLID, TYPE_SOLID | PROP_NEUTPENETRATE, &update_FRAN},
-  {"TNT",		PIXPACK(0x990000),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	800,	2,	20,	1,	1,	1,	100,	1.0f,  SC_EXPLOSIVE,	R_TEMP+0.0f	+273.15f,	88,		"TNT", ST_SOLID, TYPE_SOLID | PROP_NEUTPENETRATE, NULL},
+  {"TNT",		PIXPACK(0x990000),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	20,	2,	20,	1,	1,	1,	100,	1.0f,  SC_EXPLOSIVE,	R_TEMP+0.0f	+273.15f,	88,		"TNT", ST_SOLID, TYPE_SOLID | PROP_NEUTPENETRATE, NULL},
 	//Name		Colour				Advec	Airdrag			Airloss	Loss	Collid	Grav	Diffus	Hotair			Fal	Burn	Exp	Mel	Hrd M	Use	Weight Valency	Section			H						Ins		Description
 };
 
