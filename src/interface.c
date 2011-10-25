@@ -2478,6 +2478,39 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
             SLALT = h;
             SEC2 = -1;
         }
+        else if (i!=SC_FAVOURITES&&(sdl_mod & (KMOD_LSHIFT)))
+        {
+            int in;
+            int result = 0;
+            int maxint;
+            int s = sizeof(favourites) / sizeof(int);
+            for (in = 0; in < s; in++)
+            {
+                if (favourites[in]==h)
+                    result = 1;
+
+                if (!favourites[in])
+                    maxint = in;
+            }
+            if (result==0)
+                favourites[maxint] = h;
+
+        }
+        else if (i==SC_FAVOURITES&&(sdl_mod & (KMOD_LSHIFT)))
+        {
+            int in;
+            int result = 1;
+            int maxint;
+            int s = sizeof(favourites) / sizeof(int);
+            for (in = 0; in < s; in++)
+            {
+                if (favourites[in]==h)
+                    maxint = in;
+            }
+            favourites[maxint] = 0;
+
+
+        }
         else
         {
             *sl = h;

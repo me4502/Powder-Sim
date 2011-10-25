@@ -177,7 +177,7 @@ static const char *old_ver_msg = "A new version is available - click here!";
 char new_message_msg[255];
 float mheat = 0.0f;
 
-int favourites[PT_NUM] = {2,16};
+int favourites[PT_NUM] = {};
 
 int do_open = 0;
 int sys_pause = 0;
