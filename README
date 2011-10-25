@@ -37,6 +37,7 @@ vanquish349
 randalserrano
 Anthony Boot
 Matthew Miller
+Antonvrg
 
 
 Instructions:
@@ -106,11 +107,12 @@ ddir <directory> - Directory used for saving stamps and preferences
 History:
 
 ---------------------------------------------------------------------------
-[Our Epic Stuff]
+[Our Additions]
 
-* Version X.X
+* Version 1.0
+      o Makefile updated for RHEL
 
-[Simons Epic Stuff]
+[Simons Additions]
 
 *  Version 65.4
       o "Sand" effect for drawing powders, activate with "N"
