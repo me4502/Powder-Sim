@@ -2171,6 +2171,49 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
             }
         }
     }
+    if (i==SC_FAVOURITES)//favourites menu
+    {
+        if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling
+        {
+            float overflow = fwidth-(XRES-BARSIZE), location = ((float)XRES-BARSIZE)/((float)(mx-(XRES-BARSIZE)));
+            xoff = (int)(overflow / location);
+            menlock = (int)(overflow / location);
+        }
+        else
+        {
+            if (fwidth > XRES-BARSIZE)
+                xoff = menlock;
+        }
+        int s = sizeof(favourites) / sizeof(int);
+        for (n = 0; n < s; n++)
+        {
+            if (!favourites[n])
+                continue;
+            x -= draw_tool_xy(vid_buf, x-xoff, y, favourites[n], ptypes[favourites[n]].pcolors)+5;
+            if (!bq && mx>=x+32 && mx<x+58 && my>=y && my< y+15)
+            {
+                drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 255, 55, 55, 255);
+                h = favourites[n];
+            }
+            if (!bq && mx>=x+32 && mx<x+58 && my>=y && my< y+15&&(sdl_mod & (KMOD_LALT) && sdl_mod & (KMOD_CTRL)))
+            {
+                drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 0, 255, 255, 255);
+                h = favourites[n];
+            }
+            else if (favourites[n]==SLALT)
+            {
+                drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 0, 255, 255, 255);
+            }
+            else if (favourites[n]==*sl)
+            {
+                drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 255, 55, 55, 255);
+            }
+            else if (favourites[n]==*sr)
+            {
+                drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 55, 55, 255, 255);
+            }
+        }
+    }
     else if (i==SC_TOOL)//tools menu
     {
         if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling
@@ -2409,6 +2452,10 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     else if (i==SC_NBLE)
     {
         drawtext(vid_buf, XRES-textwidth((char *)nmenu[(h>>8)&0xFF].description)-BARSIZE, sy-10, (char *)nmenu[(h>>8)&0xFF].description, 255, 255, 255, 255);
+    }
+    else if (i==SC_FAVOURITES)
+    {
+        drawtext(vid_buf, XRES-textwidth((char *)ptypes[h].descs)-BARSIZE, sy-10, (char *)ptypes[h].descs, 255, 255, 255, 255);
     }
     else
     {
