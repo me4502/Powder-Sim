@@ -1007,6 +1007,8 @@ int wireless[CHANNELS][2];
 extern int portal_rx[8];
 extern int portal_ry[8];
 
+extern int favourites[PT_NUM];
+
 extern int wire_placed;
 
 extern int gravwl_timeout;
