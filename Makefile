@@ -7,9 +7,9 @@ PY_INCPATH := $(shell $(PY_BIN) -c "import os.path,sys;print os.path.join(sys.ex
 PY_LDFLAGS := $(shell $(PY_BIN) -c "import distutils.sysconfig;print distutils.sysconfig.get_config_var('LINKFORSHARED')")
 PYCOMMAND := $(PY_BIN) getheader.py
 
-CFLAGS := -w -std=c99 -D_POSIX_C_SOURCE=200112L -DPYCONSOLE -DLUACONSOLE -DGRAVFFT -Iincludes/ -D_GNU_SOURCE
+CFLAGS := -w -std=c99 -D_POSIX_C_SOURCE=200112L -DLUACONSOLE -DGRAVFFT -Iincludes/ -D_GNU_SOURCE -DLUA_R_INCL
 OFLAGS := -O3 -ffast-math -ftree-vectorize -funsafe-math-optimizations
-LFLAGS := -lpthread -lSDL -lfftw3f -lm -lbz2 -lX11 -llua5.1 -lrt -lpython2.6 -L/usr/lib/python2.6/config -I/usr/include/python2.6 -Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions
+LFLAGS := -lpthread -lSDL -lfftw3f -lm -lbz2 -lX11 -llua -lrt #-lpython$(PY_VERSION) -L$(PY_LIBPATH) -I$(PY_INCPATH) $(PY_LDFLAGS)
 LFLAGS_X := -lm -lbz2 -lSDLmain -I/Library/Frameworks/Python.framework/Versions/$(PY_VERSION)/include/python$(PY_VERSION)
 MFLAGS_SSE3 := -march=native -DX86 -DX86_SSE3 -msse3
 MFLAGS_SSE2 := -march=native -DX86 -DX86_SSE2 -msse2
@@ -22,6 +22,7 @@ LINUX_TARG := powder-64-sse2 powder-sse powder-sse2
 WIN32_TARG := powder-sse.exe powder-sse2.exe
 
 powder: $(SOURCES)
+	$(PYCOMMAND)
 	$(COMPILER) -DINTERNAL -o$@ $(CFLAGS) $(OFLAGS) $(MFLAGS_SSE3) $(SOURCES) $(LFLAGS) -DLIN64
 	mv $@ build
 
