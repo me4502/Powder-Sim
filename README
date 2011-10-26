@@ -1,4 +1,4 @@
-Powder-sim - TPT Mod | v1.2
+Powder-Sim | v1.2
 
 NOTE: Our README is currently being updated.
 
@@ -6,10 +6,8 @@ Thanks to:
 
 ---------------------------------------------------------------------------
 
-[Original]
+[Prior Versions]
 Stanislaw K Skowronek
-
-[TPT]
 Simon Robertshaw
 Skresanov Savely
 cracker64
@@ -25,14 +23,14 @@ Anthony Boot
 Madeline Miller
 
 
-[Powder Sim]
+[Powder Sim Staff]
 Madeline Miller
 EyesIsMine
 PizzaPlatypus
 vanquish349
 randalserrano
-Anthony Boot
-Madeline Miller
+
+[Contributers]
 Antonvrg
 
 
@@ -104,14 +102,9 @@ History:
 
 ---------------------------------------------------------------------------
 
-* Version 1.2
-      o Francium Updated
-      o Bug fixes
-
-* Version 1.1
-      o Francium Added
-      o TNT Added
-
 * Version 1.0
       o Makefile updated for RHEL
+      o Francium Added
+      o TNT Added
+      o Bug fixes
 
