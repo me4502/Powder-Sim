@@ -1,8 +1,12 @@
-Powder-sim - TPT Mod | v1.2
+The Powder Toy - October 2011
 
-NOTE: Our README is currently being updated.
+Get latest version here:  [website pending]
 
-Thanks to:
+
+To use online features such as saving, you need to register at: [website pending]
+
+
+Thanks:
 
 ---------------------------------------------------------------------------
 
@@ -105,17 +109,9 @@ History:
 ---------------------------------------------------------------------------
 [Our Additions]
 
-* Version 1.2
-      o Francium Updated
-      o Bug fixes
-
-* Version 1.1
-      o Francium Added
-      o TNT Added
-
 * Version 1.0
       o Makefile updated for RHEL
-
+      o Francium Added
 
 [Simons Additions]
 
