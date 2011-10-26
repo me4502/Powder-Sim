@@ -15,11 +15,10 @@ int update_FRAN(UPDATE_FUNC_ARGS) {
 					{
 						part_change_type(i,x,y,PT_FIRE);
 						parts[r>>8].temp = parts[i].temp = 0;
-						parts[i].life = rand()%150+50;
-						pv[y/CELL][x/CELL] += 1.5;
+						parts[i].life = rand()%650+50;
+						pv[y/CELL][x/CELL] += 14.5;
 					}
 				}
 			}
 	return 0;
 }
-
