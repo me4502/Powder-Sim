@@ -23,3 +23,5 @@ obj/*
 *.stm
 */*.stm
 *.*~
+powder
+*.hpp
