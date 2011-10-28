@@ -208,6 +208,7 @@ typedef struct stamp stamp;
 
 unsigned int decolour[XRES][YRES];
 
+int menuitems;
 int frameidx;
 int MSIGN;
 int CGOL;

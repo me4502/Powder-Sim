@@ -2496,10 +2496,18 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
                         result = 1;
 
                     if (!favourites[in])
+                    {
                         maxint = in;
+                        break;
+                    }
                 }
                 if (result==0)
+                {
                     favourites[maxint] = h;
+                    menuitems = maxint;
+                }
+
+                save_presets(0);
             }
 
         }
@@ -2515,6 +2523,8 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
                     maxint = in;
             }
             favourites[maxint] = 0;
+            menuitems = maxint - 1;
+            save_presets(0);
         }
         else
         {

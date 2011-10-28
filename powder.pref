@@ -9,6 +9,7 @@
 	"proxy":	"",
 	"cmode":	3,
 	"scale":	1,
+	"favourites":	[19],
 	"Sand effect":	0,
 	"Draw gravity grid":	0,
 	"Show Decorations":	1,

@@ -161,6 +161,7 @@ void save_presets(int do_update)
 	cJSON_AddStringToObject(root, "proxy", http_proxy_string);
 	cJSON_AddNumberToObject(root, "cmode", cmode);
 	cJSON_AddNumberToObject(root, "scale", sdl_scale);
+	cJSON_AddItemToObject(root,"favourites",cJSON_CreateIntArray(favourites, menuitems));
 
     int i = 0;
 
@@ -274,6 +275,16 @@ void load_presets(void)
 		if((tmpobj = cJSON_GetObjectItem(root, "proxy")) && tmpobj->type == cJSON_String) strncpy(http_proxy_string, tmpobj->valuestring, 255); else http_proxy_string[0] = 0;
 		if(tmpobj = cJSON_GetObjectItem(root, "cmode")) cmode = tmpobj->valueint;
 		if(tmpobj = cJSON_GetObjectItem(root, "scale")) sdl_scale = tmpobj->valueint;
+
+		cJSON *tmpobj2;
+		if (tmpobj = cJSON_GetObjectItem(root, "favourites"))
+		{
+		    menuitems = 0;
+		    for(int i = 0; i < cJSON_GetArrayItem(tmpobj, i);i++)
+		    {
+                favourites[menuitems++] = tmpobj2->valueint;
+		    }
+		}
 
         int i = 0;
 
