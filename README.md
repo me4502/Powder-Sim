@@ -27,7 +27,6 @@ Anthony Boot<br />
 Matthew Miller<br />
 
 
-<<<<<<< HEAD
 ### [Powder Sim]
 Matthew Miller<br />
 EyesIsMine<br />
@@ -38,19 +37,7 @@ Anthony Boot<br />
 Matthew Miller<br />
 
 ### [Contributers]
-=======
-[Powder Sim]
-Matthew Miller
-EyesIsMine
-PizzaPlatypus
-vanquish349
-randalserrano
-Anthony Boot
-Matthew Miller
-
-[Contributers]
->>>>>>> 18bde6e4b41e7137009fb45cf8db3d7064a463fa
-Antonvrg
+Antonvrg<br />
 
 
 ## Instructions:
