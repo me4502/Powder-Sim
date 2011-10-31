@@ -52,7 +52,6 @@ Click on the elements with the mouse and draw in the field, like in MS Paint. Th
 
 ---------------------------------------------------------------------------
 
-<<<<<<< HEAD
 **Caps Lock**  Specific Element Erase<br />
 **Insert**     Replace mode<br />
 **TAB**        Circle/Square Brush<br />
@@ -79,34 +78,6 @@ Click on the elements with the mouse and draw in the field, like in MS Paint. Th
 **=** 		     Reset pressure and velocity map<br />
 **[** 		     Decrase brush size<br />
 **]** 		     Increase brush size<br />
-=======
-Caps Lock       Specific Element Erase
-Insert 		Replace mode
-TAB 		Circle/Square Brush
-Space 		Pause
-Q 		Quit
-Esc 		Quit
-Z 		Zoom
-S 		Save stamp (+ Ctrl when STK2 is out)
-L 		Load last saved stamp
-K 		Stamp library
-C 		Cycle view mode
-1-9 		Set view mode
-P 		Save screenshot to .ppm
-F 		Pause and go to next frame
-G 		Grid
-H 		Show/Hide HUD
-D 		Debug mode (+ Shift when STK2 is out)
-I 		Invert Pressure and Velocity map
-T 		Vine mode
-W 		Toggle gravity modes (+ Ctrl when STK2 is out)
-R 		Reset LIFE generation (when in Debug mode)
-N		"Sand effect" for drawing powders
-~ 		Console
-= 		Reset pressure and velocity map
-[ 		Decrase brush size
-] 		Increase brush size 
->>>>>>> 18bde6e4b41e7137009fb45cf8db3d7064a463fa
 
 **Ctrl + C/V/X** 		       Copy/Paste/Cut<br />
 **Ctrl + Z** 		           Undo<br />
@@ -321,6 +292,3 @@ N		"Sand effect" for drawing powders
 <<<<<<< HEAD
       o New wall type added: E-Hole, absorbs particles when unpowered, released them when powered.
 </pre>
-=======
-      o New wall type added: E-Hole, absorbs particles when unpowered, released them when powered.
->>>>>>> 18bde6e4b41e7137009fb45cf8db3d7064a463fa
