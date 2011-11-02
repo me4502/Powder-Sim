@@ -924,6 +924,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].life = 10;
 	if (t==PT_MERC)
 		parts[i].tmp = 10;
+	if (t==PT_WSTE)
+		 parts[i].life = 300 + (rand()%400);	
 	if (t==PT_BRAY)
 		parts[i].life = 30;
 	if (t==PT_PUMP)
