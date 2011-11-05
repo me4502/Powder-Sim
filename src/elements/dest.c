@@ -52,3 +52,15 @@ int update_DEST(UPDATE_FUNC_ARGS) {
 	parts[i].temp = restrict_flt(parts[i].temp, MIN_TEMP, MAX_TEMP);
 	return 0;
 }
+int graphics_DEST(GRAPHICS_FUNC_ARGS)
+{
+	if(cpart->life)
+	{
+		*pixel_mode |= PMODE_LFLARE;
+	}
+	else
+	{
+		*pixel_mode |= PMODE_SPARK;
+	}
+	return 0;
+}
