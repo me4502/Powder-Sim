@@ -16,9 +16,7 @@ int update_HFAC(UPDATE_FUNC_ARGS) {
                         part_change_type(r>>8,x+rx,y+ry,PT_FIRE);
                         parts[r>>8].life = 4;
                     }
-                    if (parts[i].life < 2)
-                        part_change_type(i,x,y,PT_GLOW);
-                    else if (rand()%700 == 1)
+                    if (rand()%700 == 1)
                     {
                         kill_part(r>>8);
                         parts[i].life -= parts[i].life -1;
