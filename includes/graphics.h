@@ -2,7 +2,6 @@
 #define GRAPHICS_H
 #include <SDL/SDL.h>
 #include "defines.h"
-#include "hmap.h"
 
 #ifdef PIX16
 #define PIXELSIZE 2
@@ -26,6 +25,14 @@
 #define PIXR(x) (((x)>>8)&0xFF)
 #define PIXG(x) (((x)>>16)&0xFF)
 #define PIXB(x) (((x)>>24))
+#elif defined(PIX32OGL)
+#define PIXPACK(x) (0xFF000000|((x)&0xFFFFFF))
+#define PIXRGB(r,g,b) (0xFF000000|((r)<<16)|((g)<<8)|((b)))// (((b)<<16)|((g)<<8)|(r))
+#define PIXRGBA(r,g,b,a) (((a)<<24)|((r)<<16)|((g)<<8)|((b)))// (((b)<<16)|((g)<<8)|(r))
+#define PIXA(x) (((x)>>24)&0xFF)
+#define PIXR(x) (((x)>>16)&0xFF)
+#define PIXG(x) (((x)>>8)&0xFF)
+#define PIXB(x) ((x)&0xFF)
 #else
 #define PIXPACK(x) (x)
 #define PIXRGB(r,g,b) (((r)<<16)|((g)<<8)|(b))
@@ -53,6 +60,33 @@ extern unsigned char fire_b[YRES/CELL][XRES/CELL];
 
 extern unsigned int fire_alpha[CELL*3][CELL*3];
 extern pixel *pers_bg;
+
+extern char * flm_data;
+extern int flm_data_points;
+extern pixel flm_data_colours[];
+extern float flm_data_pos[];
+
+extern char * plasma_data;
+extern int plasma_data_points;
+extern pixel plasma_data_colours[];
+extern float plasma_data_pos[];
+
+struct gcache_item
+{
+	int isready;
+	int pixel_mode;
+	int cola, colr, colg, colb;
+	int firea, firer, fireg, fireb;
+};
+typedef struct gcache_item gcache_item;
+
+gcache_item *graphicscache;
+
+int graphics_DEFAULT(GRAPHICS_FUNC_ARGS);
+
+void prepare_graphicscache();
+
+char * generate_gradient(pixel * colours, float * points, int pointcount, int size);
 
 void draw_other(pixel *vid);
 
@@ -138,7 +172,11 @@ void xor_rect(pixel *vid, int x, int y, int w, int h);
 
 void blend_line(pixel *vid, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
 
+<<<<<<< HEAD
 void draw_back(pixel *vid);
+=======
+void render_parts(pixel *vid);
+>>>>>>> upstream/master
 
 void draw_parts(pixel *vid);
 
@@ -180,10 +218,102 @@ int sdl_open(void);
 
 int draw_debug_info(pixel* vid, int lm, int lx, int ly, int cx, int cy, int line_x, int line_y);
 
-#ifdef OpenGL
-void Enable2D ();
-void RenderScene ();
-void ClearScreen();
+#ifdef OGLR
+void clearScreen(float alpha);
+void ogl_blit(int x, int y, int w, int h, pixel *src, int pitch, int scale);
 #endif
 
+#endif
+
+#ifdef INCLUDE_SHADERS
+#ifndef SHADERS_H
+#define SHADERS_H
+const char * fireFragment = "#version 120\n\
+uniform sampler2D fireAlpha;\
+void main () {\
+    vec4 texColor = texture2D(fireAlpha, gl_PointCoord);\
+    gl_FragColor = vec4(gl_Color.rgb, texColor.a*gl_Color.a);\
+}";
+const char * fireVertex = "#version 120\n\
+void main(void)\
+{\
+   gl_Position = ftransform();;\
+   gl_FrontColor = gl_Color;\
+}";
+const char * lensFragment = "#version 120\n\
+uniform sampler2D pTex;\
+uniform sampler2D tfX;\
+uniform sampler2D tfY;\
+uniform float xres;\
+uniform float yres;\
+void main () {\
+	vec4 transformX = texture2D(tfX, vec2(gl_TexCoord[0].s, -gl_TexCoord[0].t));\
+	vec4 transformY = -texture2D(tfY, vec2(gl_TexCoord[0].s, -gl_TexCoord[0].t));\
+	transformX.r /= xres;\
+	transformY.g /= yres;\
+    vec4 texColor = vec4(\
+    	texture2D(pTex, gl_TexCoord[0].st-vec2(transformX.r*0.75, transformY.g*0.75)).r,\
+    	texture2D(pTex, gl_TexCoord[0].st-vec2(transformX.r*0.875, transformY.g*0.875)).g,\
+    	texture2D(pTex, gl_TexCoord[0].st-vec2(transformX.r, transformY.g)).b,\
+    	1.0\
+    );\
+    gl_FragColor = texColor;\
+}";
+const char * lensVertex = "#version 120\n\
+void main(void)\
+{\
+	gl_TexCoord[0]  = gl_MultiTexCoord0;\
+	gl_Position = ftransform();;\
+	gl_FrontColor = gl_Color;\
+}";
+const char * airVFragment = "#version 120\n\
+uniform sampler2D airX;\
+uniform sampler2D airY;\
+uniform sampler2D airP;\
+void main () {\
+	vec4 texX = texture2D(airX, gl_TexCoord[0].st);\
+	vec4 texY = texture2D(airY, gl_TexCoord[0].st);\
+	vec4 texP = texture2D(airP, gl_TexCoord[0].st);\
+	gl_FragColor = vec4(abs(texX.r)/2.0, texP.b/2.0, abs(texY.g)/2.0, 1.0);\
+}";
+const char * airVVertex = "#version 120\n\
+void main(void)\
+{\
+	gl_TexCoord[0]  = gl_MultiTexCoord0;\
+	gl_Position = ftransform();;\
+	gl_FrontColor = gl_Color;\
+}";
+const char * airPFragment = "#version 120\n\
+uniform sampler2D airX;\
+uniform sampler2D airY;\
+uniform sampler2D airP;\
+void main () {\
+	vec4 texP = texture2D(airP, gl_TexCoord[0].st);\
+    gl_FragColor = vec4(max(texP.b/2.0, 0), 0, abs(min(texP.b/2.0, 0)), 1.0);\
+}";
+const char * airPVertex = "#version 120\n\
+void main(void)\
+{\
+	gl_TexCoord[0]  = gl_MultiTexCoord0;\
+	gl_Position = ftransform();;\
+	gl_FrontColor = gl_Color;\
+}";
+const char * airCFragment = "#version 120\n\
+uniform sampler2D airX;\
+uniform sampler2D airY;\
+uniform sampler2D airP;\
+void main () {\
+	vec4 texX = texture2D(airX, gl_TexCoord[0].st);\
+	vec4 texY = texture2D(airY, gl_TexCoord[0].st);\
+	vec4 texP = texture2D(airP, gl_TexCoord[0].st);\
+    gl_FragColor = vec4(max(texP.b/2.0, 0), 0, abs(min(texP.b/2.0, 0)), 1.0) + vec4(abs(texX.r)/8.0, abs(texX.r)/8.0, abs(texX.r)/8.0, 1.0) + vec4(abs(texY.g)/8.0, abs(texY.g)/8.0, abs(texY.g)/8.0, 1.0);\
+}";
+const char * airCVertex = "#version 120\n\
+void main(void)\
+{\
+	gl_TexCoord[0]  = gl_MultiTexCoord0;\
+	gl_Position = ftransform();;\
+	gl_FrontColor = gl_Color;\
+}";
+#endif
 #endif
