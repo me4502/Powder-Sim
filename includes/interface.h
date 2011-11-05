@@ -69,12 +69,16 @@ static menu_section msections[] = //doshow does not do anything currently.
 	{"\xC8", "Hidden Elements", 0, 0},
 };
 
-static quick_option quickmenu[] = //doshow does not do anything currently.
+static quick_option quickmenu[] =
 {
 	{"P", "Sand effect", QM_TOGGLE, &pretty_powder},
 	{"G", "Draw gravity grid", QM_TOGGLE, &drawgrav_enable},
+<<<<<<< HEAD
 	{"D", "Show Decorations", QM_TOGGLE, &decorations_enable},
 	{"M", "Click to change menus", QM_TOGGLE, &clickmenu_enable},
+=======
+	{"D", "Show decorations", QM_TOGGLE, &decorations_enable},
+>>>>>>> upstream/master
 	{NULL}
 };
 
