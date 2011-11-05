@@ -50,54 +50,6 @@ unsigned char fire_b[YRES/CELL][XRES/CELL];
 unsigned int fire_alpha[CELL*3][CELL*3];
 pixel *pers_bg;
 
-<<<<<<< HEAD
-void *ptif_pack(pixel *src, int w, int h, int *result_size)
-{
-    int i = 0, datalen = (w*h)*3, cx = 0, cy = 0;
-    unsigned char *red_chan = calloc(1, w*h);
-    unsigned char *green_chan = calloc(1, w*h);
-    unsigned char *blue_chan = calloc(1, w*h);
-    unsigned char *data = malloc(((w*h)*3)+8);
-    unsigned char *result = malloc(((w*h)*3)+8);
-
-    for(cx = 0; cx<w; cx++)
-    {
-        for(cy = 0; cy<h; cy++)
-        {
-            red_chan[w*(cy)+(cx)] = PIXR(src[w*(cy)+(cx)]);
-            green_chan[w*(cy)+(cx)] = PIXG(src[w*(cy)+(cx)]);
-            blue_chan[w*(cy)+(cx)] = PIXB(src[w*(cy)+(cx)]);
-        }
-    }
-
-    memcpy(data, red_chan, w*h);
-    memcpy(data+(w*h), green_chan, w*h);
-    memcpy(data+((w*h)*2), blue_chan, w*h);
-    free(red_chan);
-    free(green_chan);
-    free(blue_chan);
-
-    result[0] = 'P';
-    result[1] = 'T';
-    result[2] = 'i';
-    result[3] = 1;
-    result[4] = w;
-    result[5] = w>>8;
-    result[6] = h;
-    result[7] = h>>8;
-
-    i -= 8;
-
-    if(BZ2_bzBuffToBuffCompress((char *)(result+8), (unsigned *)&i, (char *)data, datalen, 9, 0, 0) != BZ_OK)
-    {
-        free(data);
-        free(result);
-        return NULL;
-    }
-    *result_size = i+8;
-    free(data);
-    return result;
-=======
 char * flm_data;
 int flm_data_points = 4;
 pixel flm_data_colours[] = {PIXPACK(0xAF9F0F), PIXPACK(0xDFBF6F), PIXPACK(0x60300F), PIXPACK(0x000000)};
@@ -125,7 +77,7 @@ char * generate_gradient(pixel * colours, float * points, int pointcount, int si
 				temp = points[j-1];
 				points[j-1] = points[j];
 				points[j] = temp;
-				
+
 				ptemp = colours[j-1];
 				colours[j-1] = colours[j];
 				colours[j] = ptemp;
@@ -157,12 +109,12 @@ char * generate_gradient(pixel * colours, float * points, int pointcount, int si
 
 void *ptif_pack(pixel *src, int w, int h, int *result_size){
 	int i = 0, datalen = (w*h)*3, cx = 0, cy = 0;
-	unsigned char *red_chan = calloc(1, w*h); 
-	unsigned char *green_chan = calloc(1, w*h); 
-	unsigned char *blue_chan = calloc(1, w*h); 
+	unsigned char *red_chan = calloc(1, w*h);
+	unsigned char *green_chan = calloc(1, w*h);
+	unsigned char *blue_chan = calloc(1, w*h);
 	unsigned char *data = malloc(((w*h)*3)+8);
 	unsigned char *result = malloc(((w*h)*3)+8);
-	
+
 	for(cx = 0; cx<w; cx++){
 		for(cy = 0; cy<h; cy++){
 			red_chan[w*(cy)+(cx)] = PIXR(src[w*(cy)+(cx)]);
@@ -170,14 +122,14 @@ void *ptif_pack(pixel *src, int w, int h, int *result_size){
 			blue_chan[w*(cy)+(cx)] = PIXB(src[w*(cy)+(cx)]);
 		}
 	}
-	
+
 	memcpy(data, red_chan, w*h);
 	memcpy(data+(w*h), green_chan, w*h);
 	memcpy(data+((w*h)*2), blue_chan, w*h);
 	free(red_chan);
 	free(green_chan);
 	free(blue_chan);
-	
+
 	result[0] = 'P';
 	result[1] = 'T';
 	result[2] = 'i';
@@ -186,19 +138,18 @@ void *ptif_pack(pixel *src, int w, int h, int *result_size){
 	result[5] = w>>8;
 	result[6] = h;
 	result[7] = h>>8;
-	
+
 	i -= 8;
-	
+
 	if(BZ2_bzBuffToBuffCompress((char *)(result+8), (unsigned *)&i, (char *)data, datalen, 9, 0, 0) != BZ_OK){
 		free(data);
 		free(result);
 		return NULL;
 	}
-	
+
 	*result_size = i+8;
 	free(data);
 	return result;
->>>>>>> upstream/master
 }
 
 pixel *ptif_unpack(void *datain, int size, int *w, int *h)
@@ -565,13 +516,8 @@ void sdl_blit_2(int x, int y, int w, int h, pixel *src, int pitch)
 
 void sdl_blit(int x, int y, int w, int h, pixel *src, int pitch)
 {
-<<<<<<< HEAD
-#ifdef OpenGL
-    RenderScene();
-=======
 #if defined(OGLR)
         ogl_blit(x, y, w, h, src, pitch, sdl_scale);
->>>>>>> upstream/master
 #else
     if (sdl_scale == 2)
         sdl_blit_2(x, y, w, h, src, pitch);
@@ -657,7 +603,7 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 						vid_buf[(XRES+BARSIZE)*(y+j)+(x+i)] = pc;
 					else if  (i%CELL == (j%CELL)+1 || (i%CELL == 0 && j%CELL == CELL-1))
 						vid_buf[(XRES+BARSIZE)*(y+j)+(x+i)] = gc;
-					else 
+					else
 						vid_buf[(XRES+BARSIZE)*(y+j)+(x+i)] = PIXPACK(0x202020);
 		}
 		else
@@ -2573,9 +2519,9 @@ void draw_air(pixel *vid)
 
     glEnable( GL_TEXTURE_2D );
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, partsFbo);
-    
+
 	glUseProgram(airProg);
-	
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, airVX);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, XRES/CELL, YRES/CELL, GL_RED, GL_FLOAT, vx);
@@ -2589,7 +2535,7 @@ void draw_air(pixel *vid)
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, XRES/CELL, YRES/CELL, GL_BLUE, GL_FLOAT, pv);
     glUniform1i(glGetUniformLocation(airProg, "airP"), 2);
     glActiveTexture(GL_TEXTURE0);
-    
+
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
     glTexCoord2d(1, 1);
@@ -2601,7 +2547,7 @@ void draw_air(pixel *vid)
     glTexCoord2d(1, 0);
     glVertex3f(XRES*sdl_scale, 0, 1.0);
     glEnd();
-    
+
     glUseProgram(0);
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -2622,7 +2568,7 @@ void draw_grav_zones(pixel * vid)
 					for (i=0; i<CELL; i++)
 						if(i == j)
 							drawpixel(vid, x*CELL+i, y*CELL+j, 255, 200, 0, 120);
-						else 
+						else
 							drawpixel(vid, x*CELL+i, y*CELL+j, 32, 32, 32, 120);
 			}
 		}
@@ -5136,7 +5082,7 @@ void render_parts(pixel *vid)
 		int caddV = 0, caddC = 0, cadd = 0;
 		int clineV = 0, clineC = 0, cline = 0;
 		GLuint origBlendSrc, origBlendDst;
-        
+
         glGetIntegerv(GL_BLEND_SRC, &origBlendSrc);
         glGetIntegerv(GL_BLEND_DST, &origBlendDst);
         //Render to the particle FBO
@@ -5153,7 +5099,7 @@ void render_parts(pixel *vid)
 
 			if(photons[ny][nx]&0xFF && !(ptypes[t].properties & TYPE_ENERGY))
 				continue;
-				
+
 			//Defaults
 			pixel_mode = 0 | PMODE_FLAT;
 			cola = 255;
@@ -5161,12 +5107,12 @@ void render_parts(pixel *vid)
 			colg = PIXG(ptypes[t].pcolors);
 			colb = PIXB(ptypes[t].pcolors);
 			firea = 0;
-			
+
 			deca = (parts[i].dcolour>>24)&0xFF;
 			decr = (parts[i].dcolour>>16)&0xFF;
 			decg = (parts[i].dcolour>>8)&0xFF;
 			decb = (parts[i].dcolour)&0xFF;
-				
+
 			if(cmode == CM_NOTHING)
 			{
 				if(decorations_enable)
@@ -5188,7 +5134,7 @@ void render_parts(pixel *vid)
 #endif
 			}
 			else
-			{	
+			{
 				if (graphicscache[t].isready)
 				{
 					pixel_mode = graphicscache[t].pixel_mode;
@@ -5285,7 +5231,7 @@ void render_parts(pixel *vid)
 				default:
 					break;
 				}
-				
+
 				//Apply decoration colour
 				if(!(pixel_mode & NO_DECO) && cmode != CM_HEAT && decorations_enable)
 				{
@@ -5293,14 +5239,14 @@ void render_parts(pixel *vid)
 					colg = (deca*decg + (255-deca)*colg) >> 8;
 					colb = (deca*decb + (255-deca)*colb) >> 8;
 				}
-				
+
 				if(pixel_mode & DECO_FIRE && decorations_enable)
 				{
 					firer = (deca*decr + (255-deca)*firer) >> 8;
 					fireg = (deca*decg + (255-deca)*fireg) >> 8;
 					fireb = (deca*decb + (255-deca)*fireb) >> 8;
 				}
-				
+
 	#ifndef OGLR
 				//All colours are now set, check ranges
 				if(colr>255) colr = 255;
@@ -5312,7 +5258,7 @@ void render_parts(pixel *vid)
 				if(cola>255) cola = 255;
 				else if(cola<0) cola = 0;
 	#endif
-					
+
 				//Pixel rendering
 				if(pixel_mode & PSPEC_STICKMAN)
 				{
@@ -5353,13 +5299,13 @@ void render_parts(pixel *vid)
 					glBegin(GL_LINES);
 					glVertex2f(nx, ny+3);
 					glVertex2f(cplayer->legs[0], cplayer->legs[1]);
-					
+
 					glVertex2f(cplayer->legs[0], cplayer->legs[1]);
 					glVertex2f(cplayer->legs[4], cplayer->legs[5]);
-					
+
 					glVertex2f(nx, ny+3);
 					glVertex2f(cplayer->legs[8], cplayer->legs[9]);
-					
+
 					glVertex2f(cplayer->legs[8], cplayer->legs[9]);
 					glVertex2f(cplayer->legs[12], cplayer->legs[13]);
 					glEnd();
@@ -5502,7 +5448,7 @@ void render_parts(pixel *vid)
 					addpixel(vid, nx-1, ny, colr, colg, colb, 96);
 					addpixel(vid, nx, ny+1, colr, colg, colb, 96);
 					addpixel(vid, nx, ny-1, colr, colg, colb, 96);
-					
+
 					for (x = 1; x < 6; x++) {
 						addpixel(vid, nx, ny-x, colr, colg, colb, 5);
 						addpixel(vid, nx, ny+x, colr, colg, colb, 5);
@@ -5556,7 +5502,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx-5;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5564,7 +5510,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5572,7 +5518,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx+5;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5580,7 +5526,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx;
 				    lineV[clineV++] = fny-5;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5588,7 +5534,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5620,7 +5566,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx-10;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5628,7 +5574,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5636,7 +5582,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx+10;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5644,7 +5590,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx;
 				    lineV[clineV++] = fny-10;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5652,7 +5598,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5693,7 +5639,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx-70;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5701,7 +5647,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5709,7 +5655,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx+70;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5717,7 +5663,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx;
 				    lineV[clineV++] = fny-70;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5725,7 +5671,7 @@ void render_parts(pixel *vid)
 				    lineV[clineV++] = fnx;
 				    lineV[clineV++] = fny;
 				    cline++;
-				    
+
 				    lineC[clineC++] = ((float)colr)/255.0f;
 				    lineC[clineC++] = ((float)colg)/255.0f;
 				    lineC[clineC++] = ((float)colb)/255.0f;
@@ -5787,14 +5733,14 @@ void render_parts(pixel *vid)
 					firer = ((firea*firer) >> 8) + fire_r[ny/CELL][nx/CELL];
 					fireg = ((firea*fireg) >> 8) + fire_g[ny/CELL][nx/CELL];
 					fireb = ((firea*fireb) >> 8) + fire_b[ny/CELL][nx/CELL];
-				
+
 					if(firer>255)
 						firer = 255;
 					if(fireg>255)
 						fireg = 255;
 					if(fireb>255)
 						fireb = 255;
-					
+
 					fire_r[ny/CELL][nx/CELL] = firer;
 					fire_g[ny/CELL][nx/CELL] = fireg;
 					fire_b[ny/CELL][nx/CELL] = fireb;
@@ -5803,14 +5749,14 @@ void render_parts(pixel *vid)
 			}
 		}
 	}
-#ifdef OGLR		
-        
+#ifdef OGLR
+
         //Go into array mode
         glEnableClientState(GL_COLOR_ARRAY);
         glEnableClientState(GL_VERTEX_ARRAY);
-        
+
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      
+
  		if(cflat)
 		{
 			// -- BEGIN FLAT -- //
@@ -5821,11 +5767,11 @@ void render_parts(pixel *vid)
 		    glVertexPointer(2, GL_INT, 0, &flatV[0]);
 
 		    glDrawArrays(GL_POINTS, 0, cflat);
-		    
+
 		    //Clear some stuff we set
 		    // -- END FLAT -- //
         }
-        
+
         if(cblob)
 		{
 		    // -- BEGIN BLOB -- //
@@ -5836,12 +5782,12 @@ void render_parts(pixel *vid)
 		    glVertexPointer(2, GL_INT, 0, &blobV[0]);
 
 		    glDrawArrays(GL_POINTS, 0, cblob);
-		    
+
 		    //Clear some stuff we set
 		    glDisable( GL_POINT_SMOOTH );
 		    // -- END BLOB -- //
 		}
-        
+
         if(cglow || cblur)
         {
         	// -- BEGIN GLOW -- //
@@ -5851,41 +5797,41 @@ void render_parts(pixel *vid)
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, glowAlpha);
 			glUniform1i(glGetUniformLocation(fireProg, "fireAlpha"), 0);
-			
+
 			glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
-		
+
 			//Make sure we can use texture coords on points
 			glEnable(GL_POINT_SPRITE);
 			glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 			glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-		
+
 			//Set point size (size of fire texture)
 			glPointSize(11.0f);
-			
+
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 			if(cglow)
 			{
 				glColorPointer(4, GL_FLOAT, 0, &glowC[0]);
 				glVertexPointer(2, GL_INT, 0, &glowV[0]);
-	
+
 				glDrawArrays(GL_POINTS, 0, cglow);
 			}
-			
+
 			glPointSize(7.0f);
-			
+
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			
+
 			if(cblur)
 			{
 				glBindTexture(GL_TEXTURE_2D, blurAlpha);
-			
+
 				glColorPointer(4, GL_FLOAT, 0, &blurC[0]);
 				glVertexPointer(2, GL_INT, 0, &blurV[0]);
 
 				glDrawArrays(GL_POINTS, 0, cblur);
 			}
-		    
+
 		    //Clear some stuff we set
 		    glDisable(GL_POINT_SPRITE);
 			glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -5894,7 +5840,7 @@ void render_parts(pixel *vid)
 			glDisable(GL_TEXTURE_2D);
 		    // -- END GLOW -- //
         }
-        
+
  		if(cadd)
 		{
 			// -- BEGIN ADD -- //
@@ -5910,7 +5856,7 @@ void render_parts(pixel *vid)
 		    //Clear some stuff we set
 		    // -- END ADD -- //
         }
-        
+
         if(cline)
 		{
 			// -- BEGIN LINES -- //
@@ -5920,13 +5866,13 @@ void render_parts(pixel *vid)
 		    glVertexPointer(2, GL_FLOAT, 0, &lineV[0]);
 
 		    glDrawArrays(GL_LINE_STRIP, 0, cline);
-		    
+
 		    //Clear some stuff we set
 		    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		    glDisable(GL_LINE_SMOOTH);
 		    // -- END LINES -- //
         }
-		
+
 		if(cfire || csmoke)
 		{
 			// -- BEGIN FIRE -- //
@@ -5936,15 +5882,15 @@ void render_parts(pixel *vid)
 			//glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, fireAlpha);
 			glUniform1i(glGetUniformLocation(fireProg, "fireAlpha"), 0);
-		
+
 			//Make sure we can use texture coords on points
 			glEnable(GL_POINT_SPRITE);
 			glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 			glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-		
+
 			//Set point size (size of fire texture)
 			glPointSize(CELL*3);
-			
+
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 			if(cfire)
@@ -5954,9 +5900,9 @@ void render_parts(pixel *vid)
 
 				glDrawArrays(GL_POINTS, 0, cfire);
 			}
-			
+
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			
+
 			if(csmoke)
 			{
 				glColorPointer(4, GL_FLOAT, 0, &smokeC[0]);
@@ -5964,7 +5910,7 @@ void render_parts(pixel *vid)
 
 				glDrawArrays(GL_POINTS, 0, csmoke);
 			}
-		    
+
 		    //Clear some stuff we set
 		    glDisable(GL_POINT_SPRITE);
 			glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -5975,18 +5921,18 @@ void render_parts(pixel *vid)
         }
 
         glDisableClientState(GL_COLOR_ARRAY);
-        glDisableClientState(GL_VERTEX_ARRAY);     
-        
+        glDisableClientState(GL_VERTEX_ARRAY);
+
         //Reset FBO
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        
+
         //Drawing the FBO onto the screen sounds like a cool idea now
 		glEnable( GL_TEXTURE_2D );
 		if(cmode==CM_FANCY)
 		{
 			float xres = XRES, yres = YRES;
 			glUseProgram(lensProg);
-			glActiveTexture(GL_TEXTURE0);			
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, partsFboTex);
 			glUniform1i(glGetUniformLocation(lensProg, "pTex"), 0);
 			glActiveTexture(GL_TEXTURE1);
@@ -6002,11 +5948,11 @@ void render_parts(pixel *vid)
 			glUniform1fv(glGetUniformLocation(lensProg, "yres"), 1, &yres);
 		}
 		else
-		{	
+		{
 			glBindTexture(GL_TEXTURE_2D, partsFboTex);
 			glBlendFunc(GL_ONE, GL_ONE);
 		}
-		
+
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glBegin(GL_QUADS);
 		glTexCoord2d(1, 0);
@@ -6018,14 +5964,14 @@ void render_parts(pixel *vid)
 		glTexCoord2d(1, 1);
 		glVertex3f(XRES*sdl_scale, MENUSIZE*sdl_scale, 1.0);
 		glEnd();
-		
+
 		if(cmode==CM_FANCY)
 		{
 			glUseProgram(0);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 		glDisable( GL_TEXTURE_2D );
-        
+
         glBlendFunc(origBlendSrc, origBlendDst);
 #endif
 }
@@ -6073,7 +6019,7 @@ void draw_walls(pixel *vid)
 								vid[(y*CELL+j)*(XRES+BARSIZE)+(x*CELL+i)] = pc;
 							else if  (i == j+1 || (i == 0 && j == CELL-1))
 								vid[(y*CELL+j)*(XRES+BARSIZE)+(x*CELL+i)] = gc;
-							else 
+							else
 								vid[(y*CELL+j)*(XRES+BARSIZE)+(x*CELL+i)] = PIXPACK(0x202020);
 				}
 >>>>>>> upstream/master
@@ -6563,7 +6509,7 @@ void prepare_alpha(int size, float intensity)
 	for (x=0; x<CELL*3; x++)
 		for (y=0; y<CELL*3; y++)
 			fire_alpha[y][x] = (int)(multiplier*temp[y][x]/(CELL*CELL));
-			
+
 #ifdef OGLR
 	for (x=0; x<CELL*3; x++)
 		for (y=0; y<CELL*3; y++)
@@ -6575,11 +6521,11 @@ void prepare_alpha(int size, float intensity)
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, CELL*3, CELL*3, GL_ALPHA, GL_FLOAT, fire_alphaf);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
-	
+
 	memset(glow_alphaf, 0, sizeof(glow_alphaf));
-	
+
 	c = 5;
-	
+
 	glow_alphaf[c][c-1] = 0.4f;
 	glow_alphaf[c][c+1] = 0.4f;
 	glow_alphaf[c-1][c] = 0.4f;
@@ -6598,15 +6544,15 @@ void prepare_alpha(int size, float intensity)
 			glow_alphaf[c-x][c-y] += 0.02f;
 		}
 	}
-	
+
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, glowAlpha);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 11, 11, GL_ALPHA, GL_FLOAT, glow_alphaf);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
-	
+
 	c = 3;
-	
+
 	for (x=-3; x<4; x++)
 	{
 		for (y=-3; y<4; y++)
@@ -6619,7 +6565,7 @@ void prepare_alpha(int size, float intensity)
 				blur_alphaf[c+x][c-y] = 0.04f;
 		}
 	}
-	
+
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, blurAlpha);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 7, 7, GL_ALPHA, GL_FLOAT, blur_alphaf);
@@ -6767,12 +6713,12 @@ void render_zoom(pixel *img) //draws the zoom box
 	float zcx1, zcx0, zcy1, zcy0, yfactor, xfactor; //X-Factor is shit, btw
 	xfactor = 1.0f/(float)XRES;
 	yfactor = 1.0f/(float)YRES;
-	
+
 	zcx0 = (zoom_x)*xfactor;
 	zcx1 = (zoom_x+ZSIZE)*xfactor;
 	zcy0 = (zoom_y)*yfactor;
 	zcy1 = ((zoom_y+ZSIZE))*yfactor;
-	 
+
 	 glLineWidth(sdl_scale);
 	glEnable(GL_LINE_SMOOTH);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -6784,7 +6730,7 @@ void render_zoom(pixel *img) //draws the zoom box
 	glVertex3i((zoom_wx-1)*sdl_scale, (YRES+MENUSIZE-zoom_wy)*sdl_scale, 0);
 	glEnd();
 	glDisable(GL_LINE_SMOOTH);
-	
+
 	glGetIntegerv(GL_BLEND_SRC, &origBlendSrc);
 	glGetIntegerv(GL_BLEND_DST, &origBlendDst);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -6806,11 +6752,11 @@ void render_zoom(pixel *img) //draws the zoom box
 	glEnd();
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable( GL_TEXTURE_2D );
-	
+
 	glBlendFunc(origBlendSrc, origBlendDst);
-	
+
 	if(zoom_en)
-	{	
+	{
 		glEnable(GL_COLOR_LOGIC_OP);
 		//glEnable(GL_LINE_SMOOTH);
 		glLogicOp(GL_XOR);
@@ -7584,7 +7530,7 @@ int sdl_open(void)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, XRES, YRES, 0, GL_RGBA, GL_FLOAT, NULL);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-		 
+
 		//FBO
 		glGenFramebuffers(1, &partsFbo);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, partsFbo);
@@ -7805,7 +7751,7 @@ void loadShaders()
 	glAttachShader( fireProg, fragmentShader );
 	glLinkProgram( fireProg );
 	checkProgram(fireProg, "F");
-	
+
 	//Lensing
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -7823,7 +7769,7 @@ void loadShaders()
 	glAttachShader( lensProg, fragmentShader );
 	glLinkProgram( lensProg );
 	checkProgram(lensProg, "L");
-	
+
 	//Air Velocity
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -7841,7 +7787,7 @@ void loadShaders()
 	glAttachShader( airProg_Velocity, fragmentShader );
 	glLinkProgram( airProg_Velocity );
 	checkProgram(airProg_Velocity, "AV");
-	
+
 	//Air Pressure
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -7859,7 +7805,7 @@ void loadShaders()
 	glAttachShader( airProg_Pressure, fragmentShader );
 	glLinkProgram( airProg_Pressure );
 	checkProgram(airProg_Pressure, "AP");
-	
+
 	//Air cracker
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);

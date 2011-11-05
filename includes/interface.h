@@ -73,12 +73,8 @@ static quick_option quickmenu[] =
 {
 	{"P", "Sand effect", QM_TOGGLE, &pretty_powder},
 	{"G", "Draw gravity grid", QM_TOGGLE, &drawgrav_enable},
-<<<<<<< HEAD
 	{"D", "Show Decorations", QM_TOGGLE, &decorations_enable},
 	{"M", "Click to change menus", QM_TOGGLE, &clickmenu_enable},
-=======
-	{"D", "Show decorations", QM_TOGGLE, &decorations_enable},
->>>>>>> upstream/master
 	{NULL}
 };
 

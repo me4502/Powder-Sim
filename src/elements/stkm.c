@@ -14,7 +14,7 @@ int update_STKM(UPDATE_FUNC_ARGS)
 }
 
 int graphics_STKM(GRAPHICS_FUNC_ARGS)
-{	
+{
 	*pixel_mode = PSPEC_STICKMAN;
 	if ((int)player.elem<PT_NUM)
 	{
@@ -87,54 +87,6 @@ int run_stickman(playerst* playerp, UPDATE_FUNC_ARGS) {
 	parts[i].vy -= gvy*dt;
 
 	//Verlet integration
-<<<<<<< HEAD
-	pp = 2*playerp[3]-playerp[5]+playerp[19]*dt*dt;
-	playerp[5] = playerp[3];
-	playerp[3] = pp;
-	pp = 2*playerp[4]-playerp[6]+playerp[20]*dt*dt;
-	playerp[6] = playerp[4];
-	playerp[4] = pp;
-
-	pp = 2*playerp[7]-playerp[9]+(playerp[21]+gvx)*dt*dt;
-	playerp[9] = playerp[7];
-	playerp[7] = pp;
-	pp = 2*playerp[8]-playerp[10]+(playerp[22]+gvy)*dt*dt;
-	playerp[10] = playerp[8];
-	playerp[8] = pp;
-
-	pp = 2*playerp[11]-playerp[13]+playerp[23]*dt*dt;
-	playerp[13] = playerp[11];
-	playerp[11] = pp;
-	pp = 2*playerp[12]-playerp[14]+playerp[24]*dt*dt;
-	playerp[14] = playerp[12];
-	playerp[12] = pp;
-
-	pp = 2*playerp[15]-playerp[17]+(playerp[25]+gvx)*dt*dt;
-	playerp[17] = playerp[15];
-	playerp[15] = pp;
-	pp = 2*playerp[16]-playerp[18]+(playerp[26]+gvy)*dt*dt;
-	playerp[18] = playerp[16];
-	playerp[16] = pp;
-
-	//Setting acceleration to 0
-	playerp[19] = 0;
-	playerp[20] = 0;
-
-	playerp[21] = 0;
-	playerp[22] = 0;
-
-	playerp[23] = 0;
-	playerp[24] = 0;
-
-	playerp[25] = 0;
-	playerp[26] = 0;
-
-	gx = (playerp[7] + playerp[15])/2 - gvy;
-	gy = (playerp[8] + playerp[16])/2 + gvx;
-	dl = pow(gx - playerp[7], 2) + pow(gy - playerp[8], 2);
-	dr = pow(gx - playerp[15], 2) + pow(gy - playerp[16], 2);
-
-=======
 	pp = 2*playerp->legs[0]-playerp->legs[2]+playerp->accs[0]*dt*dt;
 	playerp->legs[2] = playerp->legs[0];
 	playerp->legs[0] = pp;
@@ -180,8 +132,7 @@ int run_stickman(playerst* playerp, UPDATE_FUNC_ARGS) {
 	gy = (playerp->legs[5] + playerp->legs[13])/2 + gvx;
 	dl = pow(gx - playerp->legs[4], 2) + pow(gy - playerp->legs[5], 2);
 	dr = pow(gx - playerp->legs[12], 2) + pow(gy - playerp->legs[13], 2);
-	
->>>>>>> upstream/master
+
 	//Go left
 	if (((int)(playerp->comm)&0x01) == 0x01)
 	{
@@ -233,13 +184,8 @@ int run_stickman(playerst* playerp, UPDATE_FUNC_ARGS) {
 	}
 
 	//Jump
-<<<<<<< HEAD
-	if (((int)(playerp[0])&0x04) == 0x04 &&
-			(!eval_move(PT_DUST, playerp[7], playerp[8], NULL) || !eval_move(PT_DUST, playerp[15], playerp[16], NULL)))
-=======
-	if (((int)(playerp->comm)&0x04) == 0x04 && 
+	if (((int)(playerp->comm)&0x04) == 0x04 &&
 			(!eval_move(PT_DUST, playerp->legs[4], playerp->legs[5], NULL) || !eval_move(PT_DUST, playerp->legs[12], playerp->legs[13], NULL)))
->>>>>>> upstream/master
 	{
 		parts[i].vy -= 4*gvy;
 		playerp->accs[3] -= gvy;
@@ -262,14 +208,8 @@ int run_stickman(playerst* playerp, UPDATE_FUNC_ARGS) {
 					r = photons[y+ry][x+rx];
 
 				if (!r && !bmap[(y+ry)/CELL][(x+rx)/CELL])
-					continue;
-<<<<<<< HEAD
 
-				if (ptypes[r&0xFF].falldown!=0 || (r&0xFF) == PT_NEUT || (r&0xFF) == PT_PHOT)
-=======
-				
 				if (ptypes[r&0xFF].falldown!=0 || ptypes[r&0xFF].state == ST_GAS || (r&0xFF) == PT_NEUT || (r&0xFF) == PT_PHOT)
->>>>>>> upstream/master
 				{
 					playerp->elem = r&0xFF;  //Current element
 				}
@@ -485,17 +425,7 @@ void STKM_interact(playerst* playerp, int i, int x, int y)
 			parts[i].life -= 2;
 			playerp->accs[3] -= 1;
 		}
-<<<<<<< HEAD
 
-		if ((r&0xFF)==PT_ACID)  //If on acid
-			parts[i].life -= 5;
-
-		if ((r&0xFF)==PT_PLUT)  //If on plut
-			parts[i].life -= 1;
-
-=======
-			
->>>>>>> upstream/master
 		if (ptypes[r&0xFF].properties&PROP_DEADLY)
 			switch (r&0xFF)
 			{
