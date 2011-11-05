@@ -110,7 +110,11 @@ Click on the elements with the mouse and draw in the field, like in MS Paint. Th
 ### [Our Additions]
 
 <pre>
-* Version 1.0
+* Version 0.2
+      o Added Polyethylene Plastic
+      o Added Hydrofluoric Acid
+
+* Version 0.1
       o Makefile updated for RHEL
       o Francium Added
 </pre>

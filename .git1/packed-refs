@@ -1,0 +1,4 @@
+# pack-refs with: peeled 
+26da875bcf1f6d60cd810f7e89a3ec5f6cc73af9 refs/remotes/origin/pyconsole
+c33448e25edbb7b3250354840d69bbcbdbabb986 refs/remotes/origin/merge
+0b27da4ddd035f1bb8ffb0a442b801c547e27aae refs/remotes/origin/master

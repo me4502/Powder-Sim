@@ -212,7 +212,10 @@
 #define PT_GBMB 157
 #define PT_ALCO 158
 #define PT_FRAN 159
-#define PT_NUM  160
+#define PT_WSTE 160
+#define PT_HFAC 161
+#define PT_PLAS 162
+#define PT_NUM  163
 
 #define R_TEMP 22
 #define MAX_TEMP 9999
@@ -342,6 +345,8 @@ int update_DEST(UPDATE_FUNC_ARGS);
 int update_EMP(UPDATE_FUNC_ARGS);
 int update_LIGH(UPDATE_FUNC_ARGS);
 int update_NBLE(UPDATE_FUNC_ARGS);
+int update_WSTE(UPDATE_FUNC_ARGS);
+int update_HFAC(UPDATE_FUNC_ARGS);
 
 int update_MISC(UPDATE_FUNC_ARGS);
 int update_legacy_PYRO(UPDATE_FUNC_ARGS);
@@ -581,8 +586,11 @@ static const part_type ptypes[PT_NUM] =
 	{"CLST",	PIXPACK(0xE4A4A4),	0.7f,	0.02f * CFDS,	0.94f,	0.95f,	0.0f,	0.2f,	0.00f,	0.000f	* CFDS,	1,	0,		0,	2,	2,	1,	1,	55,		1.0f,   SC_POWDERS,		R_TEMP+0.0f	+273.15f,	70,		"Clay dust. Produces paste when mixed with water.", ST_SOLID, TYPE_PART, &update_CLST},
 	{"WIRE",    PIXPACK(0xFFCC00),  0.0f,   0.00f * CFDS,   0.00f,  0.00f,  0.0f,   0.0f,   0.00f,  0.000f  * CFDS, 0,  0,      0,  0,  0,  1,  1,  100,    1.0f,   SC_ELEC,        R_TEMP+0.0f +273.15f,   250,    "WireWorld wires.",ST_SOLID,TYPE_SOLID,&update_WIRE},
 	{"GBMB",	PIXPACK(0x1144BB),	0.6f,	0.01f * CFDS,	0.98f,	0.95f,	0.0f,	0.1f,	0.00f,	0.000f	* CFDS,	1,	0,		0,	0,	20,	1,	1,	30,		1.0f,   SC_EXPLOSIVE,	R_TEMP-2.0f	+273.15f,	29,		"Sticks to first object it touches then produces strong gravity push.", ST_NONE, TYPE_PART|PROP_LIFE_DEC|PROP_LIFE_KILL_DEC, &update_GBMB},
-  {"ALCO",    PIXPACK(0x02D4D4),  0.6f,   0.01f * CFDS,   0.97f,  0.96f,  0.0f,   0.9f,   0.00f,  0.000f  * CFDS, 2,  200,    0,  0,  10, 1,  1,  49,     1.0f,   SC_EXPLOSIVE,   R_TEMP+0.0  +273.15f,   250,    "Alcohol. Flammable. Evaporates at low temps. Sterile.",ST_LIQUID, TYPE_LIQUID|PROP_DEADLY|PROP_NEUTABSORB, NULL},
-  {"FRAN",		PIXPACK(0xBDBDBD),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	500,	0,	0,	0,	1,	1,	100,  1.0f,	SC_EXPLOSIVE,	R_TEMP+0.0f	+273.15f,	88,		"Explosive", ST_SOLID, TYPE_SOLID | PROP_NEUTPENETRATE, &update_FRAN},
+	{"ALCO",    PIXPACK(0x02D4D4),  0.6f,   0.01f * CFDS,   0.97f,  0.96f,  0.0f,   0.9f,   0.00f,  0.000f  * CFDS, 2,  200,    0,  0,  10, 1,  1,  49,     1.0f,   SC_EXPLOSIVE,   R_TEMP+0.0  +273.15f,   250,    "Alcohol. Flammable. Evaporates at low temps. Sterile.",ST_LIQUID, TYPE_LIQUID|PROP_DEADLY|PROP_NEUTABSORB, NULL},
+	{"FRAN",		PIXPACK(0xBDBDBD),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	500,	0,	0,	0,	1,	1,	100,  1.0f,	SC_EXPLOSIVE,	R_TEMP+0.0f	+273.15f,	88,		"Explosive", ST_SOLID, TYPE_SOLID | PROP_NEUTPENETRATE, &update_FRAN},
+	{"WSTE",	PIXPACK(0x00BB00),	0.3f,	0.02f * CFDS,	0.98f,	0.80f,	0.0f,	0.15f,	0.00f,	0.000f	* CFDS,	2,	0,		0,	0,	2,	1,	1,	42,		1.0f,  SC_NUCLEAR,		R_TEMP+0.0f+273.15f,	44,		"Nuclear Waste", ST_LIQUID, TYPE_LIQUID, &update_WSTE},
+	{"HFAC",	PIXPACK(0xAAAAAA),	0.6f,	0.01f * CFDS,	0.98f,	0.95f,	0.0f,	0.1f,	0.00f,	0.000f	* CFDS,	2,	40,		0,	0,	1,	1,	1,	10,		1.0f,  SC_LIQUID,		R_TEMP+0.0f	+273.15f,	34,		"Hydrofluoric acid, Dissolves everything except Polyethylene Plastic.", ST_LIQUID, TYPE_LIQUID, &update_HFAC},
+	{"PLAS",	PIXPACK(0x000099),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	0,	1,	1,	100,	1.0f,  SC_SOLIDS,		R_TEMP+0.0f	+273.15f,	186,	"Polyethylene Plastic.", ST_SOLID, TYPE_SOLID, NULL},
 	//Name		Colour				Advec	Airdrag			Airloss	Loss	Collid	Grav	Diffus	Hotair			Fal	Burn	Exp	Mel	Hrd M	Use	Weight Valency	Section			H						Ins		Description
 };
 
@@ -758,6 +766,9 @@ static part_transition ptransitions[PT_NUM] =
 	/* GBMB */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
 	/* ALCO */ {IPL,  NT,     IPH,  NT,     ITL,  NT,     315.15f, PT_GAS},
 	/* FRAN */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			673.0f,	 PT_FIRE},
+	/* WSTE */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
+	/* HFAC */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
+	/* PLAS */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
 };
 #undef IPL
 #undef IPH
