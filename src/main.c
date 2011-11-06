@@ -181,6 +181,7 @@ int active_menu = 0;
 int framerender = 0;
 int pretty_powder = 0;
 int clickmenu_enable = 1;
+int fancy_graphics = 0;
 int amd = 1;
 int FPSB = 0;
 int MSIGN =-1;
