@@ -1041,7 +1041,7 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
     {
         for (i=1; i<w; i++)
         {
-            if (dir==1)
+            if (dir==1)//Up/Down
             {
                 float hf = (float)j/(float)h;
                 float wf = (float)i/(float)w;
@@ -1049,7 +1049,7 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
                 gradg[j][i] = (sg*hf) + ((1.0f-hf)*eg);
                 gradb[j][i] = (sb*hf) + ((1.0f-hf)*eb);
             }
-            else if (dir==2)
+            else if (dir==2)//Left/Right
             {
                 float hf = (float)j/(float)h;
                 float wf = (float)i/(float)w;
@@ -1057,15 +1057,19 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
                 gradg[j][i] = (sg*wf) + ((1.0f-wf)*eg);
                 gradb[j][i] = (sb*wf) + ((1.0f-wf)*eb);
             }
+            else if (dir==3)
+            {
+
+            }
         }
     }
     for (j=1; j<h; j++)
     {
         for (i=1; i<w; i++)
         {
-            if (gradr[j][i]<er)gradr[j][i]=0;
-            if (gradg[j][i]<eg)gradg[j][i]=0;
-            if (gradb[j][i]<eb)gradb[j][i]=0;
+            if (gradr[j][i]<0)gradr[j][i]=0;
+            if (gradg[j][i]<0)gradg[j][i]=0;
+            if (gradb[j][i]<0)gradb[j][i]=0;
             if (gradr[j][i]>255)gradr[j][i]=255;
             if (gradg[j][i]>255)gradg[j][i]=255;
             if (gradb[j][i]>255)gradb[j][i]=255;
