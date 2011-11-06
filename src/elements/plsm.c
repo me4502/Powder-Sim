@@ -28,7 +28,7 @@ int graphics_PLSM(GRAPHICS_FUNC_ARGS)
         *colg = PIXG(pc);
         *colb = PIXB(pc);
         *colr = PIXR(pc);
-        *pixel_mode |= FIRE_ADD;
+        *pixel_mode |= FIRE_BLEND|PMODE_FLARE|PMODE_GLOW|PMODE_BLEND;
         return 0;
     }
 }
