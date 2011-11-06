@@ -2067,7 +2067,7 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     sy = y;
     if (i==-1)
         return;
-    gradient_fill(vid_buf, 0,YRES-5,XRES,MENUSIZE/2+8,150,200,250,255,50,150,200,255);
+    gradient_fill(vid_buf, 0, YRES-5, XRES, MENUSIZE/2+8, 150, 200, 250, 255, 50, 150, 200, 2);
     if (i==SC_WALL)//wall menu
     {
         if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling
@@ -2508,7 +2508,7 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
 			float overflow = fwidth-(XRES-BARSIZE), location = ((float)XRES-BARSIZE)/((float)(mx-(XRES-BARSIZE)));
 			xoff = (int)(overflow / location);
 		}
-		for (n = 0; n<7; n++)
+		for (n = 0; n<DECO_COLNUM; n++)
 		{
 				for (a=1; a<15; a++)
 				{
@@ -2548,7 +2548,7 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
 			float overflow = fwidth-(XRES-BARSIZE), location = ((float)XRES-BARSIZE)/((float)(mx-(XRES-BARSIZE)));
 			xoff = (int)(overflow / location);
 		}
-		for (n = 0; n<4; n++)
+		for (n = 0; n<DECO_NUM; n++)
 		{
 				for (a=1; a<15; a++)
 				{

@@ -12,6 +12,6 @@
 	"favourites":	[],
 	"Sand effect":	0,
 	"Draw gravity grid":	0,
-	"Show Decorations":	1,
-	"Click to change menus":	1
+	"Show Decorations":	0,
+	"Click to change menus":	0
 }
