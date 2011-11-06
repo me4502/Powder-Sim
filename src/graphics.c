@@ -2860,12 +2860,13 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 {
 	int rp, tr,tg,tb;
 	rp = pmap[y][x];
-	if (tool == DECO_BACK)
+    if (tool == DECO_BACK)
     {
         if (click == 4)
             decolour[x][y] = 0;
         else
             decolour[x][y] = ((255<<24)|(r<<16)|(g<<8)|b);
+        draw_back(vid_buf);
     }
 	if (!rp)
 		return;
@@ -2875,7 +2876,6 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 			parts[rp>>8].dcolour = 0;
 		else
 			parts[rp>>8].dcolour = ((255<<24)|(r<<16)|(g<<8)|b);
-        draw_back(vid_buf);
 	}
 	else if (tool == DECO_LIGHTEN)
 	{//maybe get a better lighten/darken?
