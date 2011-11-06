@@ -1026,7 +1026,7 @@ void drawrect(pixel *vid, int x, int y, int w, int h, int r, int g, int b, int a
 	}
 }
 
-void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int sb, int sa, int er, int eg, int eb, int ea)
+void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int sb, int a, int er, int eg, int eb, int dir)
 {
     int i, j, p;
     int gradr[h][w];
@@ -1035,16 +1035,26 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
     unsigned int s,e;
     s = PIXRGB(sr,sg,sb);
     e = PIXRGB(er,eg,eb);
-    int ar = sr/er,ag = sg/eg,ab = sb/eb,aa = sa/ea;
+    int ar = sr/er,ag = sg/eg,ab = sb/eb;
     int am = ar+ag+ab/3;
     for (j=1; j<h; j++)
     {
         for (i=1; i<w; i++)
         {
-            int f = j+i;
-            gradr[j][i] = sr-(f-er);
-            gradg[j][i] = sg-(f-eg);
-            gradb[j][i] = sb-(f-eb);
+            if (dir==1)
+            {
+                int f = j+i;
+                gradr[j][i] = sr-(f-er);
+                gradg[j][i] = sg-(f-eg);
+                gradb[j][i] = sb-(f-eb);
+            }
+            else if (dir==2)
+            {
+                int f = j*10;
+                gradr[j][i] = sr-(f-er);
+                gradg[j][i] = sg-(f-eg);
+                gradb[j][i] = sb-(f-eb);
+            }
         }
     }
     for (j=1; j<h; j++)
@@ -1057,7 +1067,7 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
             if (gradr[j][i]>255)gradr[j][i]=255;
             if (gradg[j][i]>255)gradg[j][i]=255;
             if (gradb[j][i]>255)gradb[j][i]=255;
-            drawpixel(vid, x+i, y+j, gradr[j][i], gradg[j][i], gradb[j][i], 255);
+            drawpixel(vid, x+i, y+j, gradr[j][i], gradg[j][i], gradb[j][i], a);
         }
     }
 
