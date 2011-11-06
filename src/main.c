@@ -128,7 +128,7 @@ void play_sound(char *file)
 }
 
 static const char *it_msg =
-    "\blThe Powder Toy - Version " MTOS(SAVE_VERSION) "." MTOS(MINOR_VERSION) " - http://powdertoy.co.uk, irc.freenode.net #powder\n"
+    "\br Powder Sim - Version " MTOS(SAVE_VERSION) "." MTOS(MINOR_VERSION) " - http://powdertoy.co.cc, irc.freenode.net #powdersim\n"
     "\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\n"
     "\n"
     "\bgControl+C/V/X are Copy, Paste and cut respectively.\n"
@@ -148,10 +148,12 @@ static const char *it_msg =
     "The spacebar can be used to pause physics.\n"
     "'P' will take a screenshot and save it into the current directory.\n"
     "\n"
-    "Contributors: \bgStanislaw K Skowronek (\brhttp://powder.unaligned.org\bg, \bbirc.unaligned.org #wtf\bg),\n"
+    "\boPowder Sim Contributors:\bg Madeline Miller(me4502), Vanquish349, Randalserrano And Antonvrg\n\n"
+
+
+    "\boPowder Toy Contributors: \bgStanislaw K Skowronek (\brhttp://powder.unaligned.org\bg, \bbirc.unaligned.org #wtf\bg),\n"
     "\bgSimon Robertshaw, Skresanov Savely, cracker64, Catelite, Bryan Hoyle, Nathan Cousins, jacksonmj,\n"
-	"\bgLieuwe Mosch, Anthony Boot, Madeline Miller, MaksProg\n"
-	" \boPowder Sim Contributors:\bg Madeline Miller(Me4502), Vanquish349, Eyes, antonvrg\n"
+    "\bgLieuwe Mosch, Anthony Boot, Madeline Miller, MaksProg\n"
     "\n"
     "\bgTo use online features such as saving, you need to register at: \brhttp://powdertoy.co.uk/Register.html"
     ;
