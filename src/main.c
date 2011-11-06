@@ -1923,7 +1923,7 @@ int main(int argc, char *argv[])
 				debug_perf_time = ts.tv_nsec;
 			#endif
 		}
-        draw_back(vid_buf);
+        draw_back(vid_buf, 0);
 		render_parts(part_vbuf); //draw particles
 		draw_other(part_vbuf);
 
