@@ -10,9 +10,9 @@
 	"cmode":	3,
 	"scale":	1,
 	"favourites":	[],
-	"Sand effect":	0,
-	"Draw gravity grid":	0,
+	"Sand effect":	1,
+	"Draw gravity grid":	1,
 	"Show Decorations":	1,
-	"Click to change menus":	0,
+	"Click to change menus":	1,
 	"Fancy Graphics":	1
 }
