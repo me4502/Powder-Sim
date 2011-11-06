@@ -224,7 +224,7 @@ int graphics_INVS(GRAPHICS_FUNC_ARGS)
 		*colb = 150;
 		*pixel_mode &= PMODE;
 		*pixel_mode |= PMODE_BLEND;
-	} 
+	}
 	return 0;
 }
 int graphics_ACID(GRAPHICS_FUNC_ARGS)
@@ -349,16 +349,16 @@ int graphics_GLOW(GRAPHICS_FUNC_ARGS)
 	*colr = restrict_flt(64.0f+cpart->temp-(275.13f+32.0f), 0, 255);
 	*colg = restrict_flt(64.0f+cpart->ctype, 0, 255);
 	*colb = restrict_flt(64.0f+cpart->tmp, 0, 255);
-	
+
 	*pixel_mode |= FIRE_ADD;
 	return 0;
 }
 int graphics_LCRY(GRAPHICS_FUNC_ARGS)
 {
 	int lifemod = ((cpart->life>10?10:cpart->life)*10);
-	*colr += lifemod; 
-	*colg += lifemod; 
-	*colb += lifemod; 
+	*colr += lifemod;
+	*colg += lifemod;
+	*colb += lifemod;
 	if(cpart->dcolour && cpart->dcolour&0xFF000000)
 	{
 		lifemod *= 2.5f;
@@ -438,12 +438,12 @@ int graphics_HFLM(GRAPHICS_FUNC_ARGS)
 	*colr = (unsigned char)hflm_data[caddress];
 	*colg = (unsigned char)hflm_data[caddress+1];
 	*colb = (unsigned char)hflm_data[caddress+2];
-	
+
 	*firea = 255;
 	*firer = *colr;
 	*fireg = *colg;
 	*fireb = *colb;
-	
+
 	*pixel_mode = PMODE_NONE; //Clear default, don't draw pixel
 	*pixel_mode |= FIRE_ADD;
 	//Returning 0 means dynamic, do not cache
@@ -457,7 +457,7 @@ int graphics_FIRW(GRAPHICS_FUNC_ARGS)
 		*colr = (unsigned char)firw_data[caddress];
 		*colg = (unsigned char)firw_data[caddress+1];
 		*colb = (unsigned char)firw_data[caddress+2];
-		
+
 		if (decorations_enable && cpart->dcolour)
 		{
 			int a = (cpart->dcolour>>24)&0xFF;
@@ -465,14 +465,14 @@ int graphics_FIRW(GRAPHICS_FUNC_ARGS)
 			*colg = (a*((cpart->dcolour>>8)&0xFF) + (255-a)**colg) >> 8;
 			*colb = (a*((cpart->dcolour)&0xFF) + (255-a)**colb) >> 8;
 		}
-		
+
 		*firea = cpart->life*4;
 		if(*firea > 240)
 			*firea = 240;
 		*firer = *colr;
 		*fireg = *colg;
 		*fireb = *colb;
-		
+
 		*pixel_mode = PMODE_NONE; //Clear default, don't draw pixel
 		*pixel_mode |= FIRE_ADD;
 		//Returning 0 means dynamic, do not cache
@@ -508,12 +508,12 @@ int graphics_GBMB(GRAPHICS_FUNC_ARGS)
 int graphics_COAL(GRAPHICS_FUNC_ARGS) //Both COAL and Broken Coal
 {
 	*colr += (cpart->tmp2-295.15f)/3;
-	
+
 	if (*colr > 170)
 		*colr = 170;
 	if (*colr < *colg)
 		*colr = *colg;
-		
+
 	*colg = *colb = *colr;
 
 	if((cpart->temp-295.15f) > 300.0f-200.0f)
@@ -527,4 +527,25 @@ int graphics_COAL(GRAPHICS_FUNC_ARGS) //Both COAL and Broken Coal
 	}
 	return 0;
 }
-
+int graphics_NBLE(GRAPHICS_FUNC_ARGS)
+{
+    pixel pc;
+    pc = nmenu[cpart->ctype].colour;
+	*colr = PIXR(pc);
+	*colg = PIXG(pc);
+	*colb = PIXB(pc);
+	return 0;
+}
+int graphics_WSTE(GRAPHICS_FUNC_ARGS)
+{
+    pixel pc = ptypes[cpart->type].pcolors;
+	*colr = PIXR(pc);
+	*colg = PIXG(pc);
+	*colb = PIXB(pc);
+	*firea = 160;
+	*firer = *colr;
+	*fireb = *colb;
+	*fireg = *colg;
+	*pixel_mode |= PMODE_GLOW; //looks better than FIRE_BLEND
+	return 0;
+}
