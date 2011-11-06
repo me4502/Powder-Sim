@@ -1890,6 +1890,9 @@ int main(int argc, char *argv[])
 		sandcolour_frame++;
 		sandcolour_frame%=360;
 
+		gradient_fill(vid_buf, 200,300,100,100,0,115,0,255,0,0,0,1);
+		gradient_fill(vid_buf, 300,300,100,100,0,0,0,255,0,115,0,1);
+
 		if(ngrav_enable && drawgrav_enable)
 			draw_grav(vid_buf);
 		draw_walls(part_vbuf);
