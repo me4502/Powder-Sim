@@ -547,5 +547,5 @@ int graphics_WSTE(GRAPHICS_FUNC_ARGS)
 	*fireb = *colb;
 	*fireg = *colg;
 	*pixel_mode |= PMODE_GLOW; //looks better than FIRE_BLEND
-	return 0;
+	return 1;
 }
