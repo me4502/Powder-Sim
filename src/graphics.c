@@ -1043,17 +1043,19 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
         {
             if (dir==1)
             {
-                int f = j+i;
-                gradr[j][i] = sr-(f-er);
-                gradg[j][i] = sg-(f-eg);
-                gradb[j][i] = sb-(f-eb);
+                float hf = j/h;
+                float wf = i/w;
+                gradr[j][i] = sr*hf + (1.0f-hf)*er;
+                gradg[j][i] = sg*hf + (1.0f-hf)*eg;
+                gradb[j][i] = sb*hf + (1.0f-hf)*eb;
             }
             else if (dir==2)
             {
-                int f = j*10;
-                gradr[j][i] = sr-(f-er);
-                gradg[j][i] = sg-(f-eg);
-                gradb[j][i] = sb-(f-eb);
+                float hf = j/h;
+                float wf = i/w;
+                gradr[j][i] = sr*wf + (1.0f-wf)*er;
+                gradg[j][i] = sg*wf + (1.0f-wf)*eg;
+                gradb[j][i] = sb*wf + (1.0f-wf)*eb;
             }
         }
     }
