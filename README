@@ -1,0 +1,110 @@
+Powder-Sim | v1.2
+
+NOTE: Our README is currently being updated.
+
+Thanks to:
+
+---------------------------------------------------------------------------
+
+[Prior Versions]
+Stanislaw K Skowronek
+Simon Robertshaw
+Skresanov Savely
+cracker64
+Catelite
+Matthew Miller
+Randalserrano
+vanquish349
+Bryan Hoyle
+Nathan Cousins
+jacksonmj
+Lieuwe Mosch
+Anthony Boot
+Matthew Miller
+
+
+[Project Coders]
+Matthew Miller
+EyesIsMine
+PizzaPlatypus
+vanquish349
+randalserrano
+
+[Contributers]
+Antonvrg
+
+
+Instructions:
+
+---------------------------------------------------------------------------
+
+Click on the elements with the mouse and draw in the field, like in MS Paint. The rest of the game is learning what happens next.
+
+
+
+Controls:
+
+---------------------------------------------------------------------------
+
+Caps Lock 	Specific Element Erase
+Insert 		Replace mode
+TAB 		Circle/Square Brush
+Space 		Pause
+Q 		Quit
+Esc 		Quit
+Z 		Zoom
+S 		Save stamp (+ Ctrl when STK2 is out)
+L 		Load last saved stamp
+K 		Stamp library
+C 		Cycle view mode
+1-9 		Set view mode
+P 		Save screenshot to .ppm
+F 		Pause and go to next frame
+G 		Grid
+H 		Show/Hide HUD
+D 		Debug mode (+ Shift when STK2 is out)
+I 		Invert Pressure and Velocity map
+T 		Vine mode
+W 		Toggle gravity modes (+ Ctrl when STK2 is out)
+R 		Reset LIFE generation (when in Debug mode)
+N		"Sand effect" for drawing powders
+~ 		Console
+= 		Reset pressure and velocity map
+[ 		Decrase brush size
+] 		Increase brush size 
+
+Ctrl + C/V/X 		Copy/Paste/Cut
+Ctrl + Z 		Undo
+Ctrl + Cursor drag 	Rectangle
+Shift + Cursor drag 	Line
+MMB / Alt + LMB click 	Sample element
+Mouse scroll 		Change brush size
+Ctrl + Mouse scroll 	Change vertical brush size
+Shift + Mouse scroll 	Change horizontal brush size
+Shift + Ctrl + R 	Horizontal mirror for selected area
+Ctrl + R 		Rotate selected area counterclockwise
+Ctrl + Left Alt	Select subject for Specific Element erase
+Ctrl + = 		Reset Electricity 
+
+
+Command Line:
+
+---------------------------------------------------------------------------
+
+scale:1 - Normal window resolution
+scale:2 - Doubled window resolution
+kiosk -   Fullscreen mode
+proxy:<server>:<port> (ie, proxy:wwwcache.lancs.ac.uk:8080)
+open <file> - Opens the file as a stamp or game save
+ddir <directory> - Directory used for saving stamps and preferences
+
+History:
+
+---------------------------------------------------------------------------
+
+* Version 1.0
+      o Makefile updated for RHEL
+      o Francium Added
+      o TNT Added
+      o Bug fixes
+
