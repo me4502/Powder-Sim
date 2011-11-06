@@ -84,6 +84,7 @@ static menu_section colorsections[] = //doshow does not do anything currently.
 	{"\xD7", "Tools", 0, 1},
 };
 #define DECO_SECTIONS 2
+#define DECO_COLNUM 7
 
 static menu_wall colorlist[] =
 {
@@ -100,6 +101,7 @@ static menu_wall colorlist[] =
 #define DECO_LIGHTEN 1
 #define DECO_DARKEN 2
 #define DECO_BACK 3
+#define DECO_NUM 4
 
 static menu_wall toollist[] =
 {
