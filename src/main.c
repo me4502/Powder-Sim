@@ -1890,6 +1890,8 @@ int main(int argc, char *argv[])
 		if(ngrav_enable && drawgrav_enable)
 			draw_grav(vid_buf);
 		draw_walls(part_vbuf);
+		//drawrect(vid_buf, 300,200,100,100,255,255,255,255);
+		gradient_fill(vid_buf,300,200,100,100,150,150,170,255,50,5,100,0);
 
 		if(debug_flags & (DEBUG_PERFORMANCE_CALC|DEBUG_PERFORMANCE_FRAME))
 		{
