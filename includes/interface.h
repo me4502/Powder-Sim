@@ -75,6 +75,7 @@ static quick_option quickmenu[] =
 	{"G", "Draw gravity grid", QM_TOGGLE, &drawgrav_enable},
 	{"D", "Show Decorations", QM_TOGGLE, &decorations_enable},
 	{"M", "Click to change menus", QM_TOGGLE, &clickmenu_enable},
+	{"F", "Fancy Graphics", QM_TOGGLE, &fancy_graphics},
 	{NULL}
 };
 
