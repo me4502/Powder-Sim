@@ -21,6 +21,8 @@ int update_CLNE(UPDATE_FUNC_ARGS) {
 						parts[i].ctype = r&0xFF;
 						if ((r&0xFF)==PT_LIFE)
 							parts[i].tmp = parts[r>>8].ctype;
+                        if ((r&0xFF)==PT_NBLE)
+							parts[i].tmp = parts[r>>8].ctype;
 					}
 				}
 	}

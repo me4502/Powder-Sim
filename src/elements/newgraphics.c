@@ -534,6 +534,11 @@ int graphics_NBLE(GRAPHICS_FUNC_ARGS)
 	*colr = PIXR(pc);
 	*colg = PIXG(pc);
 	*colb = PIXB(pc);
+	*firea = 160;
+	*firer = *colr;
+	*fireb = *colb;
+	*fireg = *colg;
+	*pixel_mode |= PMODE_FLARE;
 	return 0;
 }
 int graphics_WSTE(GRAPHICS_FUNC_ARGS)
