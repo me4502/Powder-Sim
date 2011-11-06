@@ -564,3 +564,35 @@ int graphics_WSTE(GRAPHICS_FUNC_ARGS)
 	*pixel_mode |= PMODE_GLOW; //looks better than FIRE_BLEND
 	return 1;
 }
+int graphics_AMTR(GRAPHICS_FUNC_ARGS)
+{
+    pixel pc = ptypes[cpart->type].pcolors;
+	*colr = PIXR(pc);
+	*colg = PIXG(pc);
+	*colb = PIXB(pc);
+	*firea = 160;
+	*firer = *colr;
+	*fireb = *colb;
+	*fireg = *colg;
+	*pixel_mode |= PMODE_FLARE;
+}
+int graphics_SING(GRAPHICS_FUNC_ARGS)
+{
+    pixel pc = ptypes[cpart->type].pcolors;
+	*colr = PIXR(pc);
+	*colg = PIXG(pc);
+	*colb = PIXB(pc);
+    if (cpart->tmp>0)
+    {
+        *firea = 160;
+        *firer = *colr;
+        *fireb = *colb;
+        *fireg = *colg;
+        *pixel_mode |= FIRE_ADD|FIRE_BLEND|PMODE_BLEND;
+        if (cpart->tmp>=40)
+            *pixel_mode |= PMODE_LFLARE;
+        else if (cpart->tmp>=20)
+            *pixel_mode |= PMODE_FLARE;
+    }
+    return 0;
+}
