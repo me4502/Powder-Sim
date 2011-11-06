@@ -10,7 +10,7 @@ int update_WSTE(UPDATE_FUNC_ARGS)
                 r = pmap[y+ry][x+rx];
                 if (!r)
                     continue;
-                if ((r&0xFF)!=PT_WSTE && (r&0xFF)!=PT_DMND && (r&0xFF)!=PT_URAN && (r&0xFF)!=PT_PLUT && (r&0xFF)!=PT_DEUT && (r&0xFF)!=PT_NEUT && (r&0xFF)!=PT_WATR)
+                if ((r&0xFF)!=PT_WSTE && (r&0xFF)!=PT_DMND && (r&0xFF)!=PT_URAN && (r&0xFF)!=PT_PLUT && (r&0xFF)!=PT_DEUT && (r&0xFF)!=PT_NEUT && (r&0xFF)!=PT_WATR && (r&0xFF)!=PT_CLNE && (r&0xFF)!=PT_PCLN)
                 {
                     if ((r&0xFF)==PT_PLEX || (r&0xFF)==PT_NITR || (r&0xFF)==PT_GUNP || (r&0xFF)==PT_RBDM || (r&0xFF)==PT_LRBD)
                     {
