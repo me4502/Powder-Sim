@@ -1028,15 +1028,10 @@ void drawrect(pixel *vid, int x, int y, int w, int h, int r, int g, int b, int a
 
 void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int sb, int a, int er, int eg, int eb, int dir)
 {
-    int i, j, p;
+    int i, j;
     int gradr[h][w];
     int gradg[h][w];
     int gradb[h][w];
-    unsigned int s,e;
-    s = PIXRGB(sr,sg,sb);
-    e = PIXRGB(er,eg,eb);
-    int ar = sr/er,ag = sg/eg,ab = sb/eb;
-    int am = ar+ag+ab/3;
     for (j=1; j<h; j++)
     {
         for (i=1; i<w; i++)
@@ -1057,9 +1052,19 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
                 gradg[j][i] = (sg*wf) + ((1.0f-wf)*eg);
                 gradb[j][i] = (sb*wf) + ((1.0f-wf)*eb);
             }
-            else if (dir==3)
+            else if (dir==3) //Diagonal Right
             {
-
+                float of = ((float)j+(float)i)/((float)h+(float)w);
+                gradr[j][i] = (sr*of) + ((1.0f-of)*er);
+                gradg[j][i] = (sg*of) + ((1.0f-of)*eg);
+                gradb[j][i] = (sb*of) + ((1.0f-of)*eb);
+            }
+            else if (dir==4) //Diagonal Left
+            {
+                float of = ((float)j+(float)i)/((float)h+(float)w);
+                gradr[j][w-i] = (sr*of) + ((1.0f-of)*er);
+                gradg[j][w-i] = (sg*of) + ((1.0f-of)*eg);
+                gradb[j][w-i] = (sb*of) + ((1.0f-of)*eb);
             }
         }
     }
