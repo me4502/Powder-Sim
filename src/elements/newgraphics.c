@@ -359,6 +359,11 @@ int graphics_LCRY(GRAPHICS_FUNC_ARGS)
 	*colr += lifemod;
 	*colg += lifemod;
 	*colb += lifemod;
+	*firer = *colr;
+    *fireg = *colg;
+    *fireb = *colb;
+    if (lifemod==100)
+        *firea = 160;
 	if(cpart->dcolour && cpart->dcolour&0xFF000000)
 	{
 		lifemod *= 2.5f;
@@ -367,8 +372,13 @@ int graphics_LCRY(GRAPHICS_FUNC_ARGS)
 		*colr = (lifemod*((cpart->dcolour>>16)&0xFF) + (255-lifemod)**colr) >> 8;
 		*colg = (lifemod*((cpart->dcolour>>8)&0xFF) + (255-lifemod)**colg) >> 8;
 		*colb = (lifemod*((cpart->dcolour)&0xFF) + (255-lifemod)**colb) >> 8;
+		*firer = *colr;
+        *fireg = *colg;
+        *fireb = *colb;
+        if (lifemod==100)
+            *firea = 160;
 	}
-	*pixel_mode |= NO_DECO;
+	*pixel_mode |= NO_DECO|DECO_FIRE|FIRE_ADD;
 	return 0;
 }
 int graphics_PCLN(GRAPHICS_FUNC_ARGS)
