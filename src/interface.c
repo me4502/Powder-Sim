@@ -636,7 +636,8 @@ void draw_svf_ui(pixel *vid_buf, int alternate)// all the buttons at the bottom
 {
 	int c;
 
-	//the open browser button
+	gradient_fill(vid_buf, 0,YRES+(MENUSIZE-16),XRES + MENUSIZE,MENUSIZE/2+8,115,0,0,255,0,0,0,2);
+//the open browser button
 	if(alternate)
 	{
 		fillrect(vid_buf, 0, YRES+(MENUSIZE-16)-1, 18, 16, 255, 255, 255, 255);
