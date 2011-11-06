@@ -282,7 +282,7 @@ void load_presets(void)
 		    menuitems = 0;
 		    for(int i = 0; i < cJSON_GetArrayItem(tmpobj, i);i++)
 		    {
-                favourites[menuitems++] = tmpobj2->valueint;
+                //favourites[menuitems++] = tmpobj2->valueint;
 		    }
 		}
 
