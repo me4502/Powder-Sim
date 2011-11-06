@@ -1725,7 +1725,7 @@ GLfloat lineV[(((YRES*XRES)*2)*6)];
 GLfloat lineC[(((YRES*XRES)*2)*6)];
 #endif
 
-void draw_back(pixel *vid)
+void draw_back(pixel *vid, int over)
 {
     if (decorations_enable)
     {
@@ -1738,10 +1738,24 @@ void draw_back(pixel *vid)
                 int r = PIXR(decolour[x][y]);
                 int g = PIXG(decolour[x][y]);
                 int b = PIXB(decolour[x][y]);
-                if (r||g||b)
+                if ((r||g||b)||over==1)
                     drawpixel(vid,x,y,r,g,b,255);
             }
         }
+    }
+}
+
+void update_back(pixel *vid, int over, int x, int y)
+{
+    if (decorations_enable)
+    {
+        int nx = (int)(x + 0.5f);
+        int ny = (int)(y + 0.5f);
+        int r = PIXR(decolour[x][y]);
+        int g = PIXG(decolour[x][y]);
+        int b = PIXB(decolour[x][y]);
+        if ((r||g||b)||over==1)
+            drawpixel(vid,x,y,r,g,b,255);
     }
 }
 
@@ -2872,7 +2886,7 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
             decolour[x][y] = 0;
         else
             decolour[x][y] = ((255<<24)|(r<<16)|(g<<8)|b);
-        draw_back(vid_buf);
+        update_back(vid_buf,1,x,y);
     }
 	if (!rp)
 		return;
