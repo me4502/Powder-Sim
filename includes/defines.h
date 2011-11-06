@@ -17,12 +17,13 @@
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter.
 
 #define SERVER "www.google.com"//"powdertoy.co.uk"
-//#define SERVER "powdertoy.co.uk"
+
+#define MTOS_EXPAND(str) #str
+#define MTOS(str) MTOS_EXPAND(str)
+
 #define SCRIPTSERVER "powdertoy.co.uk"
 
 #define LOCAL_SAVE_DIR "Saves"
-
-#define LOCAL_LUA_DIR "Lua"
 
 #define APPDATA_SUBDIR "\\PowderSim"
 
@@ -101,13 +102,6 @@ extern unsigned char ZSIZE;
 #define TRI_BRUSH 2
 #define BRUSH_NUM 3
 
-
-//#define GRAVFFT
-//#define LUACONSOLE
-//#define PYCONSOLE
-//#define PYEXT
-//no longer needed
-
 #ifdef PIX16
 typedef unsigned short pixel;
 #else
@@ -175,6 +169,14 @@ int water_equal_test;
 extern int quickoptions_tooltip_fade;
 
 int menlock;
+
+extern int debug_flags;
+#define DEBUG_PERF_FRAMECOUNT 256
+extern int debug_perf_istart;
+extern int debug_perf_iend;
+extern long debug_perf_frametime[DEBUG_PERF_FRAMECOUNT];
+extern long debug_perf_partitime[DEBUG_PERF_FRAMECOUNT];
+extern long debug_perf_time;
 
 extern int debug_flags;
 #define DEBUG_PERF_FRAMECOUNT 256
