@@ -15,7 +15,7 @@ int graphics_PLSM(GRAPHICS_FUNC_ARGS)
         *fireb = *colb;
 
         *pixel_mode = PMODE_GLOW | PMODE_ADD; //Clear default, don't draw pixel
-        *pixel_mode |= FIRE_ADD;
+        *pixel_mode |= FIRE_ADD|DECO_FIRE;
         //Returning 0 means dynamic, do not cache
         return 0;
     } else {
