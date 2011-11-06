@@ -635,9 +635,9 @@ void ui_richtext_process(int mx, int my, int mb, int mbq, ui_richtext *ed)
 void draw_svf_ui(pixel *vid_buf, int alternate)// all the buttons at the bottom
 {
 	int c;
-
-	gradient_fill(vid_buf, 0,YRES+(MENUSIZE-16),XRES + MENUSIZE,MENUSIZE/2+8,115,0,0,255,0,0,0,2);
-//the open browser button
+    if (fancy_graphics)
+        gradient_fill(vid_buf, 0,YRES+(MENUSIZE-16),XRES + MENUSIZE,MENUSIZE/2+8,115,0,0,255,0,0,0,2);
+    //the open browser button
 	if(alternate)
 	{
 		fillrect(vid_buf, 0, YRES+(MENUSIZE-16)-1, 18, 16, 255, 255, 255, 255);
@@ -2069,7 +2069,7 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     if (i==-1)
         return;
     if (fancy_graphics)
-        gradient_fill(vid_buf, 0, YRES-5, XRES, MENUSIZE/2+8, 150, 200, 250, 255, 50, 150, 200, 2);
+        gradient_fill(vid_buf, 0, YRES-5, XRES, MENUSIZE/2+8, 250, 0, 0, 255, 115, 0, 0, 2);
     if (i==SC_WALL)//wall menu
     {
         if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling
