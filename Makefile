@@ -2,7 +2,7 @@ SOURCES := $(wildcard src/*.c src/elements/*.c)
 HEADERS := $(wildcard includes/*.h)
 OBJS := $(patsubst src/%.c,build/obj/%.o,$(SOURCES))
 
-CFLAGS := -w -std=c99 -D_POSIX_C_SOURCE=200112L -DLUACONSOLE -DGRAVFFT -Iincludes/ -D_GNU_SOURCE -DLUA_R_INCL
+CFLAGS := -w -std=c99 -D_POSIX_C_SOURCE=200112L -DLUACONSOLE -DGRAVFFT -Iincludes/ -D_GNU_SOURCE
 OFLAGS := -O3 -ffast-math -ftree-vectorize -funsafe-math-optimizations
 LFLAGS := -lpthread -lSDL -lfftw3f -lm -lbz2 -lX11 -llua5.1 -lrt
 LFLAGS_X := -lm -lbz2 -lSDLmain
@@ -15,38 +15,6 @@ COMPILER := gcc
 LINUX_TARG := powder-64-sse2 powder-sse powder-sse2
 WIN32_TARG := powder-sse.exe powder-sse2.exe
 
-<<<<<<< HEAD
-powder: $(SOURCES)
-	$(PYCOMMAND)
-	$(COMPILER) -DINTERNAL -o$@ $(CFLAGS) $(OFLAGS) $(MFLAGS_SSE3) $(SOURCES) $(LFLAGS) -DLIN64
-	mv $@ build
-
-powder-debug-64: $(SOURCES)
-	$(PYCOMMAND)
-	$(COMPILER) -m64 -o$@ $(FLAGS_DBUG) -DLIN64 $(SOURCES) -Iincludes/ $(LFLAGS)
-	
-
-powder-debug: $(SOURCES)
-	$(PYCOMMAND)
-	$(COMPILER) -DINTERNAL -o$@ $(CFLAGS) $(OFLAGS) $(MFLAGS_SSE3) $(SOURCES) $(LFLAGS) -DLIN64 $(FLAGS_DBUG)
-	
-
-powder-sse3: $(SOURCES)
-	$(PYCOMMAND)
-	$(COMPILER) -m32 -o$@ $(CFLAGS) $(OFLAGS) $(MFLAGS_SSE3) $(SOURCES) $(LFLAGS) -DLIN32
-	strip $@
-	
-powder-sse2: $(SOURCES)
-	$(PYCOMMAND)
-	$(COMPILER) -m32 -o$@ $(CFLAGS) $(OFLAGS) $(MFLAGS_SSE2) $(SOURCES) $(LFLAGS) -DLIN32
-	strip $@
-	
-powder-sse: $(SOURCES)
-	$(PYCOMMAND)
-	$(COMPILER) -m32 -o$@ $(CFLAGS) $(OFLAGS) $(MFLAGS_SSE) $(SOURCES) $(LFLAGS) -DLIN32
-	strip $@
-	
-=======
 CC := gcc
 CC_WIN := i686-w64-mingw32-gcc
 WIN_RES := i686-w64-mingw32-windres
@@ -102,29 +70,10 @@ build/powder-sse3: $(patsubst build/obj/%.o,build/obj/%.powder-sse3.o,$(OBJS))
 	strip $@
 build/obj/%.powder-sse3.o: src/%.c $(HEADERS)
 	$(CC) -c $(CFLAGS) -o $@ $<
->>>>>>> upstream/master
 
 build/powder-sse2: $(patsubst build/obj/%.o,build/obj/%.powder-sse2.o,$(OBJS))
 	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder-sse2.o,$(OBJS)) $(LIBS) -o $@
 	strip $@
-<<<<<<< HEAD
-	
-powder-sse3-opengl: $(SOURCES)
-	$(PYCOMMAND)
-	$(COMPILER) -m32 -o$@ $(CFLAGS) $(OFLAGS) $(MFLAGS_SSE3) $(SOURCES) $(LFLAGS) -DLIN32 -lGL -lGLU -DOpenGL
-	strip $@
-	
-powder-64-sse3: $(SOURCES)
-	$(PYCOMMAND)
-	$(COMPILER) -m64 -o$@ $(CFLAGS) $(OFLAGS) $(MFLAGS_SSE3) $(SOURCES) $(LFLAGS) -DLIN64
-	strip $@
-	
-powder-64-sse2: $(SOURCES)
-	$(PYCOMMAND)
-	$(COMPILER) -m64 -o$@ $(CFLAGS) $(OFLAGS) $(MFLAGS_SSE2) $(SOURCES) $(LFLAGS) -DLIN64
-	strip $@
-	
-=======
 build/obj/%.powder-sse2.o: src/%.c $(HEADERS)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
@@ -145,7 +94,6 @@ build/powder-64-sse2: $(patsubst build/obj/%.o,build/obj/%.powder-64-sse2.o,$(OB
 	strip $@
 build/obj/%.powder-64-sse2.o: src/%.c $(HEADERS)
 	$(CC) -c $(CFLAGS) -o $@ $<
->>>>>>> upstream/master
 
 build/powder-debug-64: $(patsubst build/obj/%.o,build/obj/%.powder-debug-64.o,$(OBJS))
 	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder-debug-64.o,$(OBJS)) $(LIBS) -o $@
@@ -163,31 +111,20 @@ build/powder-sse3.exe: $(patsubst build/obj/%.o,build/obj/%.powder-sse3.exe.o,$(
 	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder-sse3.exe.o,$(OBJS)) $(LIBS) -o $@
 	strip $@
 	chmod 0644 $@
-<<<<<<< HEAD
-	
-=======
 build/obj/%.powder-sse3.exe.o: src/%.c $(HEADERS)
 	$(CC) -c $(CFLAGS) -o $@ $<
->>>>>>> upstream/master
 
 build/powder-sse2.exe: $(patsubst build/obj/%.o,build/obj/%.powder-sse2.exe.o,$(OBJS))
 	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder-sse2.exe.o,$(OBJS)) $(LIBS) -o $@
 	strip $@
 	chmod 0644 $@
-<<<<<<< HEAD
-	
-=======
 build/obj/%.powder-sse2.exe.o: src/%.c $(HEADERS)
 	$(CC) -c $(CFLAGS) -o $@ $<
->>>>>>> upstream/master
 
 build/powder-sse.exe: $(patsubst build/obj/%.o,build/obj/%.powder-sse.exe.o,$(OBJS))
 	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder-sse.exe.o,$(OBJS)) $(LIBS) -o $@
 	strip $@
 	chmod 0644 $@
-<<<<<<< HEAD
-	
-=======
 build/obj/%.powder-sse.exe.o: src/%.c $(HEADERS)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
@@ -207,34 +144,12 @@ powder-icc: $(SOURCES)
 build/obj/powder-res.o: src/Resources/powder-res.rc src/Resources/powder.ico src/Resources/document.ico
 	cd src/Resources && $(WIN_RES) powder-res.rc powder-res.o
 	mv src/Resources/powder-res.o build/obj/powder-res.o
->>>>>>> upstream/master
 
 powder-x: $(SOURCES)
 	gcc -o $@ $(CFLAGS) $(OFLAGS) $(LFLAGS_X) $(MFLAGS) $(SOURCES) -DMACOSX -DPIX32BGRA -arch x86_64 -framework Cocoa -framework SDL
 	strip $@ 
-<<<<<<< HEAD
-	/Powder.app/Contents/MacOS/
-
-=======
 	mv $@ build
->>>>>>> upstream/master
 powder-x-ogl: $(SOURCES)
 	gcc -o $@ $(CFLAGS) $(OFLAGS) $(LFLAGS_X) $(MFLAGS) $(SOURCES) -DOpenGL -DMACOSX -DPIX32BGRA -arch x86_64 -framework Cocoa -framework SDL -framework OpenGL
 	strip $@ 
-<<<<<<< HEAD
-	
-
-render: $(SOURCES)
-	$(PYCOMMAND)
-	$(COMPILER) -m32 -o$@ $(CFLAGS) $(OFLAGS) $(LFLAGS) $(MFLAGS_SSE3) $(SOURCES) -DLIN32 -DRENDERER
-	strip $@
-	
-
-render-x: $(SOURCES)
-	$(PYCOMMAND)
-	$(COMPILER) -o $@ $(CFLAGS) $(OFLAGS) $(LFLAGS_X) -lSDL $(MFLAGS) $(SOURCES) -framework Cocoa -DMACOSX -DRENDERER -arch x86_64
-	strip $@
-	
-=======
 	mv $@ build
->>>>>>> upstream/master
