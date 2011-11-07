@@ -2594,6 +2594,57 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
 			return 0;
 		}
 	}
+	if(i==2) //deco tool menu
+	{
+		if (fwidth > XRES-BARSIZE) { //fancy scrolling
+			float overflow = fwidth-(XRES-BARSIZE), location = ((float)XRES-BARSIZE)/((float)(mx-(XRES-BARSIZE)));
+			xoff = (int)(overflow / location);
+		}
+		for (n = DECO_NUM; n<DECO_BNUM; n++)
+		{
+                int p = n;
+				for (a=1; a<15; a++)
+				{
+					for (c=1; c<27; c++)
+					{
+
+						if (n == DECO_BLIGHTEN)
+							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(btoollist[p].colour)-10*a, PIXG(btoollist[p].colour)-10*a, PIXB(btoollist[p].colour)-10*a);
+						else if (n == DECO_BDARKEN)
+							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(btoollist[p].colour)+10*a, PIXG(btoollist[p].colour)+10*a, PIXB(btoollist[p].colour)+10*a);
+                        else if (n == DECO_BACK)
+                            vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(*cr,*cg,*cb);
+						else
+							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = btoollist[p].colour;
+					}
+				}
+				x -= 26+5;
+				if (!bq && mx>=x+32-xoff && mx<x+58-xoff && my>=y && my< y+15)
+				{
+					drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 255, 55, 55, 255);
+					h = p;
+				}
+				else if (n==*tool)
+				{
+					drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 255, 55, 55, 255);
+				}
+		}
+		if(h!=-1)
+		{
+			drawtext(vid_buf, XRES-textwidth((char *)btoollist[h].descs)-BARSIZE, sy+20, (char *)btoollist[h].descs, 255, 255, 255, 255);
+		}
+		else
+		{
+			drawtext(vid_buf, XRES-textwidth((char *)colorsections[i].name)-BARSIZE, sy+20, (char *)colorsections[i].name, 255, 255, 255, 255);
+		}
+		//these are click events, b=1 is left click, b=4 is right
+		//h has the value of the element it is over, and -1 if not over an element
+		if (b==1 && h!=-1)
+		{
+			*tool = h;
+			return 0;
+		}
+	}
 
 	return 0;
 }
@@ -5356,12 +5407,12 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 
 			fillrect(vid_buf, window_offset_x + onleft_button_offset_x +1, window_offset_y +255+6, 12, 12, currR, currG, currB, 255);
 		}
-		for (i=0; i<2; i++)//draw all the menu sections
+		for (i=0; i<DECO_SECTIONS; i++)//draw all the menu sections
 		{
 			draw_color_menu(vid_buf, i, active_color_menu);
 		}
 
-		for (i=0; i<2; i++)//check mouse position to see if it is on a menu section
+		for (i=0; i<DECO_SECTIONS; i++)//check mouse position to see if it is on a menu section
 		{
 			if (!b&&mx>=XRES-2 && mx<XRES+BARSIZE-1 &&my>= (i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16) && my<(i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16)+15)
 			{
