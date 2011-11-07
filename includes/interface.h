@@ -122,7 +122,7 @@ static menu_wall toollist[] =
 	{PIXPACK(0xDDDDDD), "Lighten"},
 	{PIXPACK(0x111111), "Darken"},
 	{PIXPACK(0x111111), "Invert"},
-	{PIXPACK(0x111111), "Noise"},
+	{PIXPACK(0x000000), "Noise"},
 };
 
 static menu_wall btoollist[] = //For every toollist item, a {NULL}, is needed
@@ -136,7 +136,7 @@ static menu_wall btoollist[] = //For every toollist item, a {NULL}, is needed
 	{PIXPACK(0xDDDDDD), "Lighten"},
 	{PIXPACK(0x111111), "Darken"},
 	{PIXPACK(0x111111), "Invert"},
-	{PIXPACK(0x111111), "Noise"},
+	{PIXPACK(0x000000), "Noise"},
 };
 
 struct ui_edit
