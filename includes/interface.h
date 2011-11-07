@@ -86,7 +86,7 @@ static menu_section colorsections[] = //doshow does not do anything currently.
 	{"\xD7", "Background Decorator", 0, 1},
 };
 #define DECO_SECTIONS 3
-#define DECO_COLNUM 7
+#define DECO_COLNUM 10
 
 static menu_wall colorlist[] =
 {
@@ -97,6 +97,9 @@ static menu_wall colorlist[] =
 	{PIXPACK(0xFF00FF), "Pink"},
 	{PIXPACK(0x00FFFF), "Cyan"},
 	{PIXPACK(0xFFFFFF), "White"},
+	{PIXPACK(0xFF8800), "Orange"},
+	{PIXPACK(0xD400FF), "Purple"},
+	{PIXPACK(0xAD4E00), "Brown"},
 };
 
 #define DECO_DRAW 0
