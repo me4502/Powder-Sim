@@ -2562,6 +2562,7 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
 				{
 					for (c=1; c<27; c++)
 					{
+					    int noise = rand()%256;
 						if (n == DECO_LIGHTEN)
 							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(toollist[n].colour)-10*a, PIXG(toollist[n].colour)-10*a, PIXB(toollist[n].colour)-10*a);
 						else if (n == DECO_DARKEN)
@@ -2571,7 +2572,7 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
                         else if (n == DECO_INVERT)
                             vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(ir,ig,ib);
                         else if (n == DECO_NOISE)
-							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(rand()%256), PIXG(rand()%256), PIXB(rand()%256));
+							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(noise, noise, noise);
 						else
 							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = toollist[n].colour;
 					}
@@ -2616,7 +2617,7 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
 				{
 					for (c=1; c<27; c++)
 					{
-
+                        int noise = rand()%256;
 						if (n == DECO_BLIGHTEN)
 							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(btoollist[p].colour)-10*a, PIXG(btoollist[p].colour)-10*a, PIXB(btoollist[p].colour)-10*a);
 						else if (n == DECO_BDARKEN)
@@ -2626,7 +2627,7 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
                         else if (n == DECO_BINVERT)
                             vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(ir,ig,ib);
                         else if (n == DECO_BNOISE)
-							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(rand()%256), PIXG(rand()%256), PIXB(rand()%256));
+							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(noise, noise, noise);
 						else
 							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = btoollist[p].colour;
 					}
