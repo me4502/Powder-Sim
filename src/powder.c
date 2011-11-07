@@ -12,10 +12,11 @@ int wire_placed = 0;
 
 int lighting_recreate = 0;
 
-//[0] is a command cell, [3]-[18] are legs positions, [19]-[26] are accelerations, [27] shows if player was spawned
-//[28] is frames since last particle spawn - used when spawning LIGH
-float player[29];
-float player2[29];
+playerst player;
+playerst player2;
+
+playerst fighters[256]; //255 is the maximum number of fighters
+unsigned char fighcount = 0; //Contains the number of fighters
 
 particle *parts;
 particle *cb_parts;
@@ -111,6 +112,7 @@ void init_can_move()
 		//all stickman collisions are done in stickman update function
 		can_move[PT_STKM][t] = 2;
 		can_move[PT_STKM2][t] = 2;
+		can_move[PT_FIGH][t] = 2;
 	}
 	for (t=0;t<PT_NUM;t++)
 	{
@@ -121,6 +123,7 @@ void init_can_move()
 		//all stickman collisions are done in stickman update function
 		can_move[t][PT_STKM] = 2;
 		can_move[t][PT_STKM2] = 2;
+		can_move[PT_FIGH][t] = 2;
 		//INVIS behaviour varies with pressure
 		can_move[t][PT_INVIS] = 3;
 		//stop CNCT being displaced by other particles
@@ -136,6 +139,7 @@ void init_can_move()
 			|| t==PT_QRTZ || t==PT_PQRT)
 			can_move[PT_PHOT][t] = 2;
 	}
+	can_move[PT_ELEC][PT_LCRY] = 2;
 	can_move[PT_PHOT][PT_LCRY] = 3;//varies according to LCRY life
 	can_move[PT_NEUT][PT_INVIS] = 2;
 	//whol eats anar
@@ -167,7 +171,7 @@ int eval_move(int pt, int nx, int ny, unsigned *rr)
 	result = can_move[pt][r&0xFF];
 	if (result==3)
 	{
-		if (pt==PT_PHOT && (r&0xFF)==PT_LCRY)
+		if ((pt==PT_PHOT || pt==PT_ELEC) && (r&0xFF)==PT_LCRY)
 			result = (parts[r>>8].life > 5)? 2 : 0;
 		if ((r&0xFF)==PT_INVIS)
 		{
@@ -239,11 +243,11 @@ int try_move(int i, int x, int y, int nx, int ny)
 			if ((r & 0xFF) < PT_NUM && ptypes[r&0xFF].hconduct && ((r&0xFF)!=PT_HSWC||parts[r>>8].life==10) && (r&0xFF)!=PT_FILT)
 				parts[i].temp = parts[r>>8].temp = restrict_flt((parts[r>>8].temp+parts[i].temp)/2, MIN_TEMP, MAX_TEMP);
 		}
-		if (parts[i].type==PT_NEUT && ((r&0xFF)==PT_CLNE || (r&0xFF)==PT_PCLN || (r&0xFF)==PT_BCLN || (r&0xFF)==PT_PBCN)) {
+		if ((parts[i].type==PT_NEUT || parts[i].type==PT_ELEC) && ((r&0xFF)==PT_CLNE || (r&0xFF)==PT_PCLN || (r&0xFF)==PT_BCLN || (r&0xFF)==PT_PBCN)) {
 			if (!parts[r>>8].ctype)
-				parts[r>>8].ctype = PT_NEUT;
+				parts[r>>8].ctype = parts[i].type;
 		}
-		if ((r&0xFF)==PT_PRTI && (parts[i].type==PT_PHOT || parts[i].type==PT_NEUT))
+		if ((r&0xFF)==PT_PRTI && (parts[i].type==PT_PHOT || parts[i].type==PT_NEUT || parts[i].type==PT_ELEC))
 		{
 			int nnx, count;
 			for (count=0; count<8; count++)
@@ -312,11 +316,16 @@ int try_move(int i, int x, int y, int nx, int ny)
 	{
 		if (parts[i].type == PT_STKM)
 		{
-			player[27] = 0;
+			player.spwn = 0;
 		}
 		if (parts[i].type == PT_STKM2)
 		{
-			player2[27] = 0;
+			player2.spwn = 0;
+		}
+		if (parts[i].type == PT_FIGH)
+		{
+			fighters[(unsigned char)parts[i].tmp].spwn = 0;
+			fighcount--;
 		}
 		parts[i].type=PT_NONE;
 		return 0;
@@ -325,11 +334,16 @@ int try_move(int i, int x, int y, int nx, int ny)
 	{
 		if (parts[i].type == PT_STKM)
 		{
-			player[27] = 0;
+			player.spwn = 0;
 		}
 		if (parts[i].type == PT_STKM2)
 		{
-			player2[27] = 0;
+			player2.spwn = 0;
+		}
+		if (parts[i].type == PT_FIGH)
+		{
+			fighters[(unsigned char)parts[i].tmp].spwn = 0;
+			fighcount--;
 		}
 		parts[i].type=PT_NONE;
 		if (!legacy_enable)
@@ -408,7 +422,7 @@ int do_move(int i, int x, int y, float nxf, float nyf)
 				kill_part(i);
 				return -1;
 			}
-			if (t==PT_PHOT||t==PT_NEUT)
+			if (t==PT_PHOT||t==PT_NEUT||t==PT_ELEC)
 				photons[ny][nx] = t|(i<<8);
 			else if (t)
 				pmap[ny][nx] = t|(i<<8);
@@ -598,11 +612,16 @@ void kill_part(int i)//kills particle number i
 #endif
 	if (parts[i].type == PT_STKM)
 	{
-		player[27] = 0;
+		player.spwn = 0;
 	}
 	if (parts[i].type == PT_STKM2)
 	{
-		player2[27] = 0;
+		player2.spwn = 0;
+	}
+	if (parts[i].type == PT_FIGH)
+	{
+		fighters[(unsigned char)parts[i].tmp].spwn = 0;
+		fighcount--;
 	}
 	if (parts[i].type == PT_SPAWN)
 	{
@@ -640,13 +659,19 @@ inline void part_change_type(int i, int x, int y, int t)//changes the type of pa
 		t = PT_NONE;
 
 	if (parts[i].type == PT_STKM)
-		player[27] = 0;
+		player.spwn = 0;
 
 	if (parts[i].type == PT_STKM2)
-		player2[27] = 0;
+		player2.spwn = 0;
+
+	if (parts[i].type == PT_FIGH)
+	{
+		fighters[(unsigned char)parts[i].tmp].spwn = 0;
+		fighcount--;
+	}
 
 	parts[i].type = t;
-	if (t==PT_PHOT || t==PT_NEUT)
+	if (t==PT_PHOT || t==PT_NEUT || t==PT_ELEC)
 	{
 		photons[y][x] = t|(i<<8);
 		if ((pmap[y][x]>>8)==i)
@@ -778,7 +803,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		{
 			if ((pmap[y][x]&0xFF)!=PT_SPAWN&&(pmap[y][x]&0xFF)!=PT_SPAWN2)
 			{
-				if (t!=PT_STKM&&t!=PT_STKM2)
+				if (t!=PT_STKM&&t!=PT_STKM2&&t!=PT_FIGH)
 				{
 					return -1;
 				}
@@ -804,7 +829,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 				t!=PT_CLNE&&t!=PT_PCLN&&
 				t!=PT_BCLN&&t!=PT_STKM&&
 				t!=PT_STKM2&&t!=PT_PBCN&&
-				t!=PT_STOR)
+				t!=PT_STOR&&t!=PT_FIGH)
 			)
 			{
 				parts[pmap[y][x]>>8].ctype = t;
@@ -812,7 +837,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 			}
 			return -1;
 		}
-		if (photons[y][x] && (t==PT_PHOT||t==PT_NEUT))
+		if (photons[y][x] && (t==PT_PHOT||t==PT_NEUT||t==PT_ELEC))
 			return -1;
 		if (pfree == -1)
 			return -1;
@@ -853,7 +878,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].pavg[0] = 0.0f;
 		parts[i].pavg[1] = 0.0f;
 	}
-	if (t!=PT_STKM&&t!=PT_STKM2)//set everything to default values first, except for stickman.
+	if (t!=PT_STKM&&t!=PT_STKM2&&t!=PT_FIGH)//set everything to default values first, except for stickman.
 	{
 		parts[i].x = (float)x;
 		parts[i].y = (float)y;
@@ -924,6 +949,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].life = 10;
 	if (t==PT_MERC)
 		parts[i].tmp = 10;
+	if (t==PT_WSTE)
+		 parts[i].life = 700 + (rand()%400);	
 	if (t==PT_BRAY)
 		parts[i].life = 30;
 	if (t==PT_PUMP)
@@ -984,9 +1011,16 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].vx = 3.0f*cosf(a);
 		parts[i].vy = 3.0f*sinf(a);
 	}
+	if (t==PT_ELEC)
+	{
+		float a = (rand()%360)*3.14159f/180.0f;
+		parts[i].life = 680;
+		parts[i].vx = 2.0f*cosf(a);
+		parts[i].vy = 2.0f*sinf(a);
+	}
 	if (t==PT_STKM)
 	{
-		if (player[27]==0)
+		if (player.spwn==0)
 		{
 			parts[i].x = (float)x;
 			parts[i].y = (float)y;
@@ -996,8 +1030,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 			parts[i].life = 100;
 			parts[i].ctype = 0;
 			parts[i].temp = ptypes[t].heat;
-			STKM_init_legs(player, i);
-			player[27] = 1;
+			STKM_init_legs(&player, i);
+			player.spwn = 1;
 		}
 		else
 		{
@@ -1008,7 +1042,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 	}
 	if (t==PT_STKM2)
 	{
-		if (player2[27]==0)
+		if (player2.spwn==0)
 		{
 			parts[i].x = (float)x;
 			parts[i].y = (float)y;
@@ -1018,8 +1052,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 			parts[i].life = 100;
 			parts[i].ctype = 0;
 			parts[i].temp = ptypes[t].heat;
-			STKM_init_legs(player2, i);
-			player2[27] = 1;
+			STKM_init_legs(&player2, i);
+			player2.spwn = 1;
 		}
 		else
 		{
@@ -1028,12 +1062,36 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		create_part(-1,x,y,PT_SPAWN2);
 		ISSPAWN2 = 1;
 	}
+	if (t==PT_FIGH)
+	{
+		unsigned char fcount = 0;
+		while (fcount < 100 && fcount < (fighcount+1) && fighters[fcount].spwn==1) fcount++;
+		if (fcount < 100 && fighters[fcount].spwn==0)
+		{
+			parts[i].x = (float)x;
+			parts[i].y = (float)y;
+			parts[i].type = PT_FIGH;
+			parts[i].vx = 0;
+			parts[i].vy = 0;
+			parts[i].life = 100;
+			parts[i].ctype = 0;
+			parts[i].tmp = fcount;
+			parts[i].temp = ptypes[t].heat;
+			STKM_init_legs(&fighters[fcount], i);
+			fighters[fcount].spwn = 1;
+			fighters[fcount].elem = PT_DUST;
+			fighcount++;
+
+			return i;
+		}
+		return -1;
+	}
 	if (t==PT_BIZR||t==PT_BIZRG)
 		parts[i].ctype = 0x47FFFF;
 	//and finally set the pmap/photon maps to the newly created particle
-	if (t==PT_PHOT||t==PT_NEUT)
+	if (t==PT_PHOT||t==PT_NEUT||t==PT_ELEC)
 		photons[y][x] = t|(i<<8);
-	if (t!=PT_STKM&&t!=PT_STKM2 && t!=PT_PHOT && t!=PT_NEUT)
+	if (t!=PT_STKM&&t!=PT_STKM2 && t!=PT_FIGH && t!=PT_PHOT && t!=PT_NEUT)
 		pmap[y][x] = t|(i<<8);
 
 	//Fancy dust effects for powder types
@@ -1703,7 +1761,7 @@ void update_particles_i(pixel *vid, int start, int inc)
 			          (bmap[y/CELL][x/CELL]==WL_ALLOWGAS && !(ptypes[t].properties&TYPE_GAS)) || //&& ptypes[t].falldown!=0 && parts[i].type!=PT_FIRE && parts[i].type!=PT_SMKE && parts[i].type!=PT_HFLM) ||
 			          (bmap[y/CELL][x/CELL]==WL_ALLOWENERGY && !(ptypes[t].properties&TYPE_ENERGY)) ||
 					  (bmap[y/CELL][x/CELL]==WL_DETECT && (t==PT_METL || t==PT_SPRK)) ||
-			          (bmap[y/CELL][x/CELL]==WL_EWALL && !emap[y/CELL][x/CELL])) && (t!=PT_STKM) && (t!=PT_STKM2)))
+			          (bmap[y/CELL][x/CELL]==WL_EWALL && !emap[y/CELL][x/CELL])) && (t!=PT_STKM) && (t!=PT_STKM2) && (t!=PT_FIGH)))
 			{
 				kill_part(i);
 				continue;
@@ -1765,7 +1823,7 @@ void update_particles_i(pixel *vid, int start, int inc)
 				pGravX -= gravxf[(y*XRES)+x];
 				pGravY -= gravyf[(y*XRES)+x];
 			}
-			else if(t!=PT_STKM && t!=PT_STKM2 && !(ptypes[t].properties & TYPE_SOLID))
+			else if(t!=PT_STKM && t!=PT_STKM2 && t!=PT_FIGH && !(ptypes[t].properties & TYPE_SOLID))
 			{
 				pGravX += gravxf[(y*XRES)+x];
 				pGravY += gravyf[(y*XRES)+x];
@@ -2154,7 +2212,7 @@ killed:
 			stagnant = parts[i].flags & FLAG_STAGNANT;
 			parts[i].flags &= ~FLAG_STAGNANT;
 
-			if ((t==PT_PHOT||t==PT_NEUT)) {
+			if ((t==PT_PHOT||t==PT_NEUT||t==PT_ELEC)) {
 				if (t == PT_PHOT) {
 					rt = pmap[fin_y][fin_x] & 0xFF;
 					lt = pmap[y][x] & 0xFF;
@@ -2243,7 +2301,7 @@ killed:
 							kill_part(i);
 						continue;
 					}
-					if (!parts[i].ctype&&t!=PT_NEUT) {
+					if (!parts[i].ctype&&t!=PT_NEUT&&t!=PT_ELEC) {
 						kill_part(i);
 						continue;
 					}
@@ -2655,11 +2713,11 @@ int flood_prop_2(int x, int y, size_t propoffset, void * propvalue, int proptype
 	{
 		i = pmap[y][x]>>8;
 		if(proptype==2){
-			*((float*)(((void*)&parts[i])+propoffset)) = *((float*)propvalue);
+			*((float*)(((char*)&parts[i])+propoffset)) = *((float*)propvalue);
 		} else if(proptype==0) {
-			*((int*)(((void*)&parts[i])+propoffset)) = *((int*)propvalue);
+			*((int*)(((char*)&parts[i])+propoffset)) = *((int*)propvalue);
 		} else if(proptype==1) {
-			*((char*)(((void*)&parts[i])+propoffset)) = *((char*)propvalue);
+			*((char*)(((char*)&parts[i])+propoffset)) = *((char*)propvalue);
 		}
 		bitmap[(y*XRES)+x] = 1;
 	}
@@ -2885,9 +2943,9 @@ int create_parts(int x, int y, int rx, int ry, int c, int flags)
 	int i, j, r, f = 0, u, v, oy, ox, b = 0, dw = 0, stemp = 0, p;//n;
 
 	int wall = c - 100;
-	if (c==SPC_WIND){
+	if (c==SPC_WIND || c==PT_FIGH)
 		return 0;
-	}
+
 	if(c==SPC_PROP){
 		prop_edit_ui(vid_buf, x, y);
 		return 0;

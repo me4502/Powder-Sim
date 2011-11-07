@@ -7,6 +7,17 @@
 		"update":	false
 	},
 	"proxy":	"",
+<<<<<<< HEAD
 	"cmode":	7,
 	"scale":	1
+=======
+	"cmode":	3,
+	"scale":	1,
+	"favourites":	[],
+	"Sand effect":	0,
+	"Draw gravity grid":	1,
+	"Show Decorations":	1,
+	"Click to change menus":	0,
+	"Fancy Graphics":	1
+>>>>>>> 24719810124e25ac3bfd71b35c6b89998ae8105d
 }

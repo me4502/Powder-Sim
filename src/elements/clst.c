@@ -32,9 +32,3 @@ int update_CLST(UPDATE_FUNC_ARGS)
             }
     return 0;
 }
-
-int graphics_CLST(GRAPHIC_FUNC_ARGS)
-{
-
-    return 0;
-}
