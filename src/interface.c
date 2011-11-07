@@ -2571,7 +2571,7 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
                         else if (n == DECO_INVERT)
                             vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(ir,ig,ib);
                         else if (n == DECO_NOISE)
-							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(rand()%255), PIXG(rand()%255), PIXB(rand()%255));
+							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(rand()%256), PIXG(rand()%256), PIXB(rand()%256));
 						else
 							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = toollist[n].colour;
 					}
@@ -2626,7 +2626,7 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
                         else if (n == DECO_BINVERT)
                             vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(ir,ig,ib);
                         else if (n == DECO_BNOISE)
-							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(rand()%255), PIXG(rand()%255), PIXB(rand()%255));
+							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(rand()%256), PIXG(rand()%256), PIXB(rand()%256));
 						else
 							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = btoollist[p].colour;
 					}
