@@ -128,7 +128,7 @@ void play_sound(char *file)
 }
 
 static const char *it_msg =
-    "\br Powder Sim - Version " MTOS(SAVE_VERSION) "." MTOS(MINOR_VERSION) " - http://powdertoy.co.cc, irc.freenode.net #powdersim\n"
+    "\br Powder Sim - Version " MTOS(SAVE_VERSION) "." MTOS(MINOR_VERSION) " - http://powdersim.co.cc, irc.freenode.net #powdersim\n"
     "\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\n"
     "\n"
     "\bgControl+C/V/X are Copy, Paste and cut respectively.\n"
