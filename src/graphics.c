@@ -2934,6 +2934,13 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
         tb = 0x000000FF & (0xFF - tb);
 		decolour[x][y] = PIXRGB(tr,tg,tb);
 	}
+	else if (tool == DECO_BNOISE)
+	{
+		tr = rand()%256;
+		tg = rand()%256;
+		tb = rand()%256;
+		decolour[x][y] = PIXRGB(tr,tg,tb);
+	}
 	if (!rp)
 		return;
 	if (tool == DECO_DRAW)
@@ -2981,6 +2988,13 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 		tr = 0x000000FF & (0xFF - tr);
         tg = 0x000000FF & (0xFF - tg);
         tb = 0x000000FF & (0xFF - tb);
+		parts[rp>>8].dcolour = PIXRGB(tr,tg,tb);
+	}
+    else if (tool == DECO_NOISE)
+	{
+		tr = rand()%256;
+		tg = rand()%256;
+		tb = rand()%256;
 		parts[rp>>8].dcolour = PIXRGB(tr,tg,tb);
 	}
 }
