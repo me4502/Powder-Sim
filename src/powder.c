@@ -950,7 +950,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 	if (t==PT_MERC)
 		parts[i].tmp = 10;
 	if (t==PT_WSTE)
-		 parts[i].life = 700 + (rand()%400);	
+		 parts[i].life = 700 + (rand()%400);
 	if (t==PT_BRAY)
 		parts[i].life = 30;
 	if (t==PT_PUMP)
@@ -2935,12 +2935,14 @@ int create_part_add_props(int p, int x, int y, int tv, int rx, int ry)
 //this creates particles from a brush, don't use if you want to create one particle
 int create_parts(int x, int y, int rx, int ry, int c, int flags)
 {
+	int i, j, r, f = 0, u, v, oy, ox, b = 0, dw = 0, stemp = 0, p;//n;
+	if (x>XRES||y>YRES)
+        return 0;
 #ifdef LUACONSOLE
     if (c!=0)
 		if(!luacon_createevent(x, y, c, LUACON_BCREATE))
 			return 0;
 #endif
-	int i, j, r, f = 0, u, v, oy, ox, b = 0, dw = 0, stemp = 0, p;//n;
 
 	int wall = c - 100;
 	if (c==SPC_WIND || c==PT_FIGH)
