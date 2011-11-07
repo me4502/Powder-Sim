@@ -82,9 +82,10 @@ static quick_option quickmenu[] =
 static menu_section colorsections[] = //doshow does not do anything currently.
 {
 	{"\xC4", "Colors", 7, 1},
-	{"\xD7", "Tools", 0, 1},
+	{"\xD7", "Particle Decorator", 0, 1},
+	{"\xD7", "Background Decorator", 0, 1},
 };
-#define DECO_SECTIONS 2
+#define DECO_SECTIONS 3
 #define DECO_COLNUM 7
 
 static menu_wall colorlist[] =
@@ -101,15 +102,28 @@ static menu_wall colorlist[] =
 #define DECO_DRAW 0
 #define DECO_LIGHTEN 1
 #define DECO_DARKEN 2
+#define DECO_NUM 3
+
 #define DECO_BACK 3
-#define DECO_NUM 4
+#define DECO_BLIGHTEN 4
+#define DECO_BDARKEN 5
+#define DECO_BNUM 6
 
 static menu_wall toollist[] =
 {
 	{PIXPACK(0xFF0000), "Draw"},
 	{PIXPACK(0xDDDDDD), "Lighten"},
 	{PIXPACK(0x111111), "Darken"},
-	{PIXPACK(0xAAAAAA), "Background"},
+};
+
+static menu_wall btoollist[] = //For every toollist item, a {NULL}, is needed
+{
+    {NULL},
+    {NULL},
+    {NULL},
+	{PIXPACK(0xFF0000), "Background"},
+	{PIXPACK(0xDDDDDD), "Lighten"},
+	{PIXPACK(0x111111), "Darken"},
 };
 
 struct ui_edit
