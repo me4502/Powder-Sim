@@ -2503,6 +2503,13 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
 	x = XRES-BARSIZE-18;
 	y = YRES+5;
 	sy = y;
+	int ir,ig,ib,tr,tg,tb;
+	tr = (int) *cr;
+	tg = (int) *cg;
+	tb = (int) *cb;
+	ir = 0x000000FF & (0xFF - tr);
+    ig = 0x000000FF & (0xFF - tg);
+    ib = 0x000000FF & (0xFF - tb);
 	if(i==0) //color menu
 	{
 		if (fwidth > XRES-BARSIZE) { //fancy scrolling
@@ -2561,8 +2568,8 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
 							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(toollist[n].colour)+10*a, PIXG(toollist[n].colour)+10*a, PIXB(toollist[n].colour)+10*a);
 						else if (n == DECO_DRAW)
 							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(*cr,*cg,*cb);
-                        else if (n == DECO_BACK)
-                            vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(*cr,*cg,*cb);
+                        else if (n == DECO_INVERT)
+                            vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(ir,ig,ib);
 						else
 							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = toollist[n].colour;
 					}
@@ -2614,6 +2621,8 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
 							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(PIXR(btoollist[p].colour)+10*a, PIXG(btoollist[p].colour)+10*a, PIXB(btoollist[p].colour)+10*a);
                         else if (n == DECO_BACK)
                             vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(*cr,*cg,*cb);
+                        else if (n == DECO_BINVERT)
+                            vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = PIXRGB(ir,ig,ib);
 						else
 							vid_buf[(XRES+BARSIZE)*(y+a)+((x-xoff)+c)] = btoollist[p].colour;
 					}

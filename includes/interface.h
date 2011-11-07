@@ -105,18 +105,21 @@ static menu_wall colorlist[] =
 #define DECO_DRAW 0
 #define DECO_LIGHTEN 1
 #define DECO_DARKEN 2
-#define DECO_NUM 3
+#define DECO_INVERT 3
+#define DECO_NUM 4
 
-#define DECO_BACK 3
-#define DECO_BLIGHTEN 4
-#define DECO_BDARKEN 5
-#define DECO_BNUM 6
+#define DECO_BACK DECO_NUM
+#define DECO_BLIGHTEN DECO_NUM+1
+#define DECO_BDARKEN DECO_NUM+2
+#define DECO_BINVERT DECO_NUM+3
+#define DECO_BNUM DECO_NUM+4
 
 static menu_wall toollist[] =
 {
 	{PIXPACK(0xFF0000), "Draw"},
 	{PIXPACK(0xDDDDDD), "Lighten"},
 	{PIXPACK(0x111111), "Darken"},
+	{PIXPACK(0x111111), "Invert"},
 };
 
 static menu_wall btoollist[] = //For every toollist item, a {NULL}, is needed
@@ -124,9 +127,11 @@ static menu_wall btoollist[] = //For every toollist item, a {NULL}, is needed
     {NULL},
     {NULL},
     {NULL},
+    {NULL},
 	{PIXPACK(0xFF0000), "Background"},
 	{PIXPACK(0xDDDDDD), "Lighten"},
 	{PIXPACK(0x111111), "Darken"},
+	{PIXPACK(0x111111), "Invert"},
 };
 
 struct ui_edit

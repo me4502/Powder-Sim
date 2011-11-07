@@ -2913,6 +2913,27 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 		tb = (decolour[x][y])&0xFF;
 		decolour[x][y] = ((decolour[x][y]&0xFF000000)|(clamp_flt(tr-(tr)*0.02, 0,255)<<16)|(clamp_flt(tg-(tg)*0.02, 0,255)<<8)|clamp_flt(tb-(tb)*0.02, 0,255));
 	}
+	else if (tool == DECO_BINVERT)
+	{
+		if (decolour[x][y] == 0)
+		{
+		    tr = 0;
+            tg = 0;
+            tb = 0;
+            tr = 0x000000FF & (0xFF - tr);
+            tg = 0x000000FF & (0xFF - tg);
+            tb = 0x000000FF & (0xFF - tb);
+            decolour[x][y] = PIXRGB(tr,tg,tb);
+		    return;
+		}
+		tr = (decolour[x][y]>>16)&0xFF;
+		tg = (decolour[x][y]>>8)&0xFF;
+		tb = (decolour[x][y])&0xFF;
+		tr = 0x000000FF & (0xFF - tr);
+        tg = 0x000000FF & (0xFF - tg);
+        tb = 0x000000FF & (0xFF - tb);
+		decolour[x][y] = PIXRGB(tr,tg,tb);
+	}
 	if (!rp)
 		return;
 	if (tool == DECO_DRAW)
@@ -2939,6 +2960,28 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 		tg = (parts[rp>>8].dcolour>>8)&0xFF;
 		tb = (parts[rp>>8].dcolour)&0xFF;
 		parts[rp>>8].dcolour = ((parts[rp>>8].dcolour&0xFF000000)|(clamp_flt(tr-(tr)*0.02, 0,255)<<16)|(clamp_flt(tg-(tg)*0.02, 0,255)<<8)|clamp_flt(tb-(tb)*0.02, 0,255));
+	}
+	else if (tool == DECO_INVERT)
+	{
+		if (parts[rp>>8].dcolour == 0)
+		{
+		    int t = parts[rp>>8].type;
+		    tr = (ptypes[t].pcolors>>16)&0xFF;
+            tg = (ptypes[t].pcolors>>8)&0xFF;
+            tb = (ptypes[t].pcolors)&0xFF;
+            tr = 0x000000FF & (0xFF - tr);
+            tg = 0x000000FF & (0xFF - tg);
+            tb = 0x000000FF & (0xFF - tb);
+            parts[rp>>8].dcolour = PIXRGB(tr,tg,tb);
+		    return;
+		}
+		tr = (parts[rp>>8].dcolour>>16)&0xFF;
+		tg = (parts[rp>>8].dcolour>>8)&0xFF;
+		tb = (parts[rp>>8].dcolour)&0xFF;
+		tr = 0x000000FF & (0xFF - tr);
+        tg = 0x000000FF & (0xFF - tg);
+        tb = 0x000000FF & (0xFF - tb);
+		parts[rp>>8].dcolour = PIXRGB(tr,tg,tb);
 	}
 }
 void line_decorations(int x1, int y1, int x2, int y2, int rx, int ry, int r, int g, int b, int click, int tool)
