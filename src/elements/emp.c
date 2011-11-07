@@ -1,7 +1,7 @@
 #include <element.h>
 
 int update_EMP(UPDATE_FUNC_ARGS) {
-	int r,rx,ry,ok=0,t;
+	int r,rx,ry,ok=0,t,n,nx,ny;
 	if (parts[i].life)
 		return 0;
 	for (rx=-2; rx<3; rx++)
@@ -42,7 +42,7 @@ int update_EMP(UPDATE_FUNC_ARGS) {
 				else if (rand()%120==0)
 					part_change_type(r, rx, ry, PT_NTCT);
 			}
-			int n,nx,ny;
+			
 			for (nx=-2; nx<3; nx++)
 				for (ny=-2; ny<3; ny++)
 					if (rx+nx>=0 && ry+ny>=0 && rx+nx<XRES && ry+ny<YRES && (rx || ry))
@@ -105,6 +105,24 @@ int update_EMP(UPDATE_FUNC_ARGS) {
 						}
 					}
 		}
+	}
+	return 0;
+}
+int graphics_EMP(GRAPHICS_FUNC_ARGS)
+{
+	if(cpart->life)
+	{
+		*colr = cpart->life*1.5;
+		*colg = cpart->life*1.5;
+		*colb = 200-(cpart->life);
+		if (*colr>255)
+			*colr = 255;
+		if (*colg>255)
+			*colg = 255;
+		if (*colb>255)
+			*colb = 255;
+		if (*colb<=0)
+			*colb = 0;
 	}
 	return 0;
 }

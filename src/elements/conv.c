@@ -21,6 +21,8 @@ int update_CONV(UPDATE_FUNC_ARGS) {
 						parts[i].ctype = r&0xFF;
 						if ((r&0xFF)==PT_LIFE)
 							parts[i].tmp = parts[r>>8].ctype;
+                        if ((r&0xFF)==PT_NBLE)
+							parts[i].tmp = parts[r>>8].ctype;
 					}
 				}
 	}
@@ -37,6 +39,7 @@ int update_CONV(UPDATE_FUNC_ARGS) {
 					if((r&0xFF)!=PT_CONV && (r&0xFF)!=parts[i].ctype)
 					{
 						if (parts[i].ctype==PT_LIFE) create_part(r>>8, x+rx, y+ry, parts[i].ctype|(parts[i].tmp<<8));
+						else if (parts[i].ctype==PT_NBLE) create_part(r>>8, x+rx, y+ry, parts[i].ctype|(parts[i].tmp<<8));
 						else create_part(r>>8, x+rx, y+ry, parts[i].ctype);
 					}
 				}

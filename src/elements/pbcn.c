@@ -36,11 +36,13 @@ int update_PBCN(UPDATE_FUNC_ARGS) {
 						parts[i].ctype = r&0xFF;
 						if ((r&0xFF)==PT_LIFE)
 							parts[i].tmp = parts[r>>8].ctype;
+                        if ((r&0xFF)==PT_NBLE)
+							parts[i].tmp = parts[r>>8].ctype;
 					}
 				}
 	if (parts[i].life==10)
 	{
-		
+
 		for (rx=-2; rx<3; rx++)
 			for (ry=-2; ry<3; ry++)
 				if (x+rx>=0 && y+ry>0 && x+rx<XRES && y+ry<YRES && (rx || ry))

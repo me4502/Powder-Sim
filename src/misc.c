@@ -122,6 +122,8 @@ void save_presets(int do_update)
 {
 	char * outputdata;
 	cJSON *root, *userobj, *versionobj;
+	FILE* f;
+
 	root = cJSON_CreateObject();
 
 	cJSON_AddStringToObject(root, "Powder Toy Preferences", "Don't modify this file unless you know what you're doing. P.S: editing the admin/mod fields in your user info doesn't give you magical powers");
@@ -159,11 +161,19 @@ void save_presets(int do_update)
 	cJSON_AddStringToObject(root, "proxy", http_proxy_string);
 	cJSON_AddNumberToObject(root, "cmode", cmode);
 	cJSON_AddNumberToObject(root, "scale", sdl_scale);
+	cJSON_AddItemToObject(root,"favourites",cJSON_CreateIntArray(favourites, menuitems));
 
+    int i = 0;
+
+	while(quickmenu[i].icon!=NULL)
+	{
+	    cJSON_AddNumberToObject(root, quickmenu[i].name, *quickmenu[i].variable);
+		i++;
+	}
 	outputdata = cJSON_Print(root);
 	cJSON_Delete(root);
 
-	FILE *f = fopen("powder.pref", "wb");
+	f = fopen("powder.pref", "wb");
 	if(!f)
 		return;
 	fwrite(outputdata, 1, strlen(outputdata), f);
@@ -265,6 +275,27 @@ void load_presets(void)
 		if((tmpobj = cJSON_GetObjectItem(root, "proxy")) && tmpobj->type == cJSON_String) strncpy(http_proxy_string, tmpobj->valuestring, 255); else http_proxy_string[0] = 0;
 		if(tmpobj = cJSON_GetObjectItem(root, "cmode")) cmode = tmpobj->valueint;
 		if(tmpobj = cJSON_GetObjectItem(root, "scale")) sdl_scale = tmpobj->valueint;
+
+		cJSON *tmpobj2;
+		if (tmpobj = cJSON_GetObjectItem(root, "favourites"))
+		{
+		    menuitems = 0;
+		    for(int i = 0; i < cJSON_GetArrayItem(tmpobj, i);i++)
+		    {
+		        if (tmpobj2->valueint!=NULL)
+                    printf("%i\n", tmpobj2->valueint);
+           //     favourites[menuitems++] = tmpobj2->valueint;
+		    }
+		}
+
+        int i = 0;
+
+        while(quickmenu[i].icon!=NULL)
+        {
+            if (tmpobj!=NULL)
+                if(tmpobj = cJSON_GetObjectItem(root, quickmenu[i].name)) *quickmenu[i].variable = tmpobj->valueint;
+            i++;
+        }
 
 		cJSON_Delete(root);
 	} else { //Fallback and read from old def file
