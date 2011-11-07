@@ -25,8 +25,3 @@ int update_GBMB(UPDATE_FUNC_ARGS)
         gravmap[y/CELL][x/CELL] = -80;
     return 0;
 }
-
-int graphics_GBMB(GRAPHIC_FUNC_ARGS)
-{
-
-}

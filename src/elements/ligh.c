@@ -44,10 +44,10 @@ int contact_part(int i, int tp)
 
 void create_line_par(int x1, int y1, int x2, int y2, int c, int temp, int life, int tmp, int tmp2)
 {
-	if (c==WL_EHOLE || c==WL_ALLOWGAS || c==WL_ALLOWALLELEC || c==WL_ALLOWSOLID || c==WL_ALLOWAIR || c==WL_WALL || c==WL_DESTROYALL || c==WL_ALLOWLIQUID || c==WL_FAN || c==WL_STREAM || c==WL_DETECT || c==WL_EWALL || c==WL_WALLELEC)
-		return; // this function only for particles, no walls
 	int cp=abs(y2-y1)>abs(x2-x1), x, y, dx, dy, sy;
 	float e, de;
+	if (c==WL_EHOLE || c==WL_ALLOWGAS || c==WL_ALLOWALLELEC || c==WL_ALLOWSOLID || c==WL_ALLOWAIR || c==WL_WALL || c==WL_DESTROYALL || c==WL_ALLOWLIQUID || c==WL_FAN || c==WL_STREAM || c==WL_DETECT || c==WL_EWALL || c==WL_WALLELEC)
+		return; // this function only for particles, no walls
 	if (cp)
 	{
 		y = x1;
@@ -115,7 +115,10 @@ int update_LIGH(UPDATE_FUNC_ARGS)
 	 * tmp - angle of lighting
 	 *
 	*/
-	int r,rx,ry, multipler, powderful=parts[i].temp*(1+parts[i].life/40)*LIGHTING_POWER;
+	int r,rx,ry, multipler, powderful;
+	float angle, angle2=-1;
+	int near;
+	powderful = powderful=parts[i].temp*(1+parts[i].life/40)*LIGHTING_POWER;
 	update_PYRO(UPDATE_FUNC_SUBCALL_ARGS);
 	if (aheat_enable)
 	{
@@ -162,7 +165,7 @@ int update_LIGH(UPDATE_FUNC_ARGS)
 					}
 					if (ptypes[r&0xFF].hconduct)
 						parts[r>>8].temp = restrict_flt(parts[r>>8].temp+powderful/10, MIN_TEMP, MAX_TEMP);
-					if (((r&0xFF)==PT_STKM && player[2]!=PT_LIGH) || ((r&0xFF)==PT_STKM2 && player2[2]!=PT_LIGH))
+					if (((r&0xFF)==PT_STKM && player.elem!=PT_LIGH) || ((r&0xFF)==PT_STKM2 && player2.elem!=PT_LIGH))
 					{
 						parts[r>>8].life-=powderful/100;
 					}
@@ -192,9 +195,9 @@ int update_LIGH(UPDATE_FUNC_ARGS)
 		return 1;
 	}
 
-	float angle, angle2=-1;
+	angle2=-1;
 
-	int near = LIGH_nearest_part(i, parts[i].life*2.5);
+	near = LIGH_nearest_part(i, parts[i].life*2.5);
 	if (near!=-1)
 	{
 		int t=parts[near].type;
@@ -280,5 +283,13 @@ int update_LIGH(UPDATE_FUNC_ARGS)
 	}
 
 	parts[i].tmp2=-1;
+	return 1;
+}
+int graphics_LIGH(GRAPHICS_FUNC_ARGS)
+{
+	*colr = 235;
+	*colg = 245;
+	*colb = 255;
+	*pixel_mode |= PMODE_GLOW;
 	return 1;
 }

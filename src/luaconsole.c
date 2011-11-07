@@ -1555,7 +1555,6 @@ int luatpt_showcursor(lua_State* l)
         SDL_ShowCursor(SDL_ENABLE);
     return 0;
 }
-
 int luatpt_screenshot(lua_State* l)
 {
 	int captureUI = luaL_optint(l, 1, 0);
