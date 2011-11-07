@@ -1028,6 +1028,8 @@ void drawrect(pixel *vid, int x, int y, int w, int h, int r, int g, int b, int a
 
 void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int sb, int a, int er, int eg, int eb, int dir)
 {
+    if (fancy_graphics!=1)
+        return;
     int i, j;
     int gradr[h][w];
     int gradg[h][w];
