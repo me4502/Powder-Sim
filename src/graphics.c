@@ -2895,6 +2895,24 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
             decolour[x][y] = ((255<<24)|(r<<16)|(g<<8)|b);
         update_back(vid_buf,1,x,y);
     }
+    else if (tool == DECO_BLIGHTEN)
+	{//maybe get a better lighten/darken?
+		if (decolour[x][y] == 0)
+			return;
+		tr = (decolour[x][y]>>16)&0xFF;
+		tg = (decolour[x][y]>>8)&0xFF;
+		tb = (decolour[x][y])&0xFF;
+		decolour[x][y] = ((decolour[x][y]&0xFF000000)|(clamp_flt(tr+(255-tr)*0.02+1, 0,255)<<16)|(clamp_flt(tg+(255-tg)*0.02+1, 0,255)<<8)|clamp_flt(tb+(255-tb)*0.02+1, 0,255));
+	}
+	else if (tool == DECO_BDARKEN)
+	{
+		if (decolour[x][y] == 0)
+			return;
+		tr = (decolour[x][y]>>16)&0xFF;
+		tg = (decolour[x][y]>>8)&0xFF;
+		tb = (decolour[x][y])&0xFF;
+		decolour[x][y] = ((decolour[x][y]&0xFF000000)|(clamp_flt(tr-(tr)*0.02, 0,255)<<16)|(clamp_flt(tg-(tg)*0.02, 0,255)<<8)|clamp_flt(tb-(tb)*0.02, 0,255));
+	}
 	if (!rp)
 		return;
 	if (tool == DECO_DRAW)
