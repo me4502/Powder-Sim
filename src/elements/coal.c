@@ -11,7 +11,11 @@ int update_COAL(UPDATE_FUNC_ARGS)
     else if (parts[i].life < 100)
     {
         parts[i].life--;
-        create_part(-1, x+rand()%3-1, y+rand()%3-1, PT_FIRE);
+        int p;
+        if (p = create_part(-1, x+rand()%3-1, y+rand()%3-1, PT_FIRE))
+        {
+            parts[p].tmp = PT_COAL;
+        }
     }
     if ((pv[y/CELL][x/CELL] > 4.3f)&&parts[i].tmp>40)
         parts[i].tmp=39;
