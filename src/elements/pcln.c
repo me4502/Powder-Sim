@@ -26,7 +26,7 @@ int update_PCLN(UPDATE_FUNC_ARGS) {
 						parts[i].life = 10;
 				}
 			}
-	if (parts[i].ctype<=0 || parts[i].ctype>=PT_NUM || (parts[i].ctype==PT_LIFE && (parts[i].tmp<0 || parts[i].tmp>=NGOLALT)))
+	if (parts[i].ctype<=0 || parts[i].ctype>=PT_NUM || (parts[i].ctype==PT_LIFE && (parts[i].tmp<0 || parts[i].tmp>=NGOLALT))|| (parts[i].ctype==PT_NBLE && (parts[i].tmp<0 || parts[i].tmp>=NNBLALT)))
 		for (rx=-1; rx<2; rx++)
 			for (ry=-1; ry<2; ry++)
 				if (x+rx>=0 && y+ry>=0 && x+rx<XRES && y+ry<YRES)
@@ -62,6 +62,13 @@ int update_PCLN(UPDATE_FUNC_ARGS) {
 			}
 		}
 		else if (parts[i].ctype==PT_LIFE) {//create life a different way
+			for (rx=-1; rx<2; rx++) {
+				for (ry=-1; ry<2; ry++) {
+					create_part(-1, x+rx, y+ry, parts[i].ctype|(parts[i].tmp<<8));
+				}
+			}
+		}
+        else if (parts[i].ctype==PT_NBLE) {//create life a different way
 			for (rx=-1; rx<2; rx++) {
 				for (ry=-1; ry<2; ry++) {
 					create_part(-1, x+rx, y+ry, parts[i].ctype|(parts[i].tmp<<8));

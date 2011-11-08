@@ -9,7 +9,7 @@ int update_BCLN(UPDATE_FUNC_ARGS) {
 		parts[i].vx += advection*vx[y/CELL][x/CELL];
 		parts[i].vy += advection*vy[y/CELL][x/CELL];
 	}
-	if (parts[i].ctype<=0 || parts[i].ctype>=PT_NUM || (parts[i].ctype==PT_LIFE && (parts[i].tmp<0 || parts[i].tmp>=NGOLALT)))
+	if (parts[i].ctype<=0 || parts[i].ctype>=PT_NUM || (parts[i].ctype==PT_LIFE && (parts[i].tmp<0 || parts[i].tmp>=NGOLALT)) || (parts[i].ctype==PT_NBLE && (parts[i].tmp<0 || parts[i].tmp>=NNBLALT)))
 	{
 		int r, rx, ry;
 		for (rx=-1; rx<2; rx++)
@@ -36,6 +36,7 @@ int update_BCLN(UPDATE_FUNC_ARGS) {
 	}
 	else {
 		if (parts[i].ctype==PT_LIFE) create_part(-1, x+rand()%3-1, y+rand()%3-1, parts[i].ctype|(parts[i].tmp<<8));
+		else if (parts[i].ctype==PT_NBLE) create_part(-1, x+rand()%3-1, y+rand()%3-1, parts[i].ctype|(parts[i].tmp<<8));
 		else create_part(-1, x+rand()%3-1, y+rand()%3-1, parts[i].ctype);
 	}
 	return 0;
