@@ -17,6 +17,13 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		Fg = 2;
 		Fb = 2;
 	}
+	else if (cpart-> tmp == PT_NITR)
+	{		
+		Fr = 1;
+		Fg = 2;
+		Fb = 3;
+	}
+	
 	else
 	{		
 		Fr = 0;
