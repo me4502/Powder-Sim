@@ -3,24 +3,31 @@
 int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 {
 	int caddress = restrict_flt(restrict_flt((float)cpart->life, 0.0f, 200.0f)*3, 0.0f, (200.0f*3)-3);	
+	int Fr, Fg, Fb;	
+	
 	if (cpart-> tmp == PT_ALCO)
 	{
-		*colr = (unsigned char)flm_data[caddress];
-		*colg = (unsigned char)flm_data[caddress];
-		*colb = (unsigned char)flm_data[caddress];
+		Fr = 0;
+		Fg = 0;
+		Fb = 0;	
 	} 	
 	else if (cpart-> tmp == PT_COAL)
 	{		
-		*colr = (unsigned char)flm_data[caddress+1];
-		*colg = (unsigned char)flm_data[caddress+2];
-		*colb = (unsigned char)flm_data[caddress+2];
+		Fr = 1;
+		Fg = 2;
+		Fb = 2;
 	}
 	else
 	{		
-		*colr = (unsigned char)flm_data[caddress];
-		*colg = (unsigned char)flm_data[caddress+1];
-		*colb = (unsigned char)flm_data[caddress+2];
+		Fr = 0;
+		Fg = 1;
+		Fb = 2;
 	}		
+	
+	*colr = (unsigned char)flm_data[caddress+Fr];
+	*colg = (unsigned char)flm_data[caddress+Fg];
+	*colb = (unsigned char)flm_data[caddress+Fb];
+	
 	*firea = 255;
 	*firer = *colr;
 	*fireg = *colg;
