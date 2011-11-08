@@ -33,7 +33,7 @@ powder-sse2.exe: build/powder-sse2.exe
 powder-sse.exe: build/powder-sse.exe
 
 # general compiler flags
-build/powder: CFLAGS += -DINTERNAL -DLIN64 $(OFLAGS)
+build/powder: CFLAGS += -DINTERNAL -DLIN64 $(OFLAGS) -IGLU -DPIX32OGL -DPIXALPHA
 build/powder-debug: CFLAGS += -m32 -DLIN32 $(FLAGS_DBUG)
 build/powder-sse3 build/powder-sse2 build/powder-sse: CFLAGS += -m32 -DLIN32 $(OFLAGS)
 build/powder-64-sse3 build/powder-64-sse2 build/powder-64-sse3-opengl: CFLAGS += -m64 -DLIN64 $(OFLAGS)
