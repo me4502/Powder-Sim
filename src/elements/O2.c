@@ -20,11 +20,11 @@ int update_O2(UPDATE_FUNC_ARGS)
                 }
                 if ((r&0xFF)==PT_FIRE || (r&0xFF)==PT_PLSM)
                 {
+                    parts[i].ctype=parts[i].type;
                     create_part(i,x,y,PT_FIRE);
                     parts[i].temp+=(rand()/(RAND_MAX/100));
                     parts[i].tmp |= 2;
-                }
-
+                    }
             }
     return 0;
 }
