@@ -664,6 +664,9 @@ inline void part_change_type(int i, int x, int y, int t)//changes the type of pa
 	if (parts[i].type == PT_STKM2)
 		player2.spwn = 0;
 
+    if (t==PT_FIRE)
+        parts[i].ctype = parts[i].type;
+
 	if (parts[i].type == PT_FIGH)
 	{
 		fighters[(unsigned char)parts[i].tmp].spwn = 0;

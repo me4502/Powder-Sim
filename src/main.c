@@ -2784,6 +2784,16 @@ int main(int argc, char *argv[])
 
 					sprintf(nametext, "Molten %s", lowername);
 				}
+				else if ((cr&0xFF)==PT_FIRE && parts[cr>>8].tmp > 0 && parts[cr>>8].tmp < PT_NUM )
+				{
+					char lowername[6];
+					int ix;
+					strcpy(lowername, ptypes[parts[cr>>8].tmp].name);
+					for (ix = 0; lowername[ix]; ix++)
+						lowername[ix] = tolower(lowername[ix]);
+
+					sprintf(nametext, "Burning %s", lowername);
+				}
 				else if (DEBUG_MODE)
 				{
 					int tctype = parts[cr>>8].ctype;
