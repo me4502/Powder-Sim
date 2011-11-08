@@ -13,7 +13,7 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		fg = 0;
 		fb = 0;
 	}
-	else if (cpart-> tmp == PT_COAL)
+	else if (cpart-> tmp == PT_COAL || cpart-> tmp == PT_BCOL)
 	{
 		fr = 1;
 		fg = 2;
