@@ -2,7 +2,7 @@
 
 int update_CONV(UPDATE_FUNC_ARGS) {
 	int r, rx, ry;
-	if (parts[i].ctype<=0 || parts[i].ctype>=PT_NUM || (parts[i].ctype==PT_LIFE && (parts[i].tmp<0 || parts[i].tmp>=NGOLALT)))
+	if (parts[i].ctype<=0 || parts[i].ctype>=PT_NUM || (parts[i].ctype==PT_LIFE && (parts[i].tmp<0 || parts[i].tmp>=NGOLALT))|| (parts[i].ctype==PT_NBLE && (parts[i].tmp<0 || parts[i].tmp>=NNBLALT)))
 	{
 		for (rx=-1; rx<2; rx++)
 			for (ry=-1; ry<2; ry++)
