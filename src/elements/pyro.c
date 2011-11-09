@@ -54,6 +54,10 @@ int update_PYRO(UPDATE_FUNC_ARGS) {
 				if (bmap[(y+ry)/CELL][(x+rx)/CELL] && bmap[(y+ry)/CELL][(x+rx)/CELL]!=WL_STREAM)
 					continue;
 				rt = parts[r>>8].type;
+				if (parts[i].type==PT_FIRE && parts[i].tmp==PT_COAL && !rt)
+				{
+                    create_part(-1, x+rx, y+ry, PT_SMKE);
+				}
 				if ((surround_space || ptypes[rt].explosive) &&
 					(t!=PT_SPRK || (rt!=PT_RBDM && rt!=PT_LRBD && rt!=PT_INSL)) &&
 					(t!=PT_PHOT || rt!=PT_INSL) &&
