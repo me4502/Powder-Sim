@@ -5,10 +5,16 @@ int update_BCOL(UPDATE_FUNC_ARGS) {
 	if (parts[i].life<=0) {
 		create_part(i, x, y, PT_FIRE);
 		return 1;
-	} else if (parts[i].life < 100) {
-		parts[i].life--;
-		create_part(-1, x+rand()%3-1, y+rand()%3-1, PT_FIRE);
-	}
+	}	
+	else if (parts[i].life < 100)
+    	{
+        	parts[i].life--;
+        	int p;
+        	if (p = create_part(-1, x+rand()%3-1, y+rand()%3-1, PT_FIRE))
+        	{
+            		parts[p].tmp = PT_COAL;
+        	}
+   	 }
 
 	for (rx=-2; rx<3; rx++)
 		for (ry=-2; ry<3; ry++)
