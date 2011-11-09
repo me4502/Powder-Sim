@@ -178,6 +178,10 @@ void update_back(pixel *vid, int over, int x, int y);
 
 void render_parts(pixel *vid);
 
+#ifdef OGLR
+void draw_parts_fbo();
+#endif
+
 void draw_parts(pixel *vid);
 
 void draw_walls(pixel *vid);
