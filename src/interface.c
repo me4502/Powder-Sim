@@ -5150,13 +5150,13 @@ char *console_ui(pixel *vid_buf,char error[255],char console_more) {
 		else
 			i=0;
 		if (pyready)
-			drawtext(vid_buf, 15, 15, "Welcome to The Powder Toy console v.3 (by cracker64, Python enabled)", 255, i, i, 255);
+			drawtext(vid_buf, 15, 15, "Welcome to The Powder Sim console v.3 (by cracker64, Python enabled)", 255, i, i, 255);
 		else
-			drawtext(vid_buf, 15, 15, "Welcome to The Powder Toy console v.3 (by cracker64, Python disabled)", 255, i, i, 255);
+			drawtext(vid_buf, 15, 15, "Welcome to The Powder Sim console v.3 (by cracker64, Python disabled)", 255, i, i, 255);
 #elif defined(LUACONSOLE)
-		drawtext(vid_buf, 15, 15, "Welcome to The Powder Toy console v.4 (by cracker64, Lua enabled)", 255, 255, 255, 255);
+		drawtext(vid_buf, 15, 15, "Welcome to The Powder Sim console v.4 (by cracker64, Lua enabled)", 255, 255, 255, 255);
 #else
-		drawtext(vid_buf, 15, 15, "Welcome to The Powder Toy console v.3 (by cracker64)", 255, 255, 255, 255);
+		drawtext(vid_buf, 15, 15, "Welcome to The Powder Sim console v.3 (by cracker64)", 255, 255, 255, 255);
 #endif
 
 		cc = 0;
