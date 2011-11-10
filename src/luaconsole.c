@@ -37,6 +37,7 @@ void luacon_open(){
 		{"get_property", &luatpt_get_property},
 		{"drawpixel", &luatpt_drawpixel},
 		{"drawrect", &luatpt_drawrect},
+		{"gradrect", &luatpt_fillgradrect},
 		{"fillrect", &luatpt_fillrect},
 		{"drawline", &luatpt_drawline},
 		{"textwidth", &luatpt_textwidth},
@@ -806,6 +807,50 @@ int luatpt_drawrect(lua_State* l)
 	if (vid_buf!=NULL)
 	{
 		drawrect(vid_buf, x, y, w, h, r, g, b, a);
+		return 0;
+	}
+	return luaL_error(l, "Screen buffer does not exist");
+}
+
+int luatpt_fillgradrect(lua_State* l)
+{
+	int x,y,w,h,sr,sg,sb,a,er,eg,eb,dir;
+	x = luaL_optint(l, 1, 0);
+	y = luaL_optint(l, 2, 0);
+	w = luaL_optint(l, 3, 10);
+	h = luaL_optint(l, 4, 10);
+	sr = luaL_optint(l, 5, 255);
+	sg = luaL_optint(l, 6, 255);
+	sb = luaL_optint(l, 7, 255);
+	a = luaL_optint(l, 8, 255);
+    er = luaL_optint(l, 9, 255);
+	eg = luaL_optint(l, 10, 255);
+	eb = luaL_optint(l, 11, 255);
+	dir = luaL_optint(l, 12, 4);
+
+	if (x<0 || y<0 || x>=XRES+BARSIZE || y>=YRES+MENUSIZE)
+		return luaL_error(l, "Screen coordinates out of range (%d,%d)", x, y);
+	if(x+w > XRES+BARSIZE)
+		w = XRES-x;
+	if(y+h > YRES+MENUSIZE)
+		h = YRES-y;
+	if (sr<0) sr = 0;
+	if (sr>255) sr = 255;
+	if (sg<0) sg = 0;
+	if (sg>255) sg = 255;
+	if (sb<0) sb = 0;
+	if (sb>255) sb = 255;
+	if (a<0) a = 0;
+	if (a>255) a = 255;
+	if (er<0) er = 0;
+	if (er>255) er = 255;
+	if (eg<0) eg = 0;
+	if (eg>255) eg = 255;
+	if (eb<0) eb = 0;
+	if (eb>255) eb = 255;
+	if (vid_buf!=NULL)
+	{
+		gradient_fill(vid_buf, x, y, w, h, sr, sg, sb, a, er, eg, eb, dir);
 		return 0;
 	}
 	return luaL_error(l, "Screen buffer does not exist");
