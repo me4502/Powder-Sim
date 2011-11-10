@@ -126,7 +126,7 @@ void save_presets(int do_update)
 
 	root = cJSON_CreateObject();
 
-	cJSON_AddStringToObject(root, "Powder Toy Preferences", "Don't modify this file unless you know what you're doing. P.S: editing the admin/mod fields in your user info doesn't give you magical powers");
+	cJSON_AddStringToObject(root, "Powder Sim Preferences", "Don't modify this file unless you know what you're doing. P.S: editing the admin/mod fields in your user info doesn't give you magical powers");
 
 	//User Info
 	if(svf_login){
@@ -643,11 +643,11 @@ int register_extension()
 	//TODO: Implement
 
 	opencommand = malloc(strlen(currentfilename)+53+strlen(AppDataPath));
-	/*if((strlen(AppDataPath)+strlen(APPDATA_SUBDIR "\\Powder Toy"))<MAX_PATH)
+	/*if((strlen(AppDataPath)+strlen(APPDATA_SUBDIR "\\Powder Sim"))<MAX_PATH)
 	{
 		strappend(AppDataPath, APPDATA_SUBDIR);
 		_mkdir(AppDataPath);
-		strappend(AppDataPath, "\\Powder Toy");
+		strappend(AppDataPath, "\\Powder Sim");
 		_mkdir(AppDataPath);
 	} else {
 		returnval = 0;
@@ -656,12 +656,12 @@ int register_extension()
 	sprintf(opencommand, "\"%s\" open \"%%1\" ddir \"%s\"", currentfilename, AppDataPath);
 
 	//Create extension entry
-	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\.cps", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
+	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\.psc", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
 	if (rresult != ERROR_SUCCESS) {
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"PowderToySave", strlen("PowderToySave")+1);
+	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"PowderSimSave", strlen("PowderSimSave")+1);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
@@ -669,12 +669,12 @@ int register_extension()
 	}
 	RegCloseKey(newkey);
 
-	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\.stm", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
+	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\.pss", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
 	if (rresult != ERROR_SUCCESS) {
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"PowderToySave", strlen("PowderToySave")+1);
+	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"PowderSimSave", strlen("PowderSimSave")+1);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
@@ -683,12 +683,12 @@ int register_extension()
 	RegCloseKey(newkey);
 
 	//Create program entry
-	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\PowderToySave", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
+	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\PowderSimSave", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
 	if (rresult != ERROR_SUCCESS) {
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"Powder Toy Save", strlen("Powder Toy Save")+1);
+	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"Powder Sim Save", strlen("Powder Sim Save")+1);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
@@ -739,12 +739,12 @@ int register_extension()
 "<?xml version=\"1.0\"?>\n"
 "	<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>\n"
 "	<mime-type type=\"application/vnd.powdertoy.save\">\n"
-"		<comment>Powder Toy save</comment>\n"
+"		<comment>Powder Sim save</comment>\n"
 "		<glob pattern=\"*.cps\"/>\n"
 "		<glob pattern=\"*.stm\"/>\n"
 "	</mime-type>\n"
 "</mime-info>\n";
-	f = fopen("powdertoy-save.xml", "wb");
+	f = fopen("powdersim-save.xml", "wb");
 	if (!f)
 		return 0;
 	fwrite(mimedata, 1, strlen(mimedata), f);
@@ -753,40 +753,40 @@ int register_extension()
 	char *desktopfiledata_tmp =
 "[Desktop Entry]\n"
 "Type=Application\n"
-"Name=Powder Toy\n"
+"Name=Powder Sim\n"
 "Comment=Physics sandbox game\n"
-"MimeType=application/vnd.powdertoy.save;\n"
+"MimeType=application/vnd.powdersim.save;\n"
 "NoDisplay=true\n";
 	char *desktopfiledata = malloc(strlen(desktopfiledata_tmp)+strlen(currentfilename)+100);
 	strcpy(desktopfiledata, desktopfiledata_tmp);
 	strappend(desktopfiledata, "Exec=");
 	strappend(desktopfiledata, currentfilename);
 	strappend(desktopfiledata, " open %f\n");
-	f = fopen("powdertoy-tpt.desktop", "wb");
+	f = fopen("powdersim-Ps.desktop", "wb");
 	if (!f)
 		return 0;
 	fwrite(desktopfiledata, 1, strlen(desktopfiledata), f);
 	fclose(f);
-	system("xdg-mime install powdertoy-save.xml");
-	system("xdg-desktop-menu install powdertoy-tpt.desktop");
-	f = fopen("powdertoy-save-32.png", "wb");
+	system("xdg-mime install powdersim-save.xml");
+	system("xdg-desktop-menu install powdersim-Ps.desktop");
+	f = fopen("powdersim-save-32.png", "wb");
 	if (!f)
 		return 0;
 	fwrite(icon_doc_32_png, 1, sizeof(icon_doc_32_png), f);
 	fclose(f);
-	f = fopen("powdertoy-save-16.png", "wb");
+	f = fopen("powdersim-save-16.png", "wb");
 	if (!f)
 		return 0;
 	fwrite(icon_doc_16_png, 1, sizeof(icon_doc_16_png), f);
 	fclose(f);
-	system("xdg-icon-resource install --noupdate --context mimetypes --size 32 powdertoy-save-32.png application-vnd.powdertoy.save");
-	system("xdg-icon-resource install --noupdate --context mimetypes --size 16 powdertoy-save-16.png application-vnd.powdertoy.save");
+	system("xdg-icon-resource install --noupdate --context mimetypes --size 32 powdersim-save-32.png application-vnd.powdersim.save");
+	system("xdg-icon-resource install --noupdate --context mimetypes --size 16 powdersim-save-16.png application-vnd.powdersim.save");
 	system("xdg-icon-resource forceupdate");
-	system("xdg-mime default powdertoy-tpt.desktop application/vnd.powdertoy.save");
-	unlink("powdertoy-save-32.png");
-	unlink("powdertoy-save-16.png");
-	unlink("powdertoy-save.xml");
-	unlink("powdertoy-tpt.desktop");
+	system("xdg-mime default powdersim-Ps.desktop application/vnd.powdersim.save");
+	unlink("powdersim-save-32.png");
+	unlink("powdersim-save-16.png");
+	unlink("powdersim-save.xml");
+	unlink("powdersim-Ps.desktop");
 	return 1;
 #elif defined MACOSX
 	return 0;

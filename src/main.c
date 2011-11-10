@@ -2187,11 +2187,11 @@ int main(int argc, char *argv[])
 			}
 			if (sdl_key=='i' && (sdl_mod & KMOD_CTRL))
 			{
-				if(confirm_ui(vid_buf, "Install Powder Toy", "You are about to install The Powder Toy", "Install"))
+				if(confirm_ui(vid_buf, "Install Powder Sim", "You are about to install Powder Sim", "Install"))
 				{
 					if(register_extension())
 					{
-						info_ui(vid_buf, "Install success", "Powder Toy has been installed!");
+						info_ui(vid_buf, "Install success", "Powder Sim has been installed!");
 					}
 					else
 					{
@@ -2863,7 +2863,7 @@ int main(int argc, char *argv[])
 				if (update_finish())
 					error_ui(vid_buf, 0, "Update failed - try downloading a new version.");
 				else
-					info_ui(vid_buf, "Update success", "You have successfully updated the Powder Toy!");
+					info_ui(vid_buf, "Update success", "You have successfully updated the Powder Sim!");
 			}
 			update_flag = 0;
 		}
@@ -2891,7 +2891,7 @@ int main(int argc, char *argv[])
 				sprintf(tmp, "Your version: %d.%d (%d)\nNew version: %d.%d (%d)", SAVE_VERSION, MINOR_VERSION, BUILD_NUM, major, minor, buildnum);
 			}
 #endif
-			if (confirm_ui(vid_buf, "Do you want to update The Powder Toy?", tmp, "Update"))
+			if (confirm_ui(vid_buf, "Do you want to update Powder Sim?", tmp, "Update"))
 			{
 				free(tmp);
 				tmp = download_ui(vid_buf, my_uri, &i);
@@ -3481,7 +3481,7 @@ int main(int argc, char *argv[])
 		}
 #ifdef OGLR
 		draw_parts_fbo();
-#endif		
+#endif
 		if (zoom_en)
 			render_zoom(vid_buf);
 
