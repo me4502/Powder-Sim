@@ -2067,8 +2067,6 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     sy = y;
     if (i==-1)
         return;
-    //if (fancy_graphics)
-        //gradient_fill(vid_buf, 0, YRES-5, XRES, MENUSIZE/2+8, 250, 0, 0, 60, 115, 0, 0, 2);
     if (i==SC_WALL)//wall menu
     {
         if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling

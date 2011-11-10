@@ -1068,6 +1068,12 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
                 gradg[j][w-i] = (sg*of) + ((1.0f-of)*eg);
                 gradb[j][w-i] = (sb*of) + ((1.0f-of)*eb);
             }
+        }
+    }
+    for (j=1; j<h; j++)
+    {
+        for (i=1; i<w; i++)
+        {
             if (gradr[j][i]<0)gradr[j][i]=0;
             if (gradg[j][i]<0)gradg[j][i]=0;
             if (gradb[j][i]<0)gradb[j][i]=0;
@@ -1077,6 +1083,7 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
             drawpixel(vid, x+i, y+j, gradr[j][i], gradg[j][i], gradb[j][i], a);
         }
     }
+
 }
 
 //draws a rectangle and fills it in as well.
