@@ -67,6 +67,7 @@ int luatpt_get_property(lua_State* l);
 int luatpt_drawpixel(lua_State* l);
 int luatpt_drawrect(lua_State* l);
 int luatpt_fillrect(lua_State* l);
+int luatpt_fillgradrect(lua_State* l);
 int luatpt_drawline(lua_State* l);
 int luatpt_textwidth(lua_State* l);
 int luatpt_get_name(lua_State* l);
