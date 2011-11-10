@@ -31,6 +31,14 @@ int graphics_CLST(GRAPHICS_FUNC_ARGS)
 int graphics_CBNW(GRAPHICS_FUNC_ARGS)
 {
 	int z = cpart->tmp2 - 20;//speckles!
+	*colr += z * 10;
+	*colg += z * 10;
+	*colb += z * 10;
+	return 0;
+}
+int graphics_ALCO(GRAPHICS_FUNC_ARGS)
+{
+	int z = cpart->tmp2 - 20;//speckles!
 	*colr += z * 1;
 	*colg += z * 2;
 	*colb += z * 8;
@@ -596,3 +604,4 @@ int graphics_SING(GRAPHICS_FUNC_ARGS)
     }
     return 0;
 }
+
