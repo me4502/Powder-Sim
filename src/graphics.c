@@ -1068,12 +1068,6 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
                 gradg[j][w-i] = (sg*of) + ((1.0f-of)*eg);
                 gradb[j][w-i] = (sb*of) + ((1.0f-of)*eb);
             }
-        }
-    }
-    for (j=1; j<h; j++)
-    {
-        for (i=1; i<w; i++)
-        {
             if (gradr[j][i]<0)gradr[j][i]=0;
             if (gradg[j][i]<0)gradg[j][i]=0;
             if (gradb[j][i]<0)gradb[j][i]=0;
@@ -1083,7 +1077,6 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
             drawpixel(vid, x+i, y+j, gradr[j][i], gradg[j][i], gradb[j][i], a);
         }
     }
-
 }
 
 //draws a rectangle and fills it in as well.
@@ -2638,7 +2631,7 @@ void draw_parts_fbo()
 	{
 		float xres = XRES, yres = YRES;
 		glUseProgram(lensProg);
-		glActiveTexture(GL_TEXTURE0);			
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, partsFboTex);
 		glUniform1i(glGetUniformLocation(lensProg, "pTex"), 0);
 		glActiveTexture(GL_TEXTURE1);
@@ -2654,11 +2647,11 @@ void draw_parts_fbo()
 		glUniform1fv(glGetUniformLocation(lensProg, "yres"), 1, &yres);
 	}
 	else
-	{	
+	{
 		glBindTexture(GL_TEXTURE_2D, partsFboTex);
 		glBlendFunc(GL_ONE, GL_ONE);
 	}
-	
+
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
 	glTexCoord2d(1, 0);
@@ -2670,7 +2663,7 @@ void draw_parts_fbo()
 	glTexCoord2d(1, 1);
 	glVertex3f(XRES*sdl_scale, MENUSIZE*sdl_scale, 1.0);
 	glEnd();
-	
+
 	if(cmode==CM_FANCY)
 	{
 		glUseProgram(0);
@@ -3473,9 +3466,9 @@ void render_zoom(pixel *img) //draws the zoom box
 	glEnd();
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable( GL_TEXTURE_2D );
-	
+
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
+
 	glLineWidth(sdl_scale);
 	glEnable(GL_LINE_SMOOTH);
 	glBegin(GL_LINES);
@@ -3488,7 +3481,7 @@ void render_zoom(pixel *img) //draws the zoom box
 		glVertex2f((zoom_wx+i*ZFACTOR)*sdl_scale, (YRES+MENUSIZE-zoom_wy)*sdl_scale);
 	}
 	glEnd();
-	
+
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glBegin(GL_LINE_STRIP);
 	glVertex3i((zoom_wx-1)*sdl_scale, (YRES+MENUSIZE-zoom_wy)*sdl_scale, 0);
@@ -3498,7 +3491,7 @@ void render_zoom(pixel *img) //draws the zoom box
 	glVertex3i((zoom_wx-1)*sdl_scale, (YRES+MENUSIZE-zoom_wy)*sdl_scale, 0);
 	glEnd();
 	glDisable(GL_LINE_SMOOTH);
-	
+
 	glDisable(GL_LINE_SMOOTH);
 
 	if(zoom_en)
