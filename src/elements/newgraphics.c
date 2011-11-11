@@ -39,8 +39,8 @@ int graphics_CBNW(GRAPHICS_FUNC_ARGS)
 int graphics_ALCO(GRAPHICS_FUNC_ARGS)
 {
 	int z = cpart->tmp2 - 20;//speckles!
-	*colr += z * 1;
-	*colg += z * 2;
+	*colr += z * 9;
+	*colg += z * 10;
 	*colb += z * 8;
 	return 0;
 }
