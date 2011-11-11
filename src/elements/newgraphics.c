@@ -40,8 +40,8 @@ int graphics_ALCO(GRAPHICS_FUNC_ARGS)
 {
 	int z = cpart->tmp2 - 20;//speckles!
 	*colr += z * 9;
-	*colg += z * 10;
-	*colb += z * 8;
+	*colg += z * 5;
+	*colb += z * 3;
 	return 0;
 }
 int graphics_SPNG(GRAPHICS_FUNC_ARGS)
