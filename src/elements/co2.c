@@ -3,8 +3,8 @@
 int update_CO2(UPDATE_FUNC_ARGS)
 {
     int r, rx, ry;
-    for (rx=-2; rx<3; rx++)
-        for (ry=-2; ry<3; ry++)
+    for (rx=-3; rx<4; rx++)
+        for (ry=-3; ry<4; ry++)
             if (x+rx>=0 && y+ry>0 && x+rx<XRES && y+ry<YRES && (rx || ry))
             {
                 r = pmap[y+ry][x+rx];
@@ -24,12 +24,7 @@ int update_CO2(UPDATE_FUNC_ARGS)
                     part_change_type(i,x,y,PT_CBNW);
                     kill_part(r>>8);
                 }
-                parts[i].x += rand()%3-1;
+                parts[i].vx += rand()%3-1;
             }
-    return 0;
-}
-
-int graphics_CO2(GRAPHIC_FUNC_ARGS)
-{
     return 0;
 }
