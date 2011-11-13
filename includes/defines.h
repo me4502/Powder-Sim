@@ -12,11 +12,12 @@
 #define MINOR_VERSION 0
 //#define BETA
 #define BUILD_NUM 1
+#define PS_AUTH_CODE "AuthX_4502"
 //VersionInfoEnd
 
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter.
 
-#define SERVER "www.google.com"//"powdertoy.co.uk"
+#define SERVER "powdertoy.co.uk"
 
 #define MTOS_EXPAND(str) #str
 #define MTOS(str) MTOS_EXPAND(str)
@@ -47,8 +48,8 @@
 #define MENUSIZE 40
 #define BARSIZE 17
 #endif
-#define XRES	644
-#define YRES	418
+#define XRES	612
+#define YRES	384
 #define NPART XRES*YRES
 
 #define XCNTR   XRES/2

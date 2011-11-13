@@ -532,10 +532,10 @@ void *build_save(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h, un
 	c[9] = p >> 8;
 	c[10] = p >> 16;
 	c[11] = p >> 24;
+	c[12] = PS_AUTH_CODE;
+	i -= 13;
 
-	i -= 12;
-
-	if (BZ2_bzBuffToBuffCompress((char *)(c+12), (unsigned *)&i, (char *)d, p, 9, 0, 0) != BZ_OK)
+	if (BZ2_bzBuffToBuffCompress((char *)(c+13), (unsigned *)&i, (char *)d, p, 9, 0, 0) != BZ_OK)
 	{
 		free(d);
 		free(c);
@@ -545,7 +545,7 @@ void *build_save(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h, un
 	free(d);
 	free(m);
 
-	*size = i+12;
+	*size = 13;
 	return c;
 }
 
@@ -571,39 +571,26 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		return 1;
 	if (!(c[2]==0x43 && c[1]==0x75 && c[0]==0x66) && !(c[2]==0x76 && c[1]==0x53 && c[0]==0x50))
 		return 1;
-	if (c[2]==0x76 && c[1]==0x53 && c[0]==0x50) {
+	if (c[2]==0x76 && c[1]==0x53 && c[0]==0x50)
 		new_format = 1;
-	}
-	if (c[4]>SAVE_VERSION)
+	if (c[4]>SAVE_VERSION && c[12]==PS_AUTH_CODE)
 		return 2;
-	ver = c[4];
+	if (c[12]==PS_AUTH_CODE)
+        ver = c[4];
+    else
+    {
+        ver = 0;
+    }
 
-	if (ver<34)
-	{
-		legacy_enable = 1;
-	}
-	else
-	{
-		if (ver>=44) {
-			legacy_enable = c[3]&0x01;
-			if (!sys_pause) {
-				sys_pause = (c[3]>>1)&0x01;
-			}
-			if (ver>=46 && replace) {
-				gravityMode = ((c[3]>>2)&0x03);// | ((c[3]>>2)&0x01);
-				airMode = ((c[3]>>4)&0x07);// | ((c[3]>>4)&0x02) | ((c[3]>>4)&0x01);
-			}
-			if (ver>=49 && replace) {
-				tempGrav = ((c[3]>>7)&0x01);
-			}
-		} else {
-			if (c[3]==1||c[3]==0) {
-				legacy_enable = c[3];
-			} else {
-				legacy_beta = 1;
-			}
-		}
-	}
+    legacy_enable = c[3]&0x01;
+    if (!sys_pause) {
+        sys_pause = (c[3]>>1)&0x01;
+    }
+    if (replace) {
+        gravityMode = ((c[3]>>2)&0x03);// | ((c[3]>>2)&0x01);
+        airMode = ((c[3]>>4)&0x07);// | ((c[3]>>4)&0x02) | ((c[3]>>4)&0x01);
+        tempGrav = ((c[3]>>7)&0x01);
+    }
 
 	bw = c[6];
 	bh = c[7];
@@ -641,10 +628,6 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 
 	if (replace)
 	{
-		if (ver<46) {
-			gravityMode = 0;
-			airMode = 0;
-		}
 		clear_sim();
 	}
 	m = calloc(XRES*YRES, sizeof(int));
@@ -790,88 +773,68 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		i = m[j];
 		if (i)
 		{
-			if (ver>=44) {
-				if (p >= size) {
-					goto corrupt;
-				}
-				if (i <= NPART) {
-					ttv = (d[p++])<<8;
-					ttv |= (d[p++]);
-					parts[i-1].life = ttv;
-				} else {
-					p+=2;
-				}
-			} else {
-				if (p >= size)
-					goto corrupt;
-				if (i <= NPART)
-					parts[i-1].life = d[p++]*4;
-				else
-					p++;
-			}
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                ttv = (d[p++])<<8;
+                ttv |= (d[p++]);
+                parts[i-1].life = ttv;
+            } else {
+                p+=2;
+            }
 		}
 	}
-	if (ver>=44) {
-		for (j=0; j<w*h; j++)
-		{
-			i = m[j];
-			if (i)
-			{
-				if (p >= size) {
-					goto corrupt;
-				}
-				if (i <= NPART) {
-					ttv = (d[p++])<<8;
-					ttv |= (d[p++]);
-					parts[i-1].tmp = ttv;
-					if (ver<53 && !parts[i-1].tmp)
-						for (q = 1; q<=NGOLALT; q++) {
-							if (parts[i-1].type==goltype[q-1] && grule[q][9]==2)
-								parts[i-1].tmp = grule[q][9]-1;
-						}
-					if (ver>=51 && ver<53 && parts[i-1].type==PT_PBCN)
-					{
-						parts[i-1].tmp2 = parts[i-1].tmp;
-						parts[i-1].tmp = 0;
-					}
-				} else {
-					p+=2;
-				}
-			}
-		}
-	}
-	if (ver>=53) {
-		for (j=0; j<w*h; j++)
-		{
-			i = m[j];
-			ty = d[pty+j];
-			if (i && ty==PT_PBCN)
-			{
-				if (p >= size)
-					goto corrupt;
-				if (i <= NPART)
-					parts[i-1].tmp2 = d[p++];
-				else
-					p++;
-			}
-		}
-	}
+    for (j=0; j<w*h; j++)
+    {
+        i = m[j];
+        if (i)
+        {
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                ttv = (d[p++])<<8;
+                ttv |= (d[p++]);
+                parts[i-1].tmp = ttv;
+                if (!parts[i-1].tmp)
+                    for (q = 1; q<=NGOLALT; q++) {
+                        if (parts[i-1].type==goltype[q-1] && grule[q][9]==2)
+                            parts[i-1].tmp = grule[q][9]-1;
+                    }
+            } else {
+                p+=2;
+            }
+        }
+    }
+    for (j=0; j<w*h; j++)
+    {
+        i = m[j];
+        ty = d[pty+j];
+        if (i && ty==PT_PBCN)
+        {
+            if (p >= size)
+                goto corrupt;
+            if (i <= NPART)
+                parts[i-1].tmp2 = d[p++];
+            else
+                p++;
+        }
+    }
 	//Read ALPHA component
 	for (j=0; j<w*h; j++)
 	{
 		i = m[j];
 		if (i)
 		{
-			if (ver>=49) {
-				if (p >= size) {
-					goto corrupt;
-				}
-				if (i <= NPART) {
-					parts[i-1].dcolour = d[p++]<<24;
-				} else {
-					p++;
-				}
-			}
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                parts[i-1].dcolour = d[p++]<<24;
+            } else {
+                p++;
+            }
 		}
 	}
 	//Read RED component
@@ -880,16 +843,14 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		i = m[j];
 		if (i)
 		{
-			if (ver>=49) {
-				if (p >= size) {
-					goto corrupt;
-				}
-				if (i <= NPART) {
-					parts[i-1].dcolour |= d[p++]<<16;
-				} else {
-					p++;
-				}
-			}
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                parts[i-1].dcolour |= d[p++]<<16;
+            } else {
+                p++;
+            }
 		}
 	}
 	//Read GREEN component
@@ -898,16 +859,14 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		i = m[j];
 		if (i)
 		{
-			if (ver>=49) {
-				if (p >= size) {
-					goto corrupt;
-				}
-				if (i <= NPART) {
-					parts[i-1].dcolour |= d[p++]<<8;
-				} else {
-					p++;
-				}
-			}
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                parts[i-1].dcolour |= d[p++]<<8;
+            } else {
+                p++;
+            }
 		}
 	}
 	//Read BLUE component
@@ -916,16 +875,14 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		i = m[j];
 		if (i)
 		{
-			if (ver>=49) {
-				if (p >= size) {
-					goto corrupt;
-				}
-				if (i <= NPART) {
-					parts[i-1].dcolour |= d[p++];
-				} else {
-					p++;
-				}
-			}
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                parts[i-1].dcolour |= d[p++];
+            } else {
+                p++;
+            }
 		}
 	}
 	for (j=0; j<w*h; j++)
@@ -934,7 +891,7 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		ty = d[pty+j];
 		if (i)
 		{
-			if (ver>=34&&legacy_beta==0)
+			if (legacy_beta==0)
 			{
 				if (p >= size)
 				{
@@ -942,21 +899,17 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 				}
 				if (i <= NPART)
 				{
-					if (ver>=42) {
-						if (new_format) {
-							ttv = (d[p++])<<8;
-							ttv |= (d[p++]);
-							if (parts[i-1].type==PT_PUMP) {
-								parts[i-1].temp = ttv + 0.15;//fix PUMP saved at 0, so that it loads at 0.
-							} else {
-								parts[i-1].temp = ttv;
-							}
-						} else {
-							parts[i-1].temp = (d[p++]*((MAX_TEMP+(-MIN_TEMP))/255))+MIN_TEMP;
-						}
-					} else {
-						parts[i-1].temp = ((d[p++]*((O_MAX_TEMP+(-O_MIN_TEMP))/255))+O_MIN_TEMP)+273;
-					}
+                    if (new_format) {
+                        ttv = (d[p++])<<8;
+                        ttv |= (d[p++]);
+                        if (parts[i-1].type==PT_PUMP) {
+                            parts[i-1].temp = ttv + 0.15;//fix PUMP saved at 0, so that it loads at 0.
+                        } else {
+                            parts[i-1].temp = ttv;
+                        }
+                    } else {
+                        parts[i-1].temp = (d[p++]*((MAX_TEMP+(-MIN_TEMP))/255))+MIN_TEMP;
+                    }
 				}
 				else
 				{
@@ -977,7 +930,7 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		int gnum = 0;
 		i = m[j];
 		ty = d[pty+j];
-		if (i && (ty==PT_CLNE || (ty==PT_PCLN && ver>=43) || (ty==PT_BCLN && ver>=44) || (ty==PT_SPRK && ver>=21) || (ty==PT_LAVA && ver>=34) || (ty==PT_PIPE && ver>=43) || (ty==PT_LIFE && ver>=51) || (ty==PT_PBCN && ver>=52) || (ty==PT_WIRE && ver>=55) || (ty==PT_STOR && ver>=59) || (ty==PT_CONV && ver>=60)))
+		if (i && (ty==PT_CLNE || ty==PT_PCLN || ty==PT_BCLN || ty==PT_SPRK || ty==PT_LAVA || ty==PT_PIPE || ty==PT_LIFE || ty==PT_PBCN || ty==PT_WIRE || ty==PT_STOR || ty==PT_CONV))
 		{
 			if (p >= size)
 				goto corrupt;
@@ -993,6 +946,11 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 #endif
 		if (i && i<=NPART)
 		{
+		    if (ver==0)
+		    {
+		        if (parts[i].type == 158)
+                    parts[i].type = 161;
+		    }
 			if ((player.spwn == 1 && ty==PT_STKM) || (player2.spwn == 1 && ty==PT_STKM2))
 			{
 				parts[i-1].type = PT_NONE;
@@ -1023,7 +981,7 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 				}
 			}
 
-			if (ver<48 && (ty==OLD_PT_WIND || (ty==PT_BRAY&&parts[i-1].life==0)))
+			if (ty==OLD_PT_WIND || (ty==PT_BRAY&&parts[i-1].life==0))
 			{
 				// Replace invisible particles with something sensible and add decoration to hide it
 				x = (int)(parts[i-1].x+0.5f);
@@ -1031,16 +989,7 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 				parts[i-1].dcolour = 0xFF000000;
 				parts[i-1].type = PT_DMND;
 			}
-			if(ver<51 && ((ty>=78 && ty<=89) || (ty>=134 && ty<=146 && ty!=141))){
-				//Replace old GOL
-				parts[i-1].type = PT_LIFE;
-				for (gnum = 0; gnum<NGOLALT; gnum++){
-					if (ty==goltype[gnum])
-						parts[i-1].ctype = gnum;
-				}
-				ty = PT_LIFE;
-			}
-			if(ver<52 && (ty==PT_CLNE || ty==PT_PCLN || ty==PT_BCLN)){
+			if(ty==PT_CLNE || ty==PT_PCLN || ty==PT_BCLN){
 				//Replace old GOL ctypes in clone
 				for (gnum = 0; gnum<NGOLALT; gnum++){
 					if (parts[i-1].ctype==goltype[gnum])
@@ -1050,7 +999,7 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 					}
 				}
 			}
-			if(ver<67 && (ty==PT_LCRY)){
+			if(ty==PT_LCRY){
 				//New LCRY uses TMP not life
 				if(parts[i-1].life>=10)
 				{
@@ -2863,7 +2812,7 @@ int main(int argc, char *argv[])
 				if (update_finish())
 					error_ui(vid_buf, 0, "Update failed - try downloading a new version.");
 				else
-					info_ui(vid_buf, "Update success", "You have successfully updated the Powder Sim!");
+					info_ui(vid_buf, "Update success", "You have successfully updated Powder Sim!");
 			}
 			update_flag = 0;
 		}
