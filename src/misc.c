@@ -159,7 +159,7 @@ void save_presets(int do_update)
 
 	//General settings
 	cJSON_AddStringToObject(root, "proxy", http_proxy_string);
-	cJSON_AddNumberToObject(root, "cmode", cmode);
+	cJSON_AddNumberToObject(root, "colour_mode", colour_mode);
 	cJSON_AddNumberToObject(root, "scale", sdl_scale);
 	cJSON_AddItemToObject(root,"favourites",cJSON_CreateIntArray(favourites, menuitems));
 
@@ -273,7 +273,8 @@ void load_presets(void)
 
 		//Read general settings
 		if((tmpobj = cJSON_GetObjectItem(root, "proxy")) && tmpobj->type == cJSON_String) strncpy(http_proxy_string, tmpobj->valuestring, 255); else http_proxy_string[0] = 0;
-		if(tmpobj = cJSON_GetObjectItem(root, "cmode")) cmode = tmpobj->valueint;
+		//TODO: Translate old cmode value into new *_mode values
+		if(tmpobj = cJSON_GetObjectItem(root, "colour_mode")) colour_mode = tmpobj->valueint;
 		if(tmpobj = cJSON_GetObjectItem(root, "scale")) sdl_scale = tmpobj->valueint;
 
 		cJSON *tmpobj2;
@@ -346,7 +347,8 @@ void load_presets(void)
 		sdl_scale = (tmp == 2) ? 2 : 1;
 		if (fread(&tmp, 1, 1, f) != 1)
 			goto fail;
-		cmode = tmp%CM_COUNT;
+		//TODO: Translate old cmode value into new *_mode values
+		//cmode = tmp%CM_COUNT;
 		if (fread(&tmp, 1, 1, f) != 1)
 			goto fail;
 		svf_admin = tmp;
