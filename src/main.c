@@ -343,12 +343,14 @@ void *build_save(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h, un
 	particle *parts = partsptr;
 	bw=(orig_w+orig_x0-bx0*CELL+CELL-1)/CELL;
 	bh=(orig_h+orig_y0-by0*CELL+CELL-1)/CELL;
+	printf("bw %i bh %i \n", bw, bh);
 
 	// normalize coordinates
 	x0 = bx0*CELL;
 	y0 = by0*CELL;
 	w  = bw *CELL;
 	h  = bh *CELL;
+	printf("w %i h %i x0 %i y0 %i \n", w, h, x0, y0);
 
 	// save the required air state
 	for (y=by0; y<by0+bh; y++)
@@ -525,7 +527,7 @@ void *build_save(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h, un
 	c[1] = 0x53;	//0x75;
 	c[2] = 0x76;	//0x43;
 	c[3] = legacy_enable|((sys_pause<<1)&0x02)|((gravityMode<<2)&0x0C)|((airMode<<4)&0x70)|((ngrav_enable<<7)&0x80);
-	c[4] = SAVE_VERSION;
+	c[4] = SAVE_VERSION|((PS_AUTH_CODE<<1)&0x02);
 	c[5] = CELL;
 	c[6] = bw;
 	c[7] = bh;
@@ -533,10 +535,9 @@ void *build_save(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h, un
 	c[9] = p >> 8;
 	c[10] = p >> 16;
 	c[11] = p >> 24;
-	c[12] = PS_AUTH_CODE;
-	i -= 13;
+	i -= 12;
 
-	if (BZ2_bzBuffToBuffCompress((char *)(c+13), (unsigned *)&i, (char *)d, p, 9, 0, 0) != BZ_OK)
+	if (BZ2_bzBuffToBuffCompress((char *)(c+12), (unsigned *)&i, (char *)d, p, 9, 0, 0) != BZ_OK)
 	{
 		free(d);
 		free(c);
@@ -546,7 +547,7 @@ void *build_save(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h, un
 	free(d);
 	free(m);
 
-	*size = 13;
+	*size = i + 12;
 	return c;
 }
 
@@ -574,10 +575,10 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		return 1;
 	if (c[2]==0x76 && c[1]==0x53 && c[0]==0x50)
 		new_format = 1;
-	if (c[4]>SAVE_VERSION && c[12]==PS_AUTH_CODE)
+	if (c[4]&0x01>SAVE_VERSION && (c[4]>>1)&0x01==PS_AUTH_CODE)
 		return 2;
-	if (c[12]==PS_AUTH_CODE)
-        ver = c[4];
+	if ((c[4]>>1)&0x01==PS_AUTH_CODE)
+        ver = c[4]&0x01;
     else
     {
         ver = 0;
