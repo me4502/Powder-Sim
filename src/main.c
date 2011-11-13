@@ -1493,7 +1493,7 @@ int main(int argc, char *argv[])
 	unsigned char c[3];
 	char ppmfilename[256], ptifilename[256], ptismallfilename[256];
 	FILE *f;
-	
+
 	colour_mode = COLOUR_DEFAULT;
 	init_display_modes();
 
@@ -1645,7 +1645,7 @@ int main(int argc, char *argv[])
 	cb_parts = calloc(sizeof(particle), NPART);
 	init_can_move();
 	clear_sim();
-	
+
 	colour_mode = COLOUR_DEFAULT;
 	init_display_modes();
 
@@ -2750,6 +2750,7 @@ int main(int argc, char *argv[])
 						lowername[ix] = tolower(lowername[ix]);
 
 					sprintf(nametext, "Burning %s", lowername);
+				}
 				else if ((cr&0xFF)==PT_PIPE && (parts[cr>>8].tmp&0xFF) > 0 && (parts[cr>>8].tmp&0xFF) < PT_NUM )
 				{
 					char lowername[6];
@@ -3706,7 +3707,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	save_presets(0);
-	
+
 	SDL_CloseAudio();
 	http_done();
 #ifdef GRAVFFT
