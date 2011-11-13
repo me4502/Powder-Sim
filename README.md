@@ -1,4 +1,4 @@
-# The Powder Toy - October 2011
+# Powder Sim - v1.0
 
 ##### Get latest version here:  [Website Pending]
 To use online features such as saving, you need to register at: [website pending]
