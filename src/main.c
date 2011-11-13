@@ -950,8 +950,8 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		{
 		    if (ver==0)
 		    {
-		        if (parts[i].type == 158)
-                    parts[i].type = 161;
+		        if (parts[i-1].type == 158)
+                    parts[i-1].type = 161;
 		    }
 			if ((player.spwn == 1 && ty==PT_STKM) || (player2.spwn == 1 && ty==PT_STKM2))
 			{
