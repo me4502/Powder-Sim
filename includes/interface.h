@@ -147,6 +147,14 @@ struct ui_edit
 };
 typedef struct ui_edit ui_edit;
 
+struct ui_list
+{
+	int x, y, w, h;
+	char str[256],*def,**items;
+	int selected, focus, count;
+};
+typedef struct ui_list ui_list;
+
 struct ui_copytext
 {
 	int x, y, width, height;
@@ -267,6 +275,10 @@ void ui_edit_draw(pixel *vid_buf, ui_edit *ed);
 
 void ui_edit_process(int mx, int my, int mb, ui_edit *ed);
 
+void ui_list_draw(pixel *vid_buf, ui_list *ed);
+
+void ui_list_process(pixel * vid_buf, int mx, int my, int mb, ui_list *ed);
+
 void ui_checkbox_draw(pixel *vid_buf, ui_checkbox *ed);
 
 void ui_checkbox_process(int mx, int my, int mb, int mbq, ui_checkbox *ed);
@@ -348,6 +360,8 @@ void open_link(char *uri);
 int report_ui(pixel *vid_buf, char *save_id);
 
 char *console_ui(pixel *vid_buf, char error[255],char console_more);
+
+void render_ui(pixel *vid_buf);
 
 void simulation_ui(pixel *vid_buf);
 
