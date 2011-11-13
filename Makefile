@@ -56,9 +56,9 @@ build/powder-sse3.exe build/powder-sse2.exe build/powder-sse.exe: CC := $(CC_WIN
 build/powder-sse3.exe build/powder-sse2.exe build/powder-sse.exe: build/obj/powder-res.o
 
 build/powder: $(patsubst build/obj/%.o,build/obj/%.powder.o,$(OBJS))
-	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder.o,$(OBJS)) $(LIBS) -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder.o,$(OBJS)) $(LIBS) -o $@ -ggdb
 build/obj/%.powder.o: src/%.c $(HEADERS)
-	$(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) -o $@ $< -ggdb
 
 build/powder-debug: $(patsubst build/obj/%.o,build/obj/%.powder-debug.o,$(OBJS))
 	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder-debug.o,$(OBJS)) $(LIBS) -o $@

@@ -23,7 +23,7 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 	{
 		fr = 1;
 		fg = 2;
-		fb = 3;
+		fb = 2;
 	}
 
 	else
