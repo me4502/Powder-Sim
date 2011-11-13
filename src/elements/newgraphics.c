@@ -552,11 +552,12 @@ int graphics_NBLE(GRAPHICS_FUNC_ARGS)
 	*colr = PIXR(pc);
 	*colg = PIXG(pc);
 	*colb = PIXB(pc);
+	*cola = 255;
 	*firea = 160;
 	*firer = *colr;
 	*fireb = *colb;
 	*fireg = *colg;
-	*pixel_mode |= PMODE_FLARE;
+	*pixel_mode = PMODE_FLARE;
 	return 0;
 }
 int graphics_WSTE(GRAPHICS_FUNC_ARGS)
@@ -583,6 +584,7 @@ int graphics_AMTR(GRAPHICS_FUNC_ARGS)
 	*fireb = *colb;
 	*fireg = *colg;
 	*pixel_mode |= PMODE_FLARE;
+	return 1;
 }
 int graphics_SING(GRAPHICS_FUNC_ARGS)
 {
