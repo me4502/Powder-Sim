@@ -461,6 +461,87 @@ void ui_edit_process(int mx, int my, int mb, ui_edit *ed)
 	}
 }
 
+void ui_list_process(pixel * vid_buf, int mx, int my, int mb, ui_list *ed)
+{
+	int i, ystart, selected = 0;
+	if(mx > ed->x && mx < ed->x+ed->w && my > ed->y && my < ed->y+ed->h)
+	{
+		ed->focus = 1;
+		if(mb)
+		{
+			ystart = ed->y-(ed->count*8);
+			if(ystart < 5)
+				ystart = 5;
+			while (!sdl_poll())
+			{
+				mb = SDL_GetMouseState(&mx, &my);
+				if (!mb)
+					break;
+			}
+
+			while (!sdl_poll() && !selected)
+			{
+				mb = SDL_GetMouseState(&mx, &my);
+				mx /= sdl_scale;
+				my /= sdl_scale;
+				for(i = 0; i < ed->count; i++)
+				{
+					if(mx > ed->x && mx < ed->x+ed->w && my > (ystart + i*16) && my < (ystart + i * 16) + 16)
+					{
+						if(mb){
+							ed->selected = i;
+							selected = 1;
+						}
+						fillrect(vid_buf, ed->x, ystart + i * 16, ed->w, 16, 255, 255, 255, 25);
+						drawtext(vid_buf, ed->x + 4, ystart + i * 16 + 5, ed->items[i], 255, 255, 255, 255);
+					}
+					else
+					{
+						drawtext(vid_buf, ed->x + 4, ystart + i * 16 + 5, ed->items[i], 192, 192, 192, 255);
+					}
+					draw_line(vid_buf, ed->x, ystart + i * 16, ed->x+ed->w, ystart + i * 16, 128, 128, 128, XRES+BARSIZE);
+				}
+				drawrect(vid_buf, ed->x, ystart, ed->w, ed->count*16, 255, 255, 255, 255);
+				sdl_blit(0, 0, (XRES+BARSIZE), YRES+MENUSIZE, vid_buf, (XRES+BARSIZE));
+				clearrect(vid_buf, ed->x-2, ystart-2, ed->w+4, (ed->count*16)+4);
+			}
+			while (!sdl_poll())
+			{
+				mb = SDL_GetMouseState(&mx, &my);
+				if (!mb)
+					break;
+			}
+			
+			if(ed->selected!=-1)
+				strcpy(ed->str, ed->items[ed->selected]);
+		}
+	}
+	else
+	{
+		ed->focus = 0;
+	}
+}
+
+void ui_list_draw(pixel *vid_buf, ui_list *ed)
+{
+	if (ed->focus)
+	{
+		drawrect(vid_buf, ed->x, ed->y, ed->w, ed->h, 255, 255, 255, 255);
+	}
+	else
+	{
+		drawrect(vid_buf, ed->x, ed->y, ed->w, ed->h, 192, 192, 192, 255);
+	}
+	if(ed->selected!=-1)
+	{
+		drawtext(vid_buf, ed->x+4, ed->y+5, ed->str, 255, 255, 255, 255);
+	}
+	else
+	{
+		drawtext(vid_buf, ed->x+4, ed->y+5, ed->def, 192, 192, 192, 255);
+	}
+}
+
 void ui_checkbox_draw(pixel *vid_buf, ui_checkbox *ed)
 {
 	int w = 12;
@@ -723,58 +804,15 @@ void draw_svf_ui(pixel *vid_buf, int alternate)// all the buttons at the bottom
 	}
 
 	//The simulation options button, used to be the heat sim button
-	/*if (!legacy_enable)
-	{
-		fillrect(vid_buf, XRES-160+BARSIZE, YRES+(MENUSIZE-17), 16, 16, 255, 255, 255, 255);
-		drawtext(vid_buf, XRES-154+BARSIZE, YRES+(MENUSIZE-13), "\xBE", 255, 0, 0, 255);
-		drawtext(vid_buf, XRES-154+BARSIZE, YRES+(MENUSIZE-13), "\xBD", 0, 0, 0, 255);
-	}
-	else*/
 	{
 		drawtext(vid_buf, XRES-156+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\xCF", 255, 255, 255, 255);
 		drawrect(vid_buf, XRES-159+BARSIZE/*494*/, YRES+(MENUSIZE-16), 14, 14, 255, 255, 255, 255);
 	}
 
 	//the view mode button
-	switch (cmode)
-	{
-	case CM_VEL:
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\x98", 128, 160, 255, 255);
-		break;
-	case CM_PRESS:
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\x99", 255, 212, 32, 255);
-		break;
-	case CM_PERS:
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\x9A", 212, 212, 212, 255);
-		break;
-	case CM_FIRE:
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\x9B", 255, 0, 0, 255);
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\x9C", 255, 255, 64, 255);
-		break;
-	case CM_BLOB:
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\xBF", 55, 255, 55, 255);
-		break;
-	case CM_HEAT:
-		drawtext(vid_buf, XRES-27+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\xBE", 255, 0, 0, 255);
-		drawtext(vid_buf, XRES-27+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\xBD", 255, 255, 255, 255);
-		break;
-	case CM_FANCY:
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\xC4", 100, 150, 255, 255);
-		break;
-	case CM_NOTHING:
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\x00", 100, 150, 255, 255);
-		break;
-	case CM_CRACK:
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\xD4", 255, 55, 55, 255);
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\xD5", 55, 255, 55, 255);
-		break;
-	case CM_GRAD:
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\xD3", 255, 50, 255, 255);
-		break;
-	case CM_LIFE:
-		drawtext(vid_buf, XRES-29+BARSIZE/*481*/, YRES+(MENUSIZE-13), "\x00", 255, 50, 255, 255);
-		break;
-	}
+	addchar(vid_buf, XRES-29+BARSIZE, YRES+(MENUSIZE-13), 0xD8, 255, 0, 0, 255);
+	addchar(vid_buf, XRES-29+BARSIZE, YRES+(MENUSIZE-13), 0xD9, 0, 255, 0, 255);
+	addchar(vid_buf, XRES-29+BARSIZE, YRES+(MENUSIZE-13), 0xDA, 0, 0, 255, 255);
 	drawrect(vid_buf, XRES-32+BARSIZE/*478*/, YRES+(MENUSIZE-16), 14, 14, 255, 255, 255, 255);
 
 	// special icons for admin/mods
@@ -930,35 +968,35 @@ void prop_edit_ui(pixel *vid_buf, int x, int y)
 	int valuei;
 	int format;
 	size_t propoffset;
+	char *listitems[] = {"type", "life", "ctype", "temp", "tmp", "tmp2", "vy", "vx", "x", "y", "dcolour"};
+	int listitemscount = 11;
 	int xsize = 244;
 	int ysize = 87;
 	int edity, editx, edit2y, edit2x;
 	int x0=(XRES-xsize)/2,y0=(YRES-MENUSIZE-ysize)/2,b=1,bq,mx,my;
-	ui_edit ed;
+	ui_list ed;
 	ui_edit ed2;
 
-	edity = y0+30;
-	editx = x0+12;
+	edity = y0+25;
+	editx = x0+8;
 
 	edit2y = y0+50;
 	edit2x = x0+12;
 
 	ed.x = editx;
 	ed.y = edity;
-	ed.w = xsize - 20;
-	ed.nx = 1;
-	ed.def = "property";
-	ed.focus = 0;
-	ed.hide = 0;
-	ed.cursor = 0;
-	ed.multiline = 0;
-	ed.str[0] = 0;
+	ed.w = xsize - 16;
+	ed.h = 16;
+	ed.def = "[property]";
+	ed.selected = -1;
+	ed.items = listitems;
+	ed.count = listitemscount;
 
 	ed2.x = edit2x;
 	ed2.y = edit2y;
 	ed2.w = xsize - 20;
 	ed2.nx = 1;
-	ed2.def = "value";
+	ed2.def = "[value]";
 	ed2.focus = 0;
 	ed2.hide = 0;
 	ed2.cursor = 0;
@@ -985,12 +1023,12 @@ void prop_edit_ui(pixel *vid_buf, int x, int y)
 		drawrect(vid_buf, x0, y0, xsize, ysize, 192, 192, 192, 255);
 		drawtext(vid_buf, x0+8, y0+8, "Change particle property", 160, 160, 255, 255);
 		//drawtext(vid_buf, x0+8, y0+26, prompt, 255, 255, 255, 255);
+		
+		//drawrect(vid_buf, ed.x-4, ed.y-5, ed.w+4, 16, 192, 192, 192, 255);
+		drawrect(vid_buf, ed2.x-4, ed2.y-5, ed2.w+4, 16, 192, 192, 192, 255);
 
-		drawrect(vid_buf, ed.x-4, ed.y-5, ed.w+4, 16, 192, 192, 192, 255);
-		drawrect(vid_buf, ed2.x-4, ed2.y-5, ed.w+4, 16, 192, 192, 192, 255);
-
-		ui_edit_draw(vid_buf, &ed);
-		ui_edit_process(mx, my, b, &ed);
+		ui_list_draw(vid_buf, &ed);
+		ui_list_process(vid_buf, mx, my, b, &ed);
 		ui_edit_draw(vid_buf, &ed2);
 		ui_edit_process(mx, my, b, &ed2);
 
@@ -1009,42 +1047,45 @@ void prop_edit_ui(pixel *vid_buf, int x, int y)
 	}
 
 	sscanf(ed2.str, "%f", &valuef);
-
-	if (strcmp(ed.str,"type")==0){
-		propoffset = offsetof(particle, type);
-		format = 1;
-	} else if (strcmp(ed.str,"life")==0){
-		propoffset = offsetof(particle, life);
-		format = 0;
-	} else if (strcmp(ed.str,"ctype")==0){
-		propoffset = offsetof(particle, ctype);
-		format = 1;
-	} else if (strcmp(ed.str,"temp")==0){
-		propoffset = offsetof(particle, temp);
-		format = 2;
-	} else if (strcmp(ed.str,"tmp")==0){
-		propoffset = offsetof(particle, tmp);
-		format = 0;
-	} else if (strcmp(ed.str,"tmp2")==0){
-		propoffset = offsetof(particle, tmp2);
-		format = 0;
-	} else if (strcmp(ed.str,"vy")==0){
-		propoffset = offsetof(particle, vy);
-		format = 2;
-	} else if (strcmp(ed.str,"vx")==0){
-		propoffset = offsetof(particle, vx);
-		format = 2;
-	} else if (strcmp(ed.str,"x")==0){
-		propoffset = offsetof(particle, x);
-		format = 2;
-	} else if (strcmp(ed.str,"y")==0){
-		propoffset = offsetof(particle, y);
-		format = 2;
-	} else if (strcmp(ed.str,"dcolour")==0){
-		propoffset = offsetof(particle, dcolour);
-		format = 0;
+	if(ed.selected!=-1)
+	{
+		if (strcmp(ed.str,"type")==0){
+			propoffset = offsetof(particle, type);
+			format = 1;
+		} else if (strcmp(ed.str,"life")==0){
+			propoffset = offsetof(particle, life);
+			format = 0;
+		} else if (strcmp(ed.str,"ctype")==0){
+			propoffset = offsetof(particle, ctype);
+			format = 1;
+		} else if (strcmp(ed.str,"temp")==0){
+			propoffset = offsetof(particle, temp);
+			format = 2;
+		} else if (strcmp(ed.str,"tmp")==0){
+			propoffset = offsetof(particle, tmp);
+			format = 0;
+		} else if (strcmp(ed.str,"tmp2")==0){
+			propoffset = offsetof(particle, tmp2);
+			format = 0;
+		} else if (strcmp(ed.str,"vy")==0){
+			propoffset = offsetof(particle, vy);
+			format = 2;
+		} else if (strcmp(ed.str,"vx")==0){
+			propoffset = offsetof(particle, vx);
+			format = 2;
+		} else if (strcmp(ed.str,"x")==0){
+			propoffset = offsetof(particle, x);
+			format = 2;
+		} else if (strcmp(ed.str,"y")==0){
+			propoffset = offsetof(particle, y);
+			format = 2;
+		} else if (strcmp(ed.str,"dcolour")==0){
+			propoffset = offsetof(particle, dcolour);
+			format = 0;
+		}
 	} else {
 		error_ui(vid_buf, 0, "Invalid property");
+		goto exit;
 	}
 
 	if(format==0){
@@ -1058,7 +1099,7 @@ void prop_edit_ui(pixel *vid_buf, int x, int y)
 	if(format==2){
 		flood_prop(x, y, propoffset, &valuef, format);
 	}
-
+exit:
 	while (!sdl_poll())
 	{
 		b = SDL_GetMouseState(&mx, &my);
@@ -1429,9 +1470,10 @@ fail:
 
 int stamp_ui(pixel *vid_buf)
 {
-	int b=1,bq,mx,my,d=-1,i,j,k,x,gx,gy,y,w,h,r=-1,stamp_page=0,per_page=STAMP_X*STAMP_Y,page_count;
+	int b=1,bq,mx,my,d=-1,i,j,k,x,gx,gy,y,w,h,r=-1,stamp_page=0,per_page=GRID_X*GRID_Y,page_count;
 	char page_info[64];
-	page_count = ceil((float)stamp_count/(float)per_page);
+	// stamp_count-1 to avoid an extra page when there are per_page stamps on each page
+	page_count = (stamp_count-1)/per_page+1;
 
 	while (!sdl_poll())
 	{
@@ -1447,7 +1489,7 @@ int stamp_ui(pixel *vid_buf)
 		mx /= sdl_scale;
 		my /= sdl_scale;
 
-		clearrect(vid_buf, -1, -1, XRES+1, YRES+MENUSIZE+1);
+		clearrect(vid_buf, -1, -1, XRES+BARSIZE+1, YRES+MENUSIZE+1);
 		k = stamp_page*per_page;//0;
 		r = -1;
 		d = -1;
@@ -2864,74 +2906,6 @@ int sdl_poll(void)
 	return 0;
 }
 
-void set_cmode(int cm) // sets to given view mode
-{
-	cmode = cm;
-	itc = 51;
-	if (cmode==CM_BLOB)
-	{
-		memset(fire_r, 0, sizeof(fire_r));
-		memset(fire_g, 0, sizeof(fire_g));
-		memset(fire_b, 0, sizeof(fire_b));
-		strcpy(itc_msg, "Blob Display");
-	}
-	else if (cmode==CM_HEAT)
-	{
-		strcpy(itc_msg, "Heat Display");
-	}
-	else if (cmode==CM_FANCY)
-	{
-		memset(fire_r, 0, sizeof(fire_r));
-		memset(fire_g, 0, sizeof(fire_g));
-		memset(fire_b, 0, sizeof(fire_b));
-		strcpy(itc_msg, "Fancy Display");
-	}
-	else if (cmode==CM_FIRE)
-	{
-		memset(fire_r, 0, sizeof(fire_r));
-		memset(fire_g, 0, sizeof(fire_g));
-		memset(fire_b, 0, sizeof(fire_b));
-		strcpy(itc_msg, "Fire Display");
-	}
-	else if (cmode==CM_PERS)
-	{
-		memset(pers_bg, 0, (XRES+BARSIZE)*YRES*PIXELSIZE);
-		strcpy(itc_msg, "Persistent Display");
-	}
-	else if (cmode==CM_PRESS)
-	{
-		strcpy(itc_msg, "Pressure Display");
-	}
-	else if (cmode==CM_NOTHING)
-	{
-		strcpy(itc_msg, "Nothing Display");
-	}
-	else if (cmode==CM_CRACK)
-	{
-		strcpy(itc_msg, "Alternate Velocity Display");
-	}
-	else if (cmode==CM_GRAD)
-	{
-		strcpy(itc_msg, "Heat Gradient Display");
-	}
-	else if (cmode==CM_LIFE)
-	{
-		if (DEBUG_MODE) //can only get to Life view in debug mode
-		{
-			strcpy(itc_msg, "Life Display");
-		}
-		else
-		{
-			set_cmode(CM_CRACK);
-		}
-	}
-	else //if no special text given, it will display this.
-	{
-		strcpy(itc_msg, "Velocity Display");
-	}
-	save_presets(0);
-}
-
 char *download_ui(pixel *vid_buf, char *uri, int *len)
 {
 	int dstate = 0;
@@ -3648,17 +3622,23 @@ int search_ui(pixel *vid_buf)
 					thumb = calloc(1,4);
 					thlen = 4;
 				}
+				printf("Added %s to cache\n", img_id[i]);
 				thumb_cache_add(img_id[i], thumb, thlen);
 				for (pos=0; pos<GRID_X*GRID_Y; pos++) {
 					if (search_dates[pos]) {
-						char *id_d_temp = malloc(strlen(search_ids[pos])+strlen(search_dates[pos])+1);
+						char *id_d_temp = malloc(strlen(search_ids[pos])+strlen(search_dates[pos])+2);
+						if (id_d_temp == 0)
+						{
+							break;
+						}
 						strcpy(id_d_temp, search_ids[pos]);
 						strappend(id_d_temp, "_");
 						strappend(id_d_temp, search_dates[pos]);
 						//img_id[i] = mystrdup(id_d_temp);
-						if (id_d_temp && !strcmp(id_d_temp, img_id[i])) {
+						if (!strcmp(id_d_temp, img_id[i])) {
 							break;
 						}
+						free(id_d_temp);
 					} else {
 						if (search_ids[pos] && !strcmp(search_ids[pos], img_id[i])) {
 							break;
@@ -3680,9 +3660,25 @@ int search_ui(pixel *vid_buf)
 				for (pos=0; pos<GRID_X*GRID_Y; pos++)
 					if (search_ids[pos] && !search_thumbs[pos])
 					{
-						for (gi=0; gi<IMGCONNS; gi++)
-							if (img_id[gi] && !strcmp(search_ids[pos], img_id[gi]))
-								break;
+						if (search_dates[pos])
+						{
+							char *id_d_temp = malloc(strlen(search_ids[pos])+strlen(search_dates[pos])+2);
+							strcpy(id_d_temp, search_ids[pos]);
+							strappend(id_d_temp, "_");
+							strappend(id_d_temp, search_dates[pos]);
+							
+							for (gi=0; gi<IMGCONNS; gi++)
+								if (img_id[gi] && !strcmp(id_d_temp, img_id[gi]))
+									break;
+									
+							free(id_d_temp);
+						}
+						else
+						{
+							for (gi=0; gi<IMGCONNS; gi++)
+								if (img_id[gi] && !strcmp(search_ids[pos], img_id[gi]))
+									break;
+						}
 						if (gi<IMGCONNS)
 							continue;
 						break;
@@ -3690,7 +3686,7 @@ int search_ui(pixel *vid_buf)
 				if (pos<GRID_X*GRID_Y)
 				{
 					if (search_dates[pos]) {
-						char *id_d_temp = malloc(strlen(search_ids[pos])+strlen(search_dates[pos])+1);
+						char *id_d_temp = malloc(strlen(search_ids[pos])+strlen(search_dates[pos])+2);
 						uri = malloc(strlen(search_ids[pos])*3+strlen(search_dates[pos])*3+strlen(SERVER)+71);
 						strcpy(uri, "http://" SERVER "/Get.api?Op=thumbsmall&ID=");
 						strcaturl(uri, search_ids[pos]);
@@ -3701,13 +3697,14 @@ int search_ui(pixel *vid_buf)
 						strappend(id_d_temp, "_");
 						strappend(id_d_temp, search_dates[pos]);
 						img_id[i] = mystrdup(id_d_temp);
+						free(id_d_temp);
 					} else {
 						uri = malloc(strlen(search_ids[pos])*3+strlen(SERVER)+64);
 						strcpy(uri, "http://" SERVER "/Get.api?Op=thumbsmall&ID=");
 						strcaturl(uri, search_ids[pos]);
 						img_id[i] = mystrdup(search_ids[pos]);
 					}
-
+					printf("Not found: %s, downloading\n", img_id[i]);
 					img_http[i] = http_async_req_start(img_http[i], uri, NULL, 0, 1);
 					free(uri);
 				}
@@ -3869,7 +3866,21 @@ int open_ui(pixel *vid_buf, char *save_id, char *save_date)
 	}
 
 	//Try to load the thumbnail from the cache
-	if(!thumb_cache_find(save_id, &thumb_data, &thumb_data_size)){
+	if(save_date)
+	{
+		char * id_d_temp = malloc(strlen(save_id)+strlen(save_date)+2);
+		strcpy(id_d_temp, save_id);
+		strappend(id_d_temp, "_");
+		strappend(id_d_temp, save_date);
+		
+		status = thumb_cache_find(id_d_temp, &thumb_data, &thumb_data_size);
+		free(id_d_temp);
+	}
+	else
+	{
+		status = thumb_cache_find(save_id, &thumb_data, &thumb_data_size);
+	}
+	if(!status){
 		thumb_data = NULL;
 	} else {
 		//We found a thumbnail in the cache, we'll draw this one while we wait for the full image to load.
@@ -4574,6 +4585,7 @@ int search_results(char *str, int votes)
 		}
 		else if (!strncmp(str, "HISTORY ", 8))
 		{
+			char * id_d_temp = NULL;
 			if (i>=GRID_X*GRID_Y)
 				break;
 			if (votes)
@@ -4640,7 +4652,15 @@ int search_results(char *str, int votes)
 
 			if (s)
 				search_votes[i] = atoi(s);
-			thumb_cache_find(str+8, search_thumbs+i, search_thsizes+i);
+				
+			//Build thumb cache ID and find
+			id_d_temp = malloc(strlen(search_ids[i])+strlen(search_dates[i])+2);
+			strcpy(id_d_temp, search_ids[i]);
+			strappend(id_d_temp, "_");
+			strappend(id_d_temp, search_dates[i]);
+			thumb_cache_find(id_d_temp, search_thumbs+i, search_thsizes+i);
+			free(id_d_temp);
+			
 			i++;
 		}
 		else if (!strncmp(str, "MOTD ", 5))
@@ -6266,6 +6286,10 @@ openfin:
 	if(saves)
 		free_saveslist(saves);
 	return;
+}
+
+void render_ui(pixel * vid_buf)
+{
 }
 
 void simulation_ui(pixel * vid_buf)
