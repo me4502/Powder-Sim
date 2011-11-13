@@ -24,7 +24,8 @@ int update_CO2(UPDATE_FUNC_ARGS)
                     part_change_type(i,x,y,PT_CBNW);
                     kill_part(r>>8);
                 }
-                parts[i].vx += rand()%3-1;
+                if (tpt_comp==0)
+                    parts[i].vx += rand()%3-1;
             }
     return 0;
 }
