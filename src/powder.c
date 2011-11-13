@@ -217,11 +217,6 @@ int try_move(int i, int x, int y, int nx, int ny)
 
 	e = eval_move(parts[i].type, nx, ny, &r);
 
-#ifdef LUACONSOLE
-    if(!luacon_moveevent(t, x, y, nx, ny,LUACON_MOVE))
-        e = 0;
-#endif
-
 	if ((r&0xFF)==PT_BOMB && parts[i].type==PT_BOMB && parts[i].tmp == 1)
 		e = 2;
 
