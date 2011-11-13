@@ -71,11 +71,11 @@ void init_display_modes()
 	int i;
 	display_modes = calloc(sizeof(unsigned int), 1);
 	render_modes = calloc(sizeof(unsigned int), 2);
-	
+
 	display_modes[0] = 0;
 	render_modes[0] = RENDER_FIRE;
 	render_modes[1] = 0;
-	
+
 	display_mode = 0;
 	i = 0;
 	while(display_modes[i])
@@ -1836,7 +1836,7 @@ void render_parts(pixel *vid)
 	int caddV = 0, caddC = 0, cadd = 0;
 	int clineV = 0, clineC = 0, cline = 0;
 	GLuint origBlendSrc, origBlendDst;
-	
+
 	glGetIntegerv(GL_BLEND_SRC, &origBlendSrc);
 	glGetIntegerv(GL_BLEND_DST, &origBlendDst);
 	//Render to the particle FBO
@@ -1878,7 +1878,7 @@ void render_parts(pixel *vid)
 			decr = (parts[i].dcolour>>16)&0xFF;
 			decg = (parts[i].dcolour>>8)&0xFF;
 			decb = (parts[i].dcolour)&0xFF;
-				
+
 			/*if(display_mode == RENDER_NONE)
 			{
 				if(decorations_enable)
@@ -1956,14 +1956,14 @@ void render_parts(pixel *vid)
 					colg += sin(gradv*caddress*4.55 +3.14) * 34;
 					colb += sin(gradv*caddress*2.22 +3.14) * 64;
 				}
-				
+
 				if(pixel_mode & FIRE_ADD && !(render_mode & FIRE_ADD))
 					pixel_mode |= PMODE_GLOW;
 				if(pixel_mode & FIRE_BLEND && !(render_mode & FIRE_BLEND))
 					pixel_mode |= PMODE_BLUR;
-					
+
 				pixel_mode &= render_mode;
-				
+
 				//Alter colour based on display mode
 				if(display_mode & COLOUR_HEAT)
 				{
@@ -1986,7 +1986,7 @@ void render_parts(pixel *vid)
 					cola = 255;
 					if(pixel_mode & (FIREMODE | PMODE_GLOW)) pixel_mode = (pixel_mode & ~(FIREMODE|PMODE_GLOW)) | PMODE_BLUR;
 				}
-					
+
 				/*switch(cmode)
 				{
 				case CM_LIFE:
@@ -2028,7 +2028,7 @@ void render_parts(pixel *vid)
 						colg = (deca*decg + (255-deca)*colg) >> 8;
 						colb = (deca*decb + (255-deca)*colb) >> 8;
 					}
-					
+
 					if(pixel_mode & DECO_FIRE && decorations_enable)
 					{
 						firer = (deca*decr + (255-deca)*firer) >> 8;
@@ -2768,7 +2768,7 @@ void draw_parts_fbo()
 	glTexCoord2d(1, 1);
 	glVertex3f(XRES*sdl_scale, MENUSIZE*sdl_scale, 1.0);
 	glEnd();
-	
+
 	if(display_mode & DISPLAY_WARP)
 	{
 		glUseProgram(0);
@@ -3581,7 +3581,7 @@ pixel *prerender_save(void *save, int size, int *width, int *height)
 	if (c[2]==0x43 && c[1]==0x75 && c[0]==0x66) {
 		new_format = 1;
 	}
-	if (c[4]>SAVE_VERSION && c[12]==PS_AUTH_CODE)
+	if (c[4]&0x01>SAVE_VERSION && (c[4]>>1)&0x01==PS_AUTH_CODE)
 		return NULL;
 
 	bw = c[6];

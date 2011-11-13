@@ -511,7 +511,7 @@ void ui_list_process(pixel * vid_buf, int mx, int my, int mb, ui_list *ed)
 				if (!mb)
 					break;
 			}
-			
+
 			if(ed->selected!=-1)
 				strcpy(ed->str, ed->items[ed->selected]);
 		}
@@ -1023,7 +1023,7 @@ void prop_edit_ui(pixel *vid_buf, int x, int y)
 		drawrect(vid_buf, x0, y0, xsize, ysize, 192, 192, 192, 255);
 		drawtext(vid_buf, x0+8, y0+8, "Change particle property", 160, 160, 255, 255);
 		//drawtext(vid_buf, x0+8, y0+26, prompt, 255, 255, 255, 255);
-		
+
 		//drawrect(vid_buf, ed.x-4, ed.y-5, ed.w+4, 16, 192, 192, 192, 255);
 		drawrect(vid_buf, ed2.x-4, ed2.y-5, ed2.w+4, 16, 192, 192, 192, 255);
 
@@ -3666,11 +3666,11 @@ int search_ui(pixel *vid_buf)
 							strcpy(id_d_temp, search_ids[pos]);
 							strappend(id_d_temp, "_");
 							strappend(id_d_temp, search_dates[pos]);
-							
+
 							for (gi=0; gi<IMGCONNS; gi++)
 								if (img_id[gi] && !strcmp(id_d_temp, img_id[gi]))
 									break;
-									
+
 							free(id_d_temp);
 						}
 						else
@@ -3872,7 +3872,7 @@ int open_ui(pixel *vid_buf, char *save_id, char *save_date)
 		strcpy(id_d_temp, save_id);
 		strappend(id_d_temp, "_");
 		strappend(id_d_temp, save_date);
-		
+
 		status = thumb_cache_find(id_d_temp, &thumb_data, &thumb_data_size);
 		free(id_d_temp);
 	}
@@ -4652,7 +4652,7 @@ int search_results(char *str, int votes)
 
 			if (s)
 				search_votes[i] = atoi(s);
-				
+
 			//Build thumb cache ID and find
 			id_d_temp = malloc(strlen(search_ids[i])+strlen(search_dates[i])+2);
 			strcpy(id_d_temp, search_ids[i]);
@@ -4660,7 +4660,7 @@ int search_results(char *str, int votes)
 			strappend(id_d_temp, search_dates[i]);
 			thumb_cache_find(id_d_temp, search_thumbs+i, search_thsizes+i);
 			free(id_d_temp);
-			
+
 			i++;
 		}
 		else if (!strncmp(str, "MOTD ", 5))
