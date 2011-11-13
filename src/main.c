@@ -528,7 +528,7 @@ void *build_save(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h, un
 	c[1] = 0x53;	//0x75;
 	c[2] = 0x76;	//0x43;
 	c[3] = legacy_enable|((sys_pause<<1)&0x02)|((gravityMode<<2)&0x0C)|((airMode<<4)&0x70)|((ngrav_enable<<7)&0x80);
-	c[4] = SAVE_VERSION|((PS_AUTH_CODE<<1)&0x02);
+	c[4] = SAVE_VERSION;
 	c[5] = CELL;
 	c[6] = bw;
 	c[7] = bh;
@@ -576,15 +576,9 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		return 1;
 	if (c[2]==0x76 && c[1]==0x53 && c[0]==0x50)
 		new_format = 1;
-	if (c[4]&0x01>SAVE_VERSION && (c[4]>>1)&0x01==PS_AUTH_CODE)
+	if (c[4]>SAVE_VERSION)
 		return 2;
-	if ((c[4]>>1)&0x01==PS_AUTH_CODE)
-        ver = c[4]&0x01;
-    else
-    {
-        tpt_comp = 1;
-        ver = 0;
-    }
+    ver = c[4];
 
     legacy_enable = c[3]&0x01;
     if (!sys_pause) {
@@ -954,6 +948,8 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		    {
 		        if (parts[i-1].type == 158)
                     parts[i-1].type = 161;
+                if (parts[i-1].type==PT_NBLE)
+                    parts[i-1].ctype=NBL_NEON;
 		    }
 			if ((player.spwn == 1 && ty==PT_STKM) || (player2.spwn == 1 && ty==PT_STKM2))
 			{
