@@ -3563,7 +3563,7 @@ pixel *prerender_save(void *save, int size, int *width, int *height)
 	if (c[2]==0x43 && c[1]==0x75 && c[0]==0x66) {
 		new_format = 1;
 	}
-	if (c[4]>SAVE_VERSION)
+	if (c[4]>SAVE_VERSION && c[12]==PS_AUTH_CODE)
 		return NULL;
 
 	bw = c[6];
