@@ -810,9 +810,9 @@ void draw_svf_ui(pixel *vid_buf, int alternate)// all the buttons at the bottom
 	}
 
 	//the view mode button
-	addchar(vid_buf, XRES-29+BARSIZE, YRES+(MENUSIZE-13), 0xD8, 255, 0, 0, 255);
-	addchar(vid_buf, XRES-29+BARSIZE, YRES+(MENUSIZE-13), 0xD9, 0, 255, 0, 255);
-	addchar(vid_buf, XRES-29+BARSIZE, YRES+(MENUSIZE-13), 0xDA, 0, 0, 255, 255);
+	addchar(vid_buf, XRES-29+BARSIZE, YRES+(MENUSIZE-13), 0xDB, 255, 0, 0, 255);
+	addchar(vid_buf, XRES-29+BARSIZE, YRES+(MENUSIZE-13), 0xDC, 0, 255, 0, 255);
+	addchar(vid_buf, XRES-29+BARSIZE, YRES+(MENUSIZE-13), 0xDD, 0, 0, 255, 255);
 	drawrect(vid_buf, XRES-32+BARSIZE/*478*/, YRES+(MENUSIZE-16), 14, 14, 255, 255, 255, 255);
 
 	// special icons for admin/mods
@@ -2111,17 +2111,6 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
         return;
     if (i==SC_WALL)//wall menu
     {
-        if (fwidth > XRES-BARSIZE && my > YRES)   //fancy scrolling
-        {
-            float overflow = fwidth-(XRES-BARSIZE), location = ((float)XRES-BARSIZE)/((float)(mx-(XRES-BARSIZE)));
-            xoff = (int)(overflow / location);
-            menlock = (int)(overflow / location);
-        }
-        else
-        {
-            if (fwidth > XRES-BARSIZE)
-                xoff = menlock;
-        }
         for (n = UI_WALLSTART; n<UI_WALLSTART+UI_WALLCOUNT; n++)
         {
             if (n!=SPC_AIR&&n!=SPC_HEAT&&n!=SPC_COOL&&n!=SPC_VACUUM&&n!=SPC_WIND&&n!=SPC_PGRV&&n!=SPC_NGRV&&n!=SPC_PROP)
