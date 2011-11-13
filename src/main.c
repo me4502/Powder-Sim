@@ -562,11 +562,6 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 	int *fp = malloc(NPART*sizeof(int));
 	parts_lastActiveIndex = NPART-1;
 
-#ifdef LUACONSOLE
-    if(!luacon_loadevent(LUACON_LOAD))
-        goto corrupt;
-#endif
-
 	//New file header uses PSv, replacing fuC. This is to detect if the client uses a new save format for temperatures
 	//This creates a problem for old clients, that display and "corrupt" error instead of a "newer version" error
 
@@ -938,10 +933,6 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 				p++;
 		}
 		// no more particle properties to load, so we can change type here without messing up loading
-#ifdef LUACONSOLE
-        if(!luacon_loadevent(LUACON_SLOAD))
-            goto corrupt;
-#endif
 		if (i && i<=NPART)
 		{
 		    if (ver==0)
