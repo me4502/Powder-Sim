@@ -185,6 +185,7 @@ int framerender = 0;
 int pretty_powder = 0;
 int clickmenu_enable = 1;
 int fancy_graphics = 0;
+int tpt_comp = 0;
 int amd = 1;
 int FPSB = 0;
 int MSIGN =-1;
@@ -581,6 +582,7 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
         ver = c[4]&0x01;
     else
     {
+        tpt_comp = 1;
         ver = 0;
     }
 
@@ -1091,6 +1093,7 @@ corrupt:
 void clear_sim(void)
 {
 	int x, y;
+	tpt_comp = 0;
 	memset(bmap, 0, sizeof(bmap));
 	memset(emap, 0, sizeof(emap));
 	memset(signs, 0, sizeof(signs));
