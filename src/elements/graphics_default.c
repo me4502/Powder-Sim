@@ -23,11 +23,7 @@ int graphics_DEFAULT(GRAPHICS_FUNC_ARGS)
 	{
 	    *cola = 255;
 	    *pixel_mode = PMODE_BLEND;
-		*pixel_mode |= FIRE_DSMKE;
-		*firer = *colr/2;
-		*fireg = *colg/2;
-		*fireb = *colb/2;
-		*firea = 25;
+		*pixel_mode |= PMODE_DSMKE;
 	}
 	return 1;
 }
