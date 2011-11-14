@@ -491,7 +491,7 @@ void *build_save(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h, un
 	for (j=0; j<w*h; j++)
 	{
 		i = m[j];
-		if (i && (parts[i-1].type==PT_CLNE || parts[i-1].type==PT_PCLN || parts[i-1].type==PT_BCLN || parts[i-1].type==PT_SPRK || parts[i-1].type==PT_LAVA || parts[i-1].type==PT_PIPE || parts[i-1].type==PT_LIFE || parts[i-1].type==PT_PBCN || parts[i-1].type==PT_WIRE || parts[i-1].type==PT_STOR || parts[i-1].type==PT_CONV))
+		if (i && (parts[i-1].type==PT_CLNE || parts[i-1].type==PT_PCLN || parts[i-1].type==PT_BCLN || parts[i-1].type==PT_SPRK || parts[i-1].type==PT_LAVA || parts[i-1].type==PT_PIPE || parts[i-1].type==PT_LIFE || parts[i-1].type==PT_PBCN || parts[i-1].type==PT_WIRE || parts[i-1].type==PT_STOR || parts[i-1].type==PT_CONV || parts[i-1].type==PT_NBLE || parts[i-1].type==PT_FIRE || parts[i-1].type==PT_GAS))
 			d[p++] = parts[i-1].ctype;
 	}
 
@@ -923,7 +923,7 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 		int gnum = 0;
 		i = m[j];
 		ty = d[pty+j];
-		if (i && (ty==PT_CLNE || ty==PT_PCLN || ty==PT_BCLN || ty==PT_SPRK || ty==PT_LAVA || ty==PT_PIPE || ty==PT_LIFE || ty==PT_PBCN || ty==PT_WIRE || ty==PT_STOR || ty==PT_CONV))
+		if (i && (ty==PT_CLNE || ty==PT_PCLN || ty==PT_BCLN || ty==PT_SPRK || ty==PT_LAVA || ty==PT_PIPE || ty==PT_LIFE || ty==PT_PBCN || ty==PT_WIRE || ty==PT_STOR || ty==PT_CONV || ty==PT_NBLE || ty==PT_GAS || ty==PT_FIRE))
 		{
 			if (p >= size)
 				goto corrupt;
