@@ -2355,6 +2355,40 @@ void render_parts(pixel *vid)
 					}
 #endif
 				}
+				if((pixel_mode & PMODE_DSMKE) && (parts[i].vx!=0 || parts[i].vy!=0))
+				{
+				    int rx = nx,ry = ny;
+				    int am = 0;
+				    int randx, randy, randa;
+				    if (parts[i].vx!=0)
+				    {
+				        nx -= parts[i].vx*16;
+				        am -= nx/CELL;
+				    }
+				    if (parts[i].vy!=0)
+				    {
+				        ny -= parts[i].vy*16;
+				        am -= ny/CELL;
+				    }
+                    if (am<0)am = -am;
+                    am /= 2;
+                    if (am>255)am = 255;
+                    if (am<0)am = 0;
+                    if (!sys_pause)
+                    {
+                        randx = rand()%5-2;
+                        randy = rand()%5-2;
+                        randa = rand()%25;
+                    }
+                    else
+                    {
+                        randx = 0;
+                        randy = 0;
+                        randa = 0;
+                    }
+                    if (!pmap[ny][nx])
+                        blendpixel(vid, nx+randx, ny+randy, colr/2, colg/2, colb/2, (255-am)-randa);
+				}
 				if(pixel_mode & PMODE_FLARE)
 				{
 					flicker = rand()%20;
@@ -2517,54 +2551,6 @@ void render_parts(pixel *vid)
 					fire_r[ny/CELL][nx/CELL] = (firea*firer + (255-firea)*fire_r[ny/CELL][nx/CELL]) >> 8;
 					fire_g[ny/CELL][nx/CELL] = (firea*fireg + (255-firea)*fire_g[ny/CELL][nx/CELL]) >> 8;
 					fire_b[ny/CELL][nx/CELL] = (firea*fireb + (255-firea)*fire_b[ny/CELL][nx/CELL]) >> 8;
-#endif
-				}
-				if(firea && (pixel_mode & FIRE_DSMKE) && (parts[i].vx!=0 || parts[i].vy!=0))
-				{
-				    int rx = nx,ry = ny;
-				    int am = 0;
-				    int randx, randy, randa;
-				    if (parts[i].vx!=0)
-				    {
-				        nx -= parts[i].vx*16;
-				        am -= nx/CELL;
-				    }
-				    if (parts[i].vy!=0)
-				    {
-				        ny -= parts[i].vy*16;
-				        am -= ny/CELL;
-				    }
-#ifdef OGLR
-                    smokeV[csmokeV++] = nx;
-                    smokeV[csmokeV++] = ny;
-                    smokeC[csmokeC++] = ((float)firer)/255.0f;
-                    smokeC[csmokeC++] = ((float)fireg)/255.0f;
-                    smokeC[csmokeC++] = ((float)fireb)/255.0f;
-                    smokeC[csmokeC++] = ((float)firea)/255.0f;
-                    csmoke++;
-#else
-                    if (am<0)am = -am;
-                    am /= 2;
-                    if (am>255)am = 255;
-                    if (am<0)am = 0;
-                    if (!sys_pause)
-                    {
-                        randx = rand()%5-2;
-                        randy = rand()%5-2;
-                        randa = rand()%25;
-                    }
-                    else
-                    {
-                        randx = 0;
-                        randy = 0;
-                        randa = 0;
-                    }
-                    if (!pmap[ny][nx])
-                        blendpixel(vid, nx+randx, ny+randy, firer, fireg, fireb, (255-am)-randa);
-					//firea /= 2;
-					//fire_r[ny/CELL][nx/CELL] = (firea*firer + (255-firea)*fire_r[ny/CELL][nx/CELL]) >> 8;
-					//fire_g[ny/CELL][nx/CELL] = (firea*fireg + (255-firea)*fire_g[ny/CELL][nx/CELL]) >> 8;
-					//fire_b[ny/CELL][nx/CELL] = (firea*fireb + (255-firea)*fire_b[ny/CELL][nx/CELL]) >> 8;
 #endif
 				}
 				if(firea && (pixel_mode & FIRE_ADD))
