@@ -2371,7 +2371,7 @@ void render_parts(pixel *vid)
 				        am -= ny/CELL;
 				    }
                     if (am<0)am = -am;
-                    am /= 2;
+                    //am /= 2;
                     if (am>255)am = 255;
                     if (am<0)am = 0;
                     if (!sys_pause)
@@ -2386,8 +2386,7 @@ void render_parts(pixel *vid)
                         randy = 0;
                         randa = 0;
                     }
-                    if (!pmap[ny][nx])
-                        blendpixel(vid, nx+randx, ny+randy, colr/2, colg/2, colb/2, (255-am)-randa);
+                    addpixel(vid, nx+randx, ny+randy, colr/2, colg/2, colb/2, (255-am)-randa);
 				}
 				if(pixel_mode & PMODE_FLARE)
 				{
