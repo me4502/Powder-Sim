@@ -1,7 +1,7 @@
 #include <element.h>
 
 int graphics_DEFAULT(GRAPHICS_FUNC_ARGS)
-{	
+{
 	int t = cpart->type;
 	//Property based defaults
 	if(ptypes[t].properties & PROP_RADIOACTIVE) *pixel_mode |= PMODE_GLOW;
@@ -18,6 +18,16 @@ int graphics_DEFAULT(GRAPHICS_FUNC_ARGS)
 		*fireb = *colb/2;
 		*firea = 125;
 		*pixel_mode |= DECO_FIRE;
+	}
+	if(ptypes[t].properties & TYPE_PART)
+	{
+	    *cola = 255;
+	    *pixel_mode = PMODE_BLEND;
+		*pixel_mode |= FIRE_DSMKE;
+		*firer = *colr/2;
+		*fireg = *colg/2;
+		*fireb = *colb/2;
+		*firea = 25;
 	}
 	return 1;
 }
