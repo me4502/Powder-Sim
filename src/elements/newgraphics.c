@@ -18,6 +18,7 @@ int graphics_QRTZ(GRAPHICS_FUNC_ARGS) //QRTZ and PQRT
 		*colg += z * 16;
 		*colb += z * 16;
 	}
+	*pixel_mode |= PMODE_DSMKE;
 	return 0;
 }
 int graphics_CLST(GRAPHICS_FUNC_ARGS)
@@ -26,6 +27,7 @@ int graphics_CLST(GRAPHICS_FUNC_ARGS)
 	*colr += z * 16;
 	*colg += z * 16;
 	*colb += z * 16;
+	*pixel_mode |= PMODE_DSMKE;
 	return 0;
 }
 int graphics_CBNW(GRAPHICS_FUNC_ARGS)
@@ -130,6 +132,7 @@ int graphics_DUST(GRAPHICS_FUNC_ARGS)
 		*fireg = *colg;
 		*fireb = *colb;*/
 	}
+	*pixel_mode |= PMODE_DSMKE;
 	return 0;
 }
 int graphics_GRAV(GRAPHICS_FUNC_ARGS)
@@ -163,6 +166,7 @@ int graphics_GRAV(GRAPHICS_FUNC_ARGS)
 		*colg -= (cpart->vy)*GRAV_G2;
 		*colb -= (cpart->vy)*GRAV_B2;
 	}
+	*pixel_mode |= PMODE_DSMKE;
 	return 0;
 }
 int graphics_WIFI(GRAPHICS_FUNC_ARGS)
@@ -543,6 +547,7 @@ int graphics_COAL(GRAPHICS_FUNC_ARGS) //Both COAL and Broken Coal
 		*colg += sin(frequency*q*4.55 +3.14) * 34;
 		*colb += sin(frequency*q*2.22 +3.14) * 64;
 	}
+	*pixel_mode |= PMODE_DSMKE;
 	return 0;
 }
 int graphics_NBLE(GRAPHICS_FUNC_ARGS)
