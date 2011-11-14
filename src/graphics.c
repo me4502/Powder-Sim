@@ -74,7 +74,8 @@ void init_display_modes()
 
 	display_modes[0] = 0;
 	render_modes[0] = RENDER_FIRE;
-	render_modes[1] = 0;
+	render_modes[1] = RENDER_GLOW;
+	render_modes[2] = 0;
 
 	display_mode = 0;
 	i = 0;
