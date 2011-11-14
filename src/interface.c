@@ -6285,7 +6285,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 	int ysize;
 	int yoffset;
 	int xoffset;
-	int b, bq, mx, my;
+	int b, bq, mx, my, da = 255;
 	ui_checkbox *cb;
 	int optioncount = 5;
 	int options[] = {RENDER_EFFE, RENDER_GLOW, RENDER_FIRE, RENDER_BLUR, RENDER_BASC};
@@ -6293,13 +6293,13 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 
 	yoffset = 16;
 	xoffset = 0;
-	
+
 	xsize = 35;
 	ysize = optioncount * yoffset + 6;
-	
+
 	ycoord -= ysize;
 	xcoord -= xsize;
-	
+
 	cb = calloc(optioncount, sizeof(ui_checkbox));
 	for(i = 0; i < optioncount; i++)
 	{
@@ -6318,33 +6318,33 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 			j++;
 		}
 	}
-	
+
 	while (!sdl_poll())
 	{
 		b = SDL_GetMouseState(&mx, &my);
 		if (!b)
 			break;
 	}
-	
+
 	while (!sdl_poll())
 	{
 		bq = b;
 		b = SDL_GetMouseState(&mx, &my);
 		mx /= sdl_scale;
 		my /= sdl_scale;
-		
+
 		clearrect(vid_buf, xcoord-2, ycoord-2, xsize+4, ysize+4);
 		drawrect(vid_buf, xcoord, ycoord, xsize, ysize, 192, 192, 192, 255);
-		
+
 		for(i = 0; i < optioncount; i++)
 		{
 			drawchar(vid_buf, cb[i].x + 16, cb[i].y+2, optionicons[i], 255, 255, 255, 255);
 			ui_checkbox_draw(vid_buf, &(cb[i]));
 			ui_checkbox_process(mx, my, b, bq, &(cb[i]));
 		}
-		
+
 		sdl_blit(0, 0, (XRES+BARSIZE), YRES+MENUSIZE, vid_buf, (XRES+BARSIZE));
-		
+
 		if (sdl_key==SDLK_RETURN)
 			break;
 		if (sdl_key==SDLK_ESCAPE)
@@ -6352,7 +6352,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 		if (b && !bq && (mx < xcoord || mx > xcoord+xsize || my < ycoord || my > ycoord+ysize))
 			break;
 	}
-	
+
 	count = 1;
 	for(i = 0; i < optioncount; i++)
 	{
@@ -6372,9 +6372,9 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 			count++;
 		}
 	}
-	
+
 	free(cb);
-	
+
 	while (!sdl_poll())
 	{
 		b = SDL_GetMouseState(&mx, &my);
