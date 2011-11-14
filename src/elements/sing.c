@@ -3,6 +3,7 @@
 int update_SING(UPDATE_FUNC_ARGS) {
 	int r, rx, ry, cry, crx, rad, nxi, nxj, nb, j, spawncount;
 	int singularity = -parts[i].life;
+	gravmap[y/CELL][x/CELL] += parts[i].tmp/5;
 	float angle, v;
 
 	if (pv[y/CELL][x/CELL]<singularity)
