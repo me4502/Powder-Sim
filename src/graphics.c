@@ -2323,7 +2323,7 @@ void render_parts(pixel *vid)
 					}
 #endif
 				}
-				if((pixel_mode & PMODE_DSMKE) && (parts[i].vx!=0 || parts[i].vy!=0))
+				if((pixel_mode & PMODE_DSMKE) && (parts[i].vx!=0 || parts[i].vy!=0) && fancy_graphics)
 				{
 				    int rx = nx,ry = ny;
 				    int am = 0;
