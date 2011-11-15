@@ -190,6 +190,7 @@ int amd = 1;
 int FPSB = 0;
 int MSIGN =-1;
 int frameidx = 0;
+int mecool = 0;
 //int CGOL = 0;
 //int GSPEED = 1;//causes my .exe to crash..
 int sound_enable = 0;
