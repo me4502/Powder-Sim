@@ -12,7 +12,6 @@
 #define MINOR_VERSION 0
 //#define BETA
 #define BUILD_NUM 1
-#define PS_AUTH_CODE 34
 //VersionInfoEnd
 
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter.

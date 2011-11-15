@@ -1992,7 +1992,7 @@ void render_parts(pixel *vid)
 					if(pixel_mode & (FIREMODE | PMODE_GLOW)) pixel_mode = (pixel_mode & ~(FIREMODE|PMODE_GLOW)) | PMODE_BLUR;
 				}
 				//Apply decoration colour
-				if(!(colour_mode & COLOUR_HEAT|COLOUR_LIFE))
+				if(!colour_mode)
 				{
 					if(!(pixel_mode & NO_DECO) && decorations_enable)
 					{
