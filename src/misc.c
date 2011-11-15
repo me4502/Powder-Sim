@@ -157,7 +157,7 @@ void save_presets(int do_update)
 	} else {
 		cJSON_AddFalseToObject(versionobj, "update");
 	}
-	
+
 	//Display settings
 	cJSON_AddItemToObject(root, "graphics", graphicsobj=cJSON_CreateObject());
 	cJSON_AddNumberToObject(graphicsobj, "colour", colour_mode);
@@ -171,12 +171,12 @@ void save_presets(int do_update)
 	cJSON_AddNumberToObject(root, "scale", sdl_scale);
 	cJSON_AddItemToObject(root,"favourites",cJSON_CreateIntArray(favourites, menuitems));
 
-    int i = 0;
+    int q = 0;
 
-	while(quickmenu[i].icon!=NULL)
+	while(quickmenu[q].icon!=NULL)
 	{
-	    cJSON_AddNumberToObject(root, quickmenu[i].name, *quickmenu[i].variable);
-		i++;
+	    cJSON_AddNumberToObject(root, quickmenu[q].name, *quickmenu[q].variable);
+		q++;
 	}
 	outputdata = cJSON_Print(root);
 	cJSON_Delete(root);
@@ -279,7 +279,7 @@ void load_presets(void)
 			last_build = 0;
 			update_flag = 0;
 		}
-		
+
 		//Read display settings
 		graphicsobj = cJSON_GetObjectItem(root, "graphics");
 		if(graphicsobj)
