@@ -2108,6 +2108,7 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     x = XRES-BARSIZE-18;
     y = YRES+1;
     sy = y;
+    if (mecool > 0) mecool--;
     if (i==-1)
         return;
     if (i==SC_WALL)//wall menu
@@ -2161,6 +2162,13 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
         }
         for (n = 0; n < menuitems; n++)
         {
+            if (!favourites[n] && favourites[n+1])
+            {
+                favourites[n] = favourites[n+1];
+                favourites[n+1] = 0;
+            }
+            if (!favourites[n] && !favourites[n+1])
+                break;
             if (!favourites[n])
                 continue;
             if (n < UI_WALLSTART)
@@ -2462,7 +2470,7 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
         {
                 int in;
                 int result = 0;
-                int maxint;
+                int maxint, eint;
                 int s = sizeof(favourites) / sizeof(int);
                 for (in = 0; in < s; in++)
                 {
@@ -2470,6 +2478,11 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
                         result = 1;
 
                     if (!favourites[in])
+                    {
+                        eint = in;
+                        //break;
+                    }
+                    if (!favourites[in] && !favourites[in+1])
                     {
                         maxint = in;
                         break;
@@ -2484,7 +2497,7 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
                 save_presets(0);
 
         }
-        else if (i==SC_FAVOURITES&&(sdl_mod & (KMOD_LSHIFT)))
+        else if (i==SC_FAVOURITES&&(sdl_mod & (KMOD_LSHIFT)) && !mecool)
         {
             int in;
             int result = 1;
@@ -2496,6 +2509,7 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
                     maxint = in;
             }
             favourites[maxint] = 0;
+            mecool = 30;
             menuitems = maxint+1;
             save_presets(0);
         }
@@ -6297,12 +6311,12 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 	int render_options[] = {RENDER_EFFE, RENDER_GLOW, RENDER_FIRE, RENDER_BLUR, RENDER_BASC};
 	int render_optionicons[] = {0xCC, 0xC3, 0x9B, 0xC4, 0xD1};
 	char * render_desc[] = {"Effects", "Glow", "Fire", "Blur", "Basic"};
-	
+
 	int display_optioncount = 7;
 	int display_options[] = {DISPLAY_AIRC, DISPLAY_AIRP, DISPLAY_AIRV, DISPLAY_AIRH, DISPLAY_WARP, DISPLAY_PERS, DISPLAY_EFFE};
 	int display_optionicons[] = {0xCC, 0xC3, 0x9B, 0xC4, 0xD1, 0xD1, 0xD1};
 	char * display_desc[] = {"Air: Cracker", "Air: Pressure", "Air: Velocity", "Air: Heat", "Warp effect", "Persistent", "Effects"};
-	
+
 	int colour_optioncount = 2;
 	int colour_options[] = {COLOUR_LIFE, COLOUR_HEAT};
 	int colour_optionicons[] = {0xCC, 0xC3};
@@ -6310,15 +6324,15 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 
 	yoffset = 16;
 	xoffset = 0;
-	
+
 	xcoffset = 35;
-	
+
 	xsize = xcoffset*3;
 	ysize = display_optioncount * yoffset + 6;
-	
+
 	ycoord -= ysize;
 	xcoord -= xsize;
-	
+
 	colour_cb = calloc(colour_optioncount, sizeof(ui_checkbox));
 	for(i = 0; i < colour_optioncount; i++)
 	{
@@ -6332,7 +6346,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 			colour_cb[i].checked = 1;
 		}
 	}
-	
+
 	render_cb = calloc(render_optioncount, sizeof(ui_checkbox));
 	for(i = 0; i < render_optioncount; i++)
 	{
@@ -6351,7 +6365,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 			j++;
 		}
 	}
-	
+
 	display_cb = calloc(display_optioncount, sizeof(ui_checkbox));
 	for(i = 0; i < display_optioncount; i++)
 	{
@@ -6370,7 +6384,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 			j++;
 		}
 	}
-	
+
 	o_vid_buf = calloc((YRES+MENUSIZE) * (XRES+BARSIZE), PIXELSIZE);
 	memcpy(o_vid_buf, vid_buf, ((YRES+MENUSIZE) * (XRES+BARSIZE)) * PIXELSIZE);
 
@@ -6387,12 +6401,12 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 		b = SDL_GetMouseState(&mx, &my);
 		mx /= sdl_scale;
 		my /= sdl_scale;
-		
+
 		memcpy(vid_buf, o_vid_buf, ((YRES+MENUSIZE) * (XRES+BARSIZE)) * PIXELSIZE);
 
 		clearrect(vid_buf, xcoord-2, ycoord-2, xsize+4, ysize+4);
 		drawrect(vid_buf, xcoord, ycoord, xsize, ysize, 192, 192, 192, 255);
-		
+
 		for(i = 0; i < render_optioncount; i++)
 		{
 			drawchar(vid_buf, render_cb[i].x + 16, render_cb[i].y+2, render_optionicons[i], 255, 255, 255, 255);
@@ -6401,7 +6415,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 			if(render_cb[i].focus)
 				drawtext(vid_buf, xcoord - textwidth(render_desc[i]) - 10, render_cb[i].y+2, render_desc[i], 255, 255, 255, 255);
 		}
-		
+
 		for(i = 0; i < display_optioncount; i++)
 		{
 			drawchar(vid_buf, display_cb[i].x + 16, display_cb[i].y+2, display_optionicons[i], 255, 255, 255, 255);
@@ -6420,7 +6434,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 			if(display_cb[i].focus)
 				drawtext(vid_buf, xcoord - textwidth(display_desc[i]) - 10, display_cb[i].y+2, display_desc[i], 255, 255, 255, 255);
 		}
-		
+
 		for(i = 0; i < colour_optioncount; i++)
 		{
 			drawchar(vid_buf, colour_cb[i].x + 16, colour_cb[i].y+2, colour_optionicons[i], 255, 255, 255, 255);
@@ -6449,7 +6463,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 		if (b && !bq && (mx < xcoord || mx > xcoord+xsize || my < ycoord || my > ycoord+ysize))
 			break;
 	}
-	
+
 	//Compile colour options
 	colour_mode = 0;
 	for(i = 0; i < colour_optioncount; i++)
@@ -6460,7 +6474,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 		}
 	}
 	free(colour_cb);
-	
+
 	//Compile render options
 	count = 1;
 	for(i = 0; i < render_optioncount; i++)
@@ -6482,7 +6496,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 		}
 	}
 	free(render_cb);
-	
+
 	//Compile render options
 	count = 1;
 	for(i = 0; i < display_optioncount; i++)
@@ -6511,7 +6525,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 		if (!b)
 			break;
 	}
-	
+
 	free(o_vid_buf);
 }
 

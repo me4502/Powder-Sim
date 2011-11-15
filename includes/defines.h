@@ -242,6 +242,7 @@ extern int stamp_count;
 extern int itc;
 extern char itc_msg[64];
 
+extern int mecool;
 extern int do_open;
 extern int sys_pause;
 extern int sys_shortcuts;
