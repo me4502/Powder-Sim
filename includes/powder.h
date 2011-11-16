@@ -266,6 +266,7 @@ struct particle
 	int flags;
 	int tmp;
 	int tmp2;
+	int tmp3;
 	unsigned int dcolour;
     int disease;
 };
