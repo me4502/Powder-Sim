@@ -969,7 +969,7 @@ void prop_edit_ui(pixel *vid_buf, int x, int y)
 	int valuei;
 	int format;
 	size_t propoffset;
-	char *listitems[] = {"type", "life", "ctype", "temp", "tmp", "tmp2", "vy", "vx", "x", "y", "dcolour"};
+	char *listitems[] = {"type", "life", "ctype", "temp", "tmp", "tmp2", "tmp3", "vy", "vx", "x", "y", "dcolour"};
 	int listitemscount = 11;
 	int xsize = 244;
 	int ysize = 87;
@@ -1067,6 +1067,9 @@ void prop_edit_ui(pixel *vid_buf, int x, int y)
 			format = 0;
 		} else if (strcmp(ed.str,"tmp2")==0){
 			propoffset = offsetof(particle, tmp2);
+			format = 0;
+		} else if (strcmp(ed.str,"tmp3")==0){
+			propoffset = offsetof(particle, tmp3);
 			format = 0;
 		} else if (strcmp(ed.str,"vy")==0){
 			propoffset = offsetof(particle, vy);
