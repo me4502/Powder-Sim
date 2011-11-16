@@ -1,6 +1,7 @@
 #include <element.h>
 
 int update_BCLN(UPDATE_FUNC_ARGS) {
+    if (parts[i].tmp3>0)parts[i].tmp3--;
 	if (!parts[i].life && pv[y/CELL][x/CELL]>4.0f)
 		parts[i].life = rand()%40+80;
 	if (parts[i].life)
@@ -35,9 +36,11 @@ int update_BCLN(UPDATE_FUNC_ARGS) {
 				}
 	}
 	else {
+	    if (parts[i].tmp3 > 0) return 0;
 		if (parts[i].ctype==PT_LIFE) create_part(-1, x+rand()%3-1, y+rand()%3-1, parts[i].ctype|(parts[i].tmp<<8));
 		else if (parts[i].ctype==PT_NBLE) create_part(-1, x+rand()%3-1, y+rand()%3-1, parts[i].ctype|(parts[i].tmp<<8));
 		else create_part(-1, x+rand()%3-1, y+rand()%3-1, parts[i].ctype);
+        parts[i].tmp3 = parts[i].life;
 	}
 	return 0;
 }
