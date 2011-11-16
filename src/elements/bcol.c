@@ -4,6 +4,8 @@ int update_BCOL(UPDATE_FUNC_ARGS) {
 	int r, rx, ry, trade, temp;
 	if (parts[i].life<=0) {
 		create_part(i, x, y, PT_FIRE);
+		if (rand()%10 == 1){
+			create_part(i, x, y, PT_SMKE);}
 		return 1;
 	}	
 	else if (parts[i].life < 100)
