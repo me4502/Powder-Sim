@@ -132,11 +132,11 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                 ge = rand()%PT_NUM;
                 if (ge == PT_LOVE||ge == PT_LOLZ||ge == PT_VIRS)
                 {
-                    part_change_type(i, x, y, PT_DUST);
+                    create_part(r>>8, x+rx, y+ry, PT_DUST);
                 }
                 else
                 {
-                    part_change_type(i, x, y, ge);
+                    create_part(r>>8, x+rx, y+ry, ge);
                 }
 
 		  /*if(parts[r>>8].type>1 && parts[r>>8].type!=PT_NEUT && parts[r>>8].type-1!=PT_NEUT && parts[r>>8].type-1!=PT_STKM &&
