@@ -131,7 +131,7 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                 else if (((r&0xFF)==PT_BIZR||(r&0xFF)==PT_BIZRG||(r&0xFF)==PT_BIZRS) && 5>(rand()%100))
                 {
                     ge = rand()%PT_NUM;
-                    if (ge == PT_LOVE||ge == PT_LOLZ||ge == PT_VIRS||ge == PT_STKM||ge == PT_STKM2)
+                    if (ge == PT_LOVE||ge == PT_LOLZ||ge == PT_VIRS||ge == PT_STKM||ge == PT_STKM2||ge == PT_SPAWN||ge == PT_SPAWN2)
                     {
                         create_part(r>>8, x+rx, y+ry, PT_DUST);
                     }
