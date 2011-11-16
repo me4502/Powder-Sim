@@ -130,7 +130,7 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     create_part(r>>8, x+rx, y+ry, PT_ISOZ);
                 else if ((r&0xFF)==PT_BIZR && 5>(rand()%100))
                 ge = rand()%PT_NUM;
-                if ((ge != PT_LOVE) || (ge != PT_LOLZ)|| (ge != PT_VIRS))
+                if (ge != PT_LOVE || ge != PT_LOLZ|| ge != PT_VIRS)
                 {
                     create_part(r>>8, x+rx, y+ry, ge);
                 }
