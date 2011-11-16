@@ -128,7 +128,7 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     parts[r>>8].ctype = PT_DUST;
                 else if ((r&0xFF)==PT_ACID && 5>(rand()%100))
                     create_part(r>>8, x+rx, y+ry, PT_ISOZ);
-                else if ((r&0xFF)==PT_BIZR && 5>(rand()%100))
+                else if (((r&0xFF)==PT_BIZR||(r&0xFF)==PT_BIZRG||(r&0xFF)==PT_BIZRS) && 5>(rand()%100))
                 {
                     ge = rand()%PT_NUM;
                     if (ge == PT_LOVE||ge == PT_LOLZ||ge == PT_VIRS||ge == PT_STKM||ge == PT_STKM2)
