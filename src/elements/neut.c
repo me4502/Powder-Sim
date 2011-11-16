@@ -133,7 +133,7 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     ge = rand()%PT_NUM;
                     if (ge == PT_LOVE||ge == PT_LOLZ||ge == PT_VIRS||ge == PT_STKM||ge == PT_STKM2||ge == PT_SPAWN||ge == PT_SPAWN2)
                     {
-                        create_part(r>>8, x+rx, y+ry, PT_DUST);
+                        create_part(r>>8, x+rx, y+ry, PT_NEUT);
                     }
                     else
                     {
