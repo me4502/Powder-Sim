@@ -47,7 +47,7 @@ int create_n_parts(int n, int x, int y, float vx, float vy, float temp, int t)//
 
 int update_NEUT(UPDATE_FUNC_ARGS)
 {
-    int r, rx, ry, rt;
+    int r, rx, ry, rt, ge;
     int pressureFactor = 3 + (int)pv[y/CELL][x/CELL];
     for (rx=-1; rx<2; rx++)
         for (ry=-1; ry<2; ry++)
@@ -128,7 +128,13 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     parts[r>>8].ctype = PT_DUST;
                 else if ((r&0xFF)==PT_ACID && 5>(rand()%100))
                     create_part(r>>8, x+rx, y+ry, PT_ISOZ);
-                /*if(parts[r>>8].type>1 && parts[r>>8].type!=PT_NEUT && parts[r>>8].type-1!=PT_NEUT && parts[r>>8].type-1!=PT_STKM &&
+                else if ((r&0xFF)==PT_BIZR && 5>(rand()%100))
+                    ge = (rand()%PT_NUM);
+		    if ((ge != PT_LOVE) || (ge != PT_LOLZ)|| (ge != PT_VIRS))
+                    {
+			create_part(r>>8, x+rx, y+ry, ge);
+		    }
+		  /*if(parts[r>>8].type>1 && parts[r>>8].type!=PT_NEUT && parts[r>>8].type-1!=PT_NEUT && parts[r>>8].type-1!=PT_STKM &&
                   (ptypes[parts[r>>8].type-1].menusection==SC_LIQUID||
                   ptypes[parts[r>>8].type-1].menusection==SC_EXPLOSIVE||
                   ptypes[parts[r>>8].type-1].menusection==SC_GAS||
