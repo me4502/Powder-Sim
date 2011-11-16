@@ -528,6 +528,9 @@ int luatpt_set_property(lua_State* l)
 	} else if (strcmp(prop,"tmp2")==0){
 		offset = offsetof(particle, tmp2);
 		format = 1;
+	} else if (strcmp(prop,"tmp3")==0){
+		offset = offsetof(particle, tmp3);
+		format = 1;
 	} else if (strcmp(prop,"vy")==0){
 		offset = offsetof(particle, vy);
 		format = 2;
@@ -673,6 +676,10 @@ int luatpt_get_property(lua_State* l)
 		}
 		if (strcmp(prop,"tmp2")==0){
 			lua_pushinteger(l, parts[i].tmp2);
+			return 1;
+		}
+		if (strcmp(prop,"tmp3")==0){
+			lua_pushinteger(l, parts[i].tmp3);
 			return 1;
 		}
 		if (strcmp(prop,"vy")==0){

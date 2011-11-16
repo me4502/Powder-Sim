@@ -1,6 +1,7 @@
 #include <element.h>
 
 int update_CLNE(UPDATE_FUNC_ARGS) {
+    if (parts[i].tmp3>0)parts[i].tmp3--;
 	if (parts[i].ctype<=0 || parts[i].ctype>=PT_NUM || (parts[i].ctype==PT_LIFE && (parts[i].tmp<0 || parts[i].tmp>=NGOLALT))|| (parts[i].ctype==PT_NBLE && (parts[i].tmp<0 || parts[i].tmp>=NNBLALT)))
 	{
 		int r, rx, ry;
@@ -27,9 +28,11 @@ int update_CLNE(UPDATE_FUNC_ARGS) {
 				}
 	}
 	else {
+	    if (parts[i].tmp3 > 0) return 0;
 		if (parts[i].ctype==PT_LIFE) create_part(-1, x+rand()%3-1, y+rand()%3-1, parts[i].ctype|(parts[i].tmp<<8));
         else if (parts[i].ctype==PT_NBLE) create_part(-1, x+rand()%3-1, y+rand()%3-1, parts[i].ctype|(parts[i].tmp<<8));
 		else create_part(-1, x+rand()%3-1, y+rand()%3-1, parts[i].ctype);
+		parts[i].tmp3 = parts[i].tmp3;
 	}
 	return 0;
 }
