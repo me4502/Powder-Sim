@@ -2743,6 +2743,16 @@ int main(int argc, char *argv[])
 
 					sprintf(nametext, "Burning %s", lowername);
 				}
+				else if ((cr&0xFF)==PT_SMKE && parts[cr>>8].tmp > 0 && parts[cr>>8].tmp < PT_NUM )
+				{
+					char lowername[6];
+					int ix;
+					strcpy(lowername, ptypes[parts[cr>>8].tmp].name);
+					for (ix = 0; lowername[ix]; ix++)
+						lowername[ix] = tolower(lowername[ix]);
+
+					sprintf(nametext, "Smoking %s", lowername);
+				}
 				else if ((cr&0xFF)==PT_PIPE && (parts[cr>>8].tmp&0xFF) > 0 && (parts[cr>>8].tmp&0xFF) < PT_NUM )
 				{
 					char lowername[6];
