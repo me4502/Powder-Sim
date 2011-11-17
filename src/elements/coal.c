@@ -6,6 +6,7 @@ int update_COAL(UPDATE_FUNC_ARGS)
     if (parts[i].life<=0)
     {
         create_part(i, x, y, PT_FIRE);
+        parts[i].life = 10;
         return 1;
     }
     else if (parts[i].life < 100)

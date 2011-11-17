@@ -22,14 +22,13 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		fr = 1;
 		fg = 2;
 		fb = 2;
-		deftype = 0;
+		deftype = 1;
 		cleartype = 0;
 		cfs = 0;
 		*colr = PIXR(ptypes[cpart-> tmp].pcolors);
 		*colg = PIXG(ptypes[cpart-> tmp].pcolors);
 		*colb = PIXB(ptypes[cpart-> tmp].pcolors);
 		*pixel_mode |= PMODE_GLOW;
-		*pixel_mode |= FIRE_BLEND;
 	}
 	else if (cpart-> tmp == PT_NITR)
 	{
