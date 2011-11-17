@@ -662,6 +662,9 @@ inline void part_change_type(int i, int x, int y, int t)//changes the type of pa
     if (t==PT_FIRE)
         parts[i].ctype = parts[i].type;
 
+    if (t==PT_SMKE)
+        parts[i].tmp = parts[i].tmp;
+
     if (t==PT_GAS)
         parts[i].ctype = parts[i].type;
 
@@ -974,6 +977,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].life = 100;
     if (t==PT_GAS)
         parts[i].ctype = PT_OIL;
+    if (t==PT_SMKE)
+        parts[i].tmp = PT_WOOD;
 	if (t==PT_PIPE)
 		parts[i].life = 60;
 	if (t==PT_BCOL)
