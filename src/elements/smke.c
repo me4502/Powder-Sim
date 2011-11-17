@@ -7,7 +7,6 @@ int graphics_SMKE(GRAPHICS_FUNC_ARGS)
     if (cpart->tmp==PT_COAL)
     {
 		cleartype = 0;
-		//deftype = 0;
 		*colr = PIXR(ptypes[cpart-> tmp].pcolors);
 		*colg = PIXG(ptypes[cpart-> tmp].pcolors);
 		*colb = PIXB(ptypes[cpart-> tmp].pcolors);
@@ -17,7 +16,6 @@ int graphics_SMKE(GRAPHICS_FUNC_ARGS)
 		*fireg = PIXG(ptypes[cpart-> tmp].pcolors);
 		*fireb = PIXB(ptypes[cpart-> tmp].pcolors);
 		*pixel_mode |= PMODE_GLOW;
-		//*pixel_mode |= FIRE_ADD;
     }
     else
     {
