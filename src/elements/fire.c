@@ -31,6 +31,15 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		fg = 2;
 		fb = 1;
 	}
+	else if (cpart-> tmp == PT_MAGN)
+	{
+		fr = 1;
+		fg = 1;
+		fb = 1;
+
+
+
+	}
 	else
 	{
 		fr = 0;
@@ -48,7 +57,11 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 	*fireb = *colb;
 
 	*pixel_mode = PMODE_NONE; //Clear default, don't draw pixel
-	*pixel_mode |= FIRE_ADD;
+	if (cpart-> tmp == PT_MAGN)
+		*pixel_mode |= PMODE_SPARK;	
+		//*pixel_mode |= PMODE_FLARE;
+	else
+		*pixel_mode |= FIRE_ADD;
 	//Returning 0 means dynamic, do not cache
 	return 0;
 }
