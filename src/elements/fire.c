@@ -25,7 +25,12 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		fg = 1;
 		fb = 2;
 	}
-
+	else if (cpart-> tmp == PT_FRAN)
+	{
+		fr = 2;
+		fg = 2;
+		fb = 1;
+	}
 	else
 	{
 		fr = 0;
