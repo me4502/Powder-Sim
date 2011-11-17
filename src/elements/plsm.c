@@ -3,22 +3,11 @@
 
 int graphics_PLSM(GRAPHICS_FUNC_ARGS)
 {
-    if (cpart->ctype!=PT_NBLE){
-        int caddress = restrict_flt(restrict_flt((float)cpart->life, 0.0f, 200.0f)*3, 0.0f, (200.0f*3)-3);
-        *colr = (unsigned char)plasma_data[caddress];
-        *colg = (unsigned char)plasma_data[caddress+1];
-        *colb = (unsigned char)plasma_data[caddress+2];
-
-        *firea = 255;
-        *firer = *colr;
-        *fireg = *colg;
-        *fireb = *colb;
-
-        *pixel_mode = PMODE_GLOW | PMODE_ADD; //Clear default, don't draw pixel
-        *pixel_mode |= FIRE_ADD|DECO_FIRE;
-        //Returning 0 means dynamic, do not cache
-        return 0;
-    } else {
+    int fr = 0,fg = 1,fb = 2;
+    int fire = 1,pmode = 1, ret = 0, override = 0;
+    int caddress = restrict_flt(restrict_flt((float)cpart->life, 0.0f, 200.0f)*3, 0.0f, (200.0f*3)-3);
+    if (cpart->ctype==PT_NBLE)
+    {
         pixel pc;
         pc = nmenu[cpart->tmp2].colour;
         *firea = 160;
@@ -28,7 +17,28 @@ int graphics_PLSM(GRAPHICS_FUNC_ARGS)
         *colg = PIXG(pc);
         *colb = PIXB(pc);
         *colr = PIXR(pc);
-        *pixel_mode |= FIRE_BLEND|PMODE_FLARE|PMODE_GLOW|PMODE_BLEND;
-        return 0;
+        *pixel_mode |= PMODE_FLARE|PMODE_GLOW|PMODE_BLEND;
+        *pixel_mode |= FIRE_BLEND;
+        override = 1;
+        fire = 0;
+        pmode = 0;
     }
+    if (!override)
+    {
+        *colr = (unsigned char)plasma_data[caddress+fr];
+        *colg = (unsigned char)plasma_data[caddress+fg];
+        *colb = (unsigned char)plasma_data[caddress+fb];
+
+        *firea = 255;
+        *firer = *colr;
+        *fireg = *colg;
+        *fireb = *colb;
+    }
+
+    if (pmode)
+        *pixel_mode = PMODE_GLOW | PMODE_ADD; //Clear default, don't draw pixel
+    if (fire)
+        *pixel_mode |= FIRE_ADD|DECO_FIRE;
+    //Returning 0 means dynamic, do not cache
+    return ret;
 }
