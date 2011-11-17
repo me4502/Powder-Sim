@@ -6,7 +6,7 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 	int fr, fg, fb;
 	int *pix;
 	int *pixf;
-	int deftype, cleartype;
+	int deftype, cleartype, ret = 0, cfs = 1;
 	*pixel_mode = PMODE_NONE;
 
 	if (cpart-> tmp == PT_ALCO)
@@ -23,7 +23,12 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		fg = 2;
 		fb = 2;
 		deftype = 1;
-		cleartype = 1;
+		cleartype = 0;
+		cfs = 0;
+		*colr = PIXR(ptypes[cpart-> tmp].pcolors);
+		*colg = PIXG(ptypes[cpart-> tmp].pcolors);
+		*colb = PIXB(ptypes[cpart-> tmp].pcolors);
+		*pixel_mode |= PMODE_GLOW;
 	}
 	else if (cpart-> tmp == PT_NITR)
 	{
@@ -58,20 +63,27 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		deftype = 1;
 		cleartype = 1;
 	}
+    if (cfs)
+    {
+        *colr = (unsigned char)flm_data[caddress+fr];
+        *colg = (unsigned char)flm_data[caddress+fg];
+        *colb = (unsigned char)flm_data[caddress+fb];
 
-	*colr = (unsigned char)flm_data[caddress+fr];
-	*colg = (unsigned char)flm_data[caddress+fg];
-	*colb = (unsigned char)flm_data[caddress+fb];
-
-	*firea = 255;
-	*firer = *colr;
-	*fireg = *colg;
-	*fireb = *colb;
+        *firea = 255;
+        *firer = *colr;
+        *fireg = *colg;
+        *fireb = *colb;
+    } else {
+        *firea = 255;
+        *firer = (unsigned char)flm_data[caddress+fr];
+        *fireg = (unsigned char)flm_data[caddress+fg];
+        *fireb = (unsigned char)flm_data[caddress+fb];
+    }
 
     if (cleartype)
         *pixel_mode = PMODE_NONE; //Clear default, don't draw pixel
 	if (deftype)
 		*pixel_mode |= FIRE_ADD;
 	//Returning 0 means dynamic, do not cache
-	return 0;
+	return ret;
 }
