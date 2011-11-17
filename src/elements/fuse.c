@@ -5,14 +5,20 @@ int update_FUSE(UPDATE_FUNC_ARGS) {
 	if (parts[i].life<=0) {
 		r = create_part(i, x, y, PT_PLSM);
 		if (r!=-1)
-			parts[r].life = 50;
+        {
+            parts[r].ctype = PT_FUSE;
+            parts[r].life = 50;
+        }
 		return 1;
 	} else if (parts[i].life < 40) {
 		parts[i].life--;
 		if ((rand()%100)==0) {
 			r = create_part(-1, (rx=x+rand()%3-1), (ry=y+rand()%3-1), PT_PLSM);
 			if (r!=-1)
+			{
+			    parts[r].ctype = PT_FUSE;
 				parts[r].life = 50;
+			}
 		}
 	}
 	if ((pv[y/CELL][x/CELL] > 2.7f)&&parts[i].tmp>40)

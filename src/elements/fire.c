@@ -52,7 +52,7 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		fg = 1;
 		fb = 1;
 		*pixel_mode |= PMODE_SPARK;
-		deftype = 0;
+		deftype = 1;
 		cleartype = 0;
 	}
 	else if (cpart-> tmp == PT_PLEX)
