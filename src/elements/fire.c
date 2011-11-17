@@ -45,9 +45,10 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		fr = 1;
 		fg = 1;
 		fb = 1;
+		*pixel_mode = PMODE_NONE;
 		*pixel_mode |= PMODE_SPARK;
 		deftype = 0;
-		cleartype = 1;
+		cleartype = 0;
 	}
 	else
 	{
