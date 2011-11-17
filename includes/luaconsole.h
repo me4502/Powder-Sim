@@ -10,9 +10,9 @@
 #include <lauxlib.h>
 #include <lualib.h>
 #else
-#include </usr/include/lua.h>
-#include </usr/include/lauxlib.h>
-#include </usr/include/lualib.h>
+#include <lua5.1/lua.h>
+#include <lua5.1/lauxlib.h>
+#include <lua5.1/lualib.h>
 #endif
 #endif
 #include <defines.h>
