@@ -7,6 +7,7 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 	int *pix;
 	int *pixf;
 	int deftype, cleartype;
+	*pixel_mode = PMODE_NONE;
 
 	if (cpart-> tmp == PT_ALCO)
 	{
@@ -45,7 +46,6 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		fr = 1;
 		fg = 1;
 		fb = 1;
-		*pixel_mode = PMODE_NONE;
 		*pixel_mode |= PMODE_SPARK;
 		deftype = 0;
 		cleartype = 0;
