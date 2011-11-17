@@ -28,7 +28,7 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 	else if (cpart-> tmp == PT_FRAN)
 	{
 		fr = 2;
-		fg = 3;
+		fg = 2;
 		fb = 1;
 	}
 	else
