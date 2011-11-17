@@ -63,14 +63,10 @@ int update_PYRO(UPDATE_FUNC_ARGS) {
 				if (parts[i].type==PT_FIRE && parts[i].tmp==PT_COAL && !rt)
 				{
                     create_part(-1, x+rx, y+ry, PT_SMKE);
-                    int s = pmap[y+ry][x+rx];
-                    parts[s].tmp = PT_COAL;
 				}
 				if (parts[i].type==PT_FIRE && parts[i].tmp==PT_BCOL && !rt)
 				{
                     create_part(-1, x+rx, y+ry, PT_SMKE);
-                    int s = pmap[y+ry][x+rx];
-                    parts[s].tmp = PT_BCOL;
 				}
 				if ((surround_space || ptypes[rt].explosive) &&
 					(t!=PT_SPRK || (rt!=PT_RBDM && rt!=PT_LRBD && rt!=PT_INSL)) &&
