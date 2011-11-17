@@ -35,6 +35,12 @@ int update_PYRO(UPDATE_FUNC_ARGS) {
 			parts[i].life = rand()%20+250;
 		}
 	}
+	if (t==PT_FIRE && parts[i].tmp)
+	{
+        int tm = parts[i].tmp;
+        if (tm == PT_NITR && parts[i].temp < 2773.0f - 100.0f)
+            parts[i].temp += 100;
+	}
 	if(t==PT_PLSM && parts[i].life <=1)
 	{
 		if (parts[i].tmp==3){
