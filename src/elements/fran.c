@@ -13,6 +13,7 @@ int update_FRAN(UPDATE_FUNC_ARGS) {
 				{
 					if (1>rand()%6)
 					{
+						parts[i].tmp = PT_FRAN;
 						part_change_type(i,x,y,PT_FIRE);
 						parts[r>>8].temp = parts[i].temp = 0;
 						parts[i].life = rand()%650+50;
