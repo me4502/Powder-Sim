@@ -24,6 +24,8 @@ int graphics_DEFAULT(GRAPHICS_FUNC_ARGS)
 	    *cola = 255;
 	    *pixel_mode = PMODE_BLEND;
 		*pixel_mode |= PMODE_DSMKE;
+		if (ptypes[t].properties & PROP_RADIOACTIVE)
+            *pixel_mode |= PMODE_GLOW;
 	}
 	return 1;
 }
