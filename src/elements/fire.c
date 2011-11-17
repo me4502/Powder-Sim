@@ -41,8 +41,8 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 	else if (cpart-> tmp == PT_FRAN)
 	{
 		fr = 2;
-		fg = 2;
-		fb = 1;
+		fg = 1;
+		fb = 0;
 		deftype = 1;
 		cleartype = 1;
 	}
@@ -54,6 +54,14 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		*pixel_mode |= PMODE_SPARK;
 		deftype = 0;
 		cleartype = 0;
+	}
+	else if (cpart-> tmp == PT_PLEX)
+	{
+		fr = 1;
+		fg = 2;
+		fb = 1;
+		deftype = 1;
+		cleartype = 1;
 	}
 	else
 	{
