@@ -8,11 +8,14 @@
 #endif
 
 //VersionInfoStart
-#define SAVE_VERSION 1
-#define MINOR_VERSION 0
-//#define BETA
-#define BUILD_NUM 1
+#define SAVE_VERSION 68
+#define MINOR_VERSION 5
+#define BETA
+#define BUILD_NUM 111
 //VersionInfoEnd
+
+/* Powder-Sim Version Info */
+#define PS_Version 1.0
 
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter.
 
