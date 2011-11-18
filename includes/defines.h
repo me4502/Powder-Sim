@@ -18,7 +18,7 @@
 
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter.
 
-#define SERVER "powdertoy.co.uk"
+#define SERVER "google froze while googling google"//"powdertoy.co.uk"
 
 #define MTOS_EXPAND(str) #str
 #define MTOS(str) MTOS_EXPAND(str)
