@@ -23,7 +23,7 @@ int graphics_PLSM(GRAPHICS_FUNC_ARGS)
         fire = 0;
         pmode = 0;
     }
-    else if (cpart->ctype==PT_FUSE)
+    else if (cpart->ctype==PT_FUSE||cpart->ctype==PT_FSEP)
     {
         *firea = 75;
         *fireg = 193;

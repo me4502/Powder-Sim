@@ -668,6 +668,9 @@ inline void part_change_type(int i, int x, int y, int t)//changes the type of pa
     if (t==PT_GAS)
         parts[i].ctype = parts[i].type;
 
+    if (t==PT_PLSM)
+        parts[i].ctype = parts[i].type;
+
 	if (parts[i].type == PT_FIGH)
 	{
 		fighters[(unsigned char)parts[i].tmp].spwn = 0;

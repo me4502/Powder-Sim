@@ -4,15 +4,21 @@ int update_FSEP(UPDATE_FUNC_ARGS) {
 	int r, rx, ry;
 	if (parts[i].life<=0) {
 		r = create_part(i, x, y, PT_PLSM);
-		if (r!=-1)
-			parts[r].life = 50;
+        if (r!=-1)
+        {
+            parts[r].ctype = PT_FUSE;
+            parts[r].life = 50;
+        }
 		return 1;
 	} else if (parts[i].life < 40) {
 		parts[i].life--;
 		if ((rand()%10)==0) {
 			r = create_part(-1, (rx=x+rand()%3-1), (ry=y+rand()%3-1), PT_PLSM);
 			if (r!=-1)
+			{
+			    parts[r].ctype = PT_FUSE;
 				parts[r].life = 50;
+			}
 		}
 	}
 	else {
