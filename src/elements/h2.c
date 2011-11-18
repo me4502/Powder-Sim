@@ -3,11 +3,9 @@
 int update_H2(UPDATE_FUNC_ARGS)
 {
     if (pv[y/CELL][x/CELL]>80.0f)
-    {
         parts[i].ctype = 1;
-    } else {
+    else
         parts[i].ctype = 0;
-    }
     int r,rx,ry,rt;
     for (rx=-2; rx<3; rx++)
         for (ry=-2; ry<3; ry++)
