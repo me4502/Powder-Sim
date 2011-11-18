@@ -129,6 +129,8 @@ void play_sound(char *file)
 }
 
 static const char *it_msg =
+    "\br Powder Sim - Version " MTOS(PS_Version) " (TPT " MTOS(SAVE_VERSION) "." MTOS(MINOR_VERSION) ") - http://powdersim.co.cc, irc.freenode.net #powdersim\n"
+    "\r\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\n"
     "\br Powder Sim - Version " MTOS(PS_VERSION) "." MTOS(PS_MINOR_VERSION) " - http://powdersim.co.cc, irc.freenode.net #powdersim\n"
     "\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\n"
     "\n"
