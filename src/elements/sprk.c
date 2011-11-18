@@ -240,11 +240,13 @@ int graphics_SPRK(GRAPHICS_FUNC_ARGS)
     }
     if (!over)
     {
-        *colr = 170;
-        *colg = 200;
-        *colb = 220;
+        *firea = 80;
+	
+		*firer = *colr = 170;
+		*fireg = *colg = 200;
+		*fireb = *colb = 220;
     }
     if (pix)
-        *pixel_mode |= PMODE_GLOW;
+        *pixel_mode |= PMODE_ADD;
 	return ret;
 }

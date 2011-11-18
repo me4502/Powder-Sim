@@ -413,6 +413,12 @@ void clearScreen(float alpha)
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
+void clearScreenNP(float alpha)
+{
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
 void ogl_blit(int x, int y, int w, int h, pixel *src, int pitch, int scale)
 {
 
@@ -1729,7 +1735,7 @@ void draw_other(pixel *vid) // EMP effect
 	if (emp_decor>0 && !sys_pause) emp_decor-=emp_decor/25+2;
 	if (emp_decor>40) emp_decor=40;
 	if (emp_decor<0) emp_decor = 0;
-	if (!(display_mode & display_mode == DISPLAY_EFFE)) // no in nothing mode
+	if (!(display_mode & DISPLAY_EFFE)) // no in nothing mode
 		return;
 	if (emp_decor>0)
 	{
@@ -1826,6 +1832,7 @@ void update_back(pixel *vid, int over, int x, int y)
 void render_parts(pixel *vid)
 {
 	int deca, decr, decg, decb, cola, colr, colg, colb, firea, firer, fireg, fireb, pixel_mode, q, i, t, nx, ny, x, y, caddress;
+	int orbd[4] = {0, 0, 0, 0}, orbl[4] = {0, 0, 0, 0};
 	float gradv, flicker, fnx, fny;
 #ifdef OGLR
 	int cfireV = 0, cfireC = 0, cfire = 0;
@@ -1966,6 +1973,8 @@ void render_parts(pixel *vid)
 					pixel_mode |= PMODE_FLAT;
 				if(pixel_mode & PMODE_GLOW && !(render_mode & PMODE_GLOW))
 					pixel_mode |= PMODE_FLAT;
+				if (render_mode & PMODE_BLOB)
+					pixel_mode |= PMODE_BLOB;
 
 				pixel_mode &= render_mode;
 
@@ -1991,6 +2000,16 @@ void render_parts(pixel *vid)
 					cola = 255;
 					if(pixel_mode & (FIREMODE | PMODE_GLOW)) pixel_mode = (pixel_mode & ~(FIREMODE|PMODE_GLOW)) | PMODE_BLUR;
 				}
+				else if (colour_mode & COLOUR_GRAD)
+				{
+					float frequency = 0.05;
+					int q = parts[i].temp-40;
+					colr = sin(frequency*q) * 16 + colr;
+					colg = sin(frequency*q) * 16 + colg;
+					colb = sin(frequency*q) * 16 + colb;
+					if(pixel_mode & (FIREMODE | PMODE_GLOW)) pixel_mode = (pixel_mode & ~(FIREMODE|PMODE_GLOW)) | PMODE_BLUR;
+				}
+
 				//Apply decoration colour
 				if(!colour_mode)
 				{
@@ -2504,6 +2523,42 @@ void render_parts(pixel *vid)
 					}
 #endif
 				}
+				if (pixel_mode & EFFECT_GRAVIN)
+				{
+					int nxo = 0;
+					int nyo = 0;
+					int r;
+					int fire_rv = 0;
+					float drad = 0.0f;
+					float ddist = 0.0f;
+					orbitalparts_get(parts[i].life, parts[i].ctype, orbd, orbl);
+					for (r = 0; r < 4; r++) {
+						ddist = ((float)orbd[r])/16.0f;
+						drad = (M_PI * ((float)orbl[r]) / 180.0f)*1.41f;
+						nxo = ddist*cos(drad);
+						nyo = ddist*sin(drad);
+						if (ny+nyo>0 && ny+nyo<YRES && nx+nxo>0 && nx+nxo<XRES)
+							addpixel(vid, nx+nxo, ny+nyo, colr, colg, colb, 255-orbd[r]);
+					}
+				}
+				if (pixel_mode & EFFECT_GRAVOUT)
+				{
+					int nxo = 0;
+					int nyo = 0;
+					int r;
+					int fire_bv = 0;
+					float drad = 0.0f;
+					float ddist = 0.0f;
+					orbitalparts_get(parts[i].life, parts[i].ctype, orbd, orbl);
+					for (r = 0; r < 4; r++) {
+						ddist = ((float)orbd[r])/16.0f;
+						drad = (M_PI * ((float)orbl[r]) / 180.0f)*1.41f;
+						nxo = ddist*cos(drad);
+						nyo = ddist*sin(drad);
+						if (ny+nyo>0 && ny+nyo<YRES && nx+nxo>0 && nx+nxo<XRES)
+							addpixel(vid, nx+nxo, ny+nyo, colr, colg, colb, 255-orbd[r]);
+					}
+				}
 				//Fire effects
 				if(firea && (pixel_mode & FIRE_BLEND))
 				{
@@ -2879,7 +2934,85 @@ void draw_walls(pixel *vid)
 								vid[(y*CELL+j)*(XRES+BARSIZE)+(x*CELL+i)] = PIXPACK(0x242424);
 					}
 				}
-
+				if (render_mode & PMODE_BLOB)
+				{
+					// when in blob view, draw some blobs...
+					if (wtypes[wt].drawstyle==1)
+					{
+						for (j=0; j<CELL; j+=2)
+							for (i=(j>>1)&1; i<CELL; i+=2)
+								drawblob(vid, (x*CELL+i), (y*CELL+j), PIXR(pc), PIXG(pc), PIXB(pc));
+					}
+					else if (wtypes[wt].drawstyle==2)
+					{
+						for (j=0; j<CELL; j+=2)
+							for (i=0; i<CELL; i+=2)
+								drawblob(vid, (x*CELL+i), (y*CELL+j), PIXR(pc), PIXG(pc), PIXB(pc));
+					}
+					else if (wtypes[wt].drawstyle==3)
+					{
+						for (j=0; j<CELL; j++)
+							for (i=0; i<CELL; i++)
+								drawblob(vid, (x*CELL+i), (y*CELL+j), PIXR(pc), PIXG(pc), PIXB(pc));
+					}
+					else if (wtypes[wt].drawstyle==4)
+					{
+						for (j=0; j<CELL; j++)
+							for (i=0; i<CELL; i++)
+								if(i == j)
+									drawblob(vid, (x*CELL+i), (y*CELL+j), PIXR(pc), PIXG(pc), PIXB(pc));
+								else if  (i == j+1 || (i == 0 && j == CELL-1))
+									drawblob(vid, (x*CELL+i), (y*CELL+j), PIXR(gc), PIXG(gc), PIXB(gc));
+								else 
+									drawblob(vid, (x*CELL+i), (y*CELL+j), 0x20, 0x20, 0x20);
+					}
+					if (bmap[y][x]==WL_EWALL)
+					{
+						if (emap[y][x])
+						{
+							for (j=0; j<CELL; j++)
+								for (i=0; i<CELL; i++)
+									if (i&j&1)
+										drawblob(vid, (x*CELL+i), (y*CELL+j), 0x80, 0x80, 0x80);
+						}
+						else
+						{
+							for (j=0; j<CELL; j++)
+								for (i=0; i<CELL; i++)
+									if (!(i&j&1))
+										drawblob(vid, (x*CELL+i), (y*CELL+j), 0x80, 0x80, 0x80);
+						}
+					}
+					else if (bmap[y][x]==WL_WALLELEC)
+					{
+						for (j=0; j<CELL; j++)
+							for (i=0; i<CELL; i++)
+							{
+								if (!((y*CELL+j)%2) && !((x*CELL+i)%2))
+									drawblob(vid, (x*CELL+i), (y*CELL+j), PIXR(pc), PIXG(pc), PIXB(pc));
+								else
+									drawblob(vid, (x*CELL+i), (y*CELL+j), 0x80, 0x80, 0x80);
+							}
+					}
+					else if (bmap[y][x]==WL_EHOLE)
+					{
+						if (emap[y][x])
+						{
+							for (j=0; j<CELL; j++)
+								for (i=0; i<CELL; i++)
+									drawblob(vid, (x*CELL+i), (y*CELL+j), 0x24, 0x24, 0x24);
+							for (j=0; j<CELL; j+=2)
+								for (i=0; i<CELL; i+=2)
+									vid[(y*CELL+j)*(XRES+BARSIZE)+(x*CELL+i)] = PIXPACK(0x000000);
+						}
+						else
+						{
+							for (j=0; j<CELL; j+=2)
+								for (i=0; i<CELL; i+=2)
+									drawblob(vid, (x*CELL+i), (y*CELL+j), 0x24, 0x24, 0x24);
+						}
+					}
+				}
 				if (wtypes[wt].eglow && emap[y][x])
 				{
 					// glow if electrified
