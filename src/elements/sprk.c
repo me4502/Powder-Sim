@@ -222,14 +222,29 @@ int update_SPRK(UPDATE_FUNC_ARGS) {
 
 int graphics_SPRK(GRAPHICS_FUNC_ARGS)
 {
-	//*firea = 80;
-	//*firer = *colr*0.5;
-	//*fireg = *colg;
-	//*fireb = *colb*2;
-	*colr = 170;
-	*colg = 200;
-	*colb = 220;
-	//*pixel_mode |= FIRE_ADD;
-	*pixel_mode |= PMODE_GLOW;
-	return 1;
+    int pix = 1, ret = 0, over = 0;
+    if (cpart->ctype==PT_NBLE)
+    {
+        pix = 0;
+        over = 1;
+        pixel pc;
+        pc = nmenu[cpart->tmp2].colour;
+        *firea = 255;
+        *fireg = PIXG(pc);
+        *fireb = PIXB(pc);
+        *firer = PIXR(pc);
+        *colg = PIXG(pc);
+        *colb = PIXB(pc);
+        *colr = PIXR(pc);
+        *pixel_mode |= PMODE_LFLARE;
+    }
+    if (!over)
+    {
+        *colr = 170;
+        *colg = 200;
+        *colb = 220;
+    }
+    if (pix)
+        *pixel_mode |= PMODE_GLOW;
+	return ret;
 }
