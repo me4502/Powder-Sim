@@ -116,6 +116,7 @@ void init_can_move()
 	}
 	for (t=0;t<PT_NUM;t++)
 	{
+	    can_move[t][PT_H2] = 3;
 		// make them eat things
 		can_move[t][PT_VOID] = 1;
 		can_move[t][PT_BHOL] = 1;
@@ -183,6 +184,11 @@ int eval_move(int pt, int nx, int ny, unsigned *rr)
 			if (parts[r>>8].life == 10) result = 1;
 			else result = 0;
 		}
+		if ((r&0xFF)==PT_H2)
+		{
+			if (parts[r>>8].ctype == 1) result = 0;
+			else result = 1;
+		}
 	}
 	if (bmap[ny/CELL][nx/CELL])
 	{
@@ -225,6 +231,8 @@ int try_move(int i, int x, int y, int nx, int ny)
 	        (((r&0xFF)==PT_BMTL && rand()<RAND_MAX/2) ||
 	         (pmap[y][x]&0xFF)==PT_BMTL))
 		e = 2;
+    if (parts[i].type==PT_H2 && parts[i].ctype==1)
+        e = 0;
 
 	if (!e) //if no movement
 	{

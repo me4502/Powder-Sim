@@ -11,6 +11,7 @@ int graphics_DEFAULT(GRAPHICS_FUNC_ARGS)
 	}
 	if(ptypes[t].properties & TYPE_GAS)
 	{
+	    if (t==PT_H2&&cpart->ctype==1) return 0;
 		*pixel_mode &= ~PMODE;
 		*pixel_mode |= FIRE_BLEND;
 		*firer = *colr/2;
@@ -27,5 +28,5 @@ int graphics_DEFAULT(GRAPHICS_FUNC_ARGS)
 		if (ptypes[t].properties & PROP_RADIOACTIVE)
             *pixel_mode |= PMODE_GLOW;
 	}
-	return 1;
+	return 0;
 }
