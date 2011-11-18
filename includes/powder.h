@@ -218,7 +218,6 @@
 #define PT_WSTE 160
 #define PT_FIGH 161
 #define PT_MAGN 162
-#define PT_MH2  163
 #define PT_NUM  164
 
 #define R_TEMP 22
@@ -447,7 +446,6 @@ int update_DCEL(UPDATE_FUNC_ARGS);
 int update_ALCO(UPDATE_FUNC_ARGS);
 int update_OIL(UPDATE_FUNC_ARGS);
 int update_GAS(UPDATE_FUNC_ARGS);
-int update_MH2(UPDATE_FUNC_ARGS);
 
 int update_MISC(UPDATE_FUNC_ARGS);
 int update_legacy_PYRO(UPDATE_FUNC_ARGS);
@@ -678,7 +676,6 @@ static const part_type ptypes[PT_NUM] =
  	{"WSTE",	PIXPACK(0x00BB00),	0.3f,	0.02f * CFDS,	0.98f,	0.80f,	0.0f,	0.15f,	0.00f,	0.000f	* CFDS,	2,	0,		0,	0,	2,	1,	1,	42,		1.0f,  SC_NUCLEAR,		R_TEMP+0.0f+273.15f,	44,		"Nuclear Waste", ST_LIQUID, TYPE_LIQUID, &update_WSTE, &graphics_WSTE},
  	{"FIGH",	PIXPACK(0x000000),	0.5f,	0.00f * CFDS,	0.2f,	1.0f,	0.0f,	0.0f,	0.0f,	0.00f	* CFDS,	0,	0,		0,	0,	0,	1,	1,	50,		1.0f,   SC_SPECIAL,		R_TEMP+14.6f+273.15f,	0,		"Fighter. Tries to kill stickmans.", ST_NONE, 0, &update_FIGH, &graphics_FIGH},
 	{"MAGN",	PIXPACK(0x2F2E30),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	200,		0,	1,	1,	1,	1,	100,	1.0f,  SC_SOLIDS,		R_TEMP+0.0f	+273.15f,	251,	"Solid. Conducts electricity. ANGEL FIRE FTW.", ST_SOLID, TYPE_SOLID|PROP_CONDUCTS, NULL, NULL},
-	{"MH2",		PIXPACK(0x3146A3),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	200,		0,	1,	1,	0,	1,	100,	1.0f,  SC_SOLIDS,		R_TEMP+0.0f	+273.15f,	251,	"Metallic Hydrogen", ST_SOLID, TYPE_SOLID, &update_MH2, NULL},
 	//Name		Colour			Advec	Airdrag	Airloss	Loss	Collid	Grav	Diffus	Hotair			Fal	Burn		Exp	Mel	Hrd 	M	Use	Weight Valency	Section			H						Ins		Description
 };
 
@@ -842,7 +839,7 @@ static part_transition ptransitions[PT_NUM] =
 	/*FREE*//* GOL  */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
 	/*FREE*//* GOL  */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
 	/* WIND */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
-	/* H2   */ {IPL,	NT,			80.0f, PT_MH2,ITL,	NT,			ITH,	NT},
+	/* H2   */ {IPL,	NT,			IPH,    NT,         ITL,	NT,			ITH,	NT},
 	/* SOAP */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITL,	NT},
 	/* NBHL */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
 	/* NWHL */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
@@ -857,7 +854,6 @@ static part_transition ptransitions[PT_NUM] =
 	/* WSTE */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
 	/* FIGH */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			620.0f,	PT_FIRE},
 	/* MAGN */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
-	/* MH2  */ {1.5f,	PT_H2,	IPH,	NT,			ITL,	NT,			ITH,	NT},
 };
 #undef IPL
 #undef IPH
