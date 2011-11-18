@@ -300,7 +300,7 @@ void load_presets(void)
 			if(tmpobj = cJSON_GetObjectItem(graphicsobj, "render"))
 			{
 				count = cJSON_GetArraySize(tmpobj);
-				free(render_modes);
+				//free(render_modes);
 				render_mode = 0;
 				render_modes = calloc(count+1, sizeof(unsigned int));
 				for(i = 0; i < count; i++)
