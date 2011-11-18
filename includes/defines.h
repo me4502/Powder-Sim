@@ -10,16 +10,16 @@
 //VersionInfoStart
 #define SAVE_VERSION 68
 #define MINOR_VERSION 5
-#define BETA
-#define BUILD_NUM 111
-//VersionInfoEnd
+#define PS_VERSION 1
+#define PS_MINOR_VERSION 0
+//#define BETA
+#define BUILD_NUM 1
 
-/* Powder-Sim Version Info */
-#define PS_Version 1.0
+//VersionInfoEnd
 
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter.
 
-#define SERVER "powdertoy.co.uk"
+#define SERVER "google froze while googling google"//"powdertoy.co.uk"
 
 #define MTOS_EXPAND(str) #str
 #define MTOS(str) MTOS_EXPAND(str)
