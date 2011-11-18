@@ -497,12 +497,14 @@ int graphics_FIRW(GRAPHICS_FUNC_ARGS)
 
 		*pixel_mode = PMODE_NONE; //Clear default, don't draw pixel
 		*pixel_mode |= FIRE_ADD;
+		*pixel_mode |= PMODE_DSMKE;
 		//Returning 0 means dynamic, do not cache
 	}
 	else if(cpart->tmp > 0)
 	{
 		*pixel_mode |= PMODE_GLOW;
 	}
+    *pixel_mode |= PMODE_DSMKE;
 	return 0;
 }
 int graphics_BOMB(GRAPHICS_FUNC_ARGS)
@@ -588,7 +590,7 @@ int graphics_AMTR(GRAPHICS_FUNC_ARGS)
 	*firer = *colr;
 	*fireb = *colb;
 	*fireg = *colg;
-	*pixel_mode |= PMODE_FLARE;
+	*pixel_mode |= PMODE_FLARE|PMODE_DSMKE;
 	return 1;
 }
 int graphics_SING(GRAPHICS_FUNC_ARGS)
