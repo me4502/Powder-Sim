@@ -105,17 +105,17 @@ void luacon_open(){
 	lua_setfield(l, tptProperties, "height");
 	lua_pushinteger(l, 0);
 	lua_setfield(l, tptProperties, "elements");
-	
-	lua_newtable(l);
+
+	/*lua_newtable(l);
 	tptPropertiesVersion = lua_gettop(l);
 	lua_pushinteger(l, SAVE_VERSION);
-	lua_setfield(l, tptPropertiesVersion, "major"); 
+	lua_setfield(l, tptPropertiesVersion, "major");
 	lua_pushinteger(l, MINOR_VERSION);
-	lua_setfield(l, tptPropertiesVersion, "minor"); 
+	lua_setfield(l, tptPropertiesVersion, "minor");
 	lua_pushinteger(l, BUILD_NUM);
-	lua_setfield(l, tptPropertiesVersion, "build"); 
+	lua_setfield(l, tptPropertiesVersion, "build");
 	lua_setfield(l, tptProperties, "version");
-	
+
 	lua_newtable(l);
 	tptElements = lua_gettop(l);
 	lua_pushinteger(l, PT_NONE);
@@ -131,10 +131,10 @@ void luacon_open(){
 		tmpname[strlen(ptypes[i].name)] = 0;
 		lua_pushinteger(l, i);
 		lua_setfield(l, tptElements, tmpname);
-	}
-	lua_setfield(l, tptProperties, "el");
+	}*/
+	//lua_setfield(l, tptProperties, "el");
 	//lua_setglobal(l, "pel");
-	
+
 	lua_el_func = calloc(PT_NUM, sizeof(int));
 	lua_el_mode = calloc(PT_NUM, sizeof(int));
 	for(i = 0; i < PT_NUM; i++)
