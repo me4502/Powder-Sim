@@ -2328,12 +2328,12 @@ void render_parts(pixel *vid)
 				    int rx = nx,ry = ny;
 				    int am = 0;
 				    int randx, randy, randa;
-				    if (parts[i].vx!=0)
+				    if (parts[i].vx > 0.5 || parts[i].vx < -0.5)
 				    {
 				        nx -= parts[i].vx*16;
 				        am -= nx/CELL;
 				    }
-				    if (parts[i].vy!=0)
+				    if (parts[i].vy > 0.5 || parts[i].vy < -0.5)
 				    {
 				        ny -= parts[i].vy*16;
 				        am -= ny/CELL;
@@ -2354,7 +2354,9 @@ void render_parts(pixel *vid)
                         randy = 0;
                         randa = 0;
                     }
-                    addpixel(vid, nx+randx, ny+randy, colr/2, colg/2, colb/2, (255-am)-randa);
+                    int r = pmap[ny][nx];
+                    if (!r)
+                        addpixel(vid, nx+randx, ny+randy, colr/2, colg/2, colb/2, (255-am)-randa);
 				}
 				if(pixel_mode & PMODE_FLARE)
 				{
