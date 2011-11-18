@@ -584,6 +584,58 @@ void ui_checkbox_process(int mx, int my, int mb, int mbq, ui_checkbox *ed)
 	}
 }
 
+void ui_radio_draw(pixel *vid_buf, ui_checkbox *ed)
+{
+	if (ed->checked)
+	{
+		int nx, ny;
+		for(nx=-6; nx<=6; nx++)
+			for(ny=-6; ny<=6; ny++)
+				if((nx*nx+ny*ny)<10)
+					blendpixel(vid_buf, ed->x+6+nx, ed->y+6+ny, 128, 128, 128, 255);
+	}
+	if (ed->focus)
+	{
+		int nx, ny;
+		for(nx=-6; nx<=6; nx++)
+			for(ny=-6; ny<=6; ny++)
+				if((nx*nx+ny*ny)<40 && (nx*nx+ny*ny)>28)
+					blendpixel(vid_buf, ed->x+6+nx, ed->y+6+ny, 255, 255, 255, 255);
+	}
+	else
+	{
+		int nx, ny;
+		for(nx=-6; nx<=6; nx++)
+			for(ny=-6; ny<=6; ny++)
+				if((nx*nx+ny*ny)<40 && (nx*nx+ny*ny)>28)
+					blendpixel(vid_buf, ed->x+6+nx, ed->y+6+ny, 128, 128, 128, 255);
+	}
+}
+
+void ui_radio_process(int mx, int my, int mb, int mbq, ui_checkbox *ed)
+{
+	int w = 12;
+
+	if (mb && !mbq)
+	{
+		if (mx>=ed->x && mx<=ed->x+w && my>=ed->y && my<=ed->y+w)
+		{
+			ed->checked = (ed->checked)?0:1;
+		}
+	}
+	else
+	{
+		if (mx>=ed->x && mx<=ed->x+w && my>=ed->y && my<=ed->y+w)
+		{
+			ed->focus = 1;
+		}
+		else
+		{
+			ed->focus = 0;
+		}
+	}
+}
+
 void ui_copytext_draw(pixel *vid_buf, ui_copytext *ed)
 {
 	int g = 180, i = 0;
@@ -2915,6 +2967,132 @@ int sdl_poll(void)
 	return 0;
 }
 
+void set_cmode(int cm) // sets to given view mode
+{
+	int cmode = cm;
+	colour_mode = COLOUR_DEFAULT;
+	
+	free(render_modes);
+	render_modes = calloc(1, sizeof(unsigned int));
+	render_mode = RENDER_BASC;
+	render_modes[0] = RENDER_BASC;
+	
+	free(display_modes);
+	display_mode = 0;
+	display_modes = calloc(1, sizeof(unsigned int));
+	display_modes[0] = 0;
+	
+	itc = 51;
+	if (cmode==CM_VEL)
+	{
+		free(display_modes);
+		display_modes = calloc(2, sizeof(unsigned int));
+		display_mode |= DISPLAY_AIRV;
+		display_modes[0] = DISPLAY_AIRV;
+		display_modes[1] = 0;
+		strcpy(itc_msg, "Velocity Display");
+	}
+	else if (cmode==CM_PRESS)
+	{
+		free(display_modes);
+		display_modes = calloc(2, sizeof(unsigned int));
+		display_mode |= DISPLAY_AIRP;
+		display_modes[0] = DISPLAY_AIRP;
+		display_modes[1] = 0;
+		strcpy(itc_msg, "Pressure Display");
+	}
+	else if (cmode==CM_PERS)
+	{
+		free(display_modes);
+		display_modes = calloc(2, sizeof(unsigned int));
+		display_mode |= DISPLAY_PERS;
+		display_modes[0] = DISPLAY_PERS;
+		display_modes[1] = 0;
+		memset(pers_bg, 0, (XRES+BARSIZE)*YRES*PIXELSIZE);
+		strcpy(itc_msg, "Persistent Display");
+	}
+	else if (cmode==CM_FIRE)
+	{
+		free(render_modes);
+		render_modes = calloc(2, sizeof(unsigned int));
+		render_mode |= RENDER_FIRE;
+		render_modes[0] = RENDER_FIRE;
+		render_modes[1] = 0;
+		memset(fire_r, 0, sizeof(fire_r));
+		memset(fire_g, 0, sizeof(fire_g));
+		memset(fire_b, 0, sizeof(fire_b));
+		strcpy(itc_msg, "Fire Display");
+	}
+	else if (cmode==CM_BLOB)
+	{
+		free(render_modes);
+		render_modes = calloc(3, sizeof(unsigned int));
+		render_mode |= RENDER_FIRE;
+		render_mode |= RENDER_BLOB;
+		render_modes[0] = RENDER_FIRE;
+		render_modes[1] = RENDER_BLOB;
+		render_modes[2] = 0;
+		memset(fire_r, 0, sizeof(fire_r));
+		memset(fire_g, 0, sizeof(fire_g));
+		memset(fire_b, 0, sizeof(fire_b));
+		strcpy(itc_msg, "Blob Display");
+	}
+	else if (cmode==CM_HEAT)
+	{
+		colour_mode = COLOUR_HEAT;
+		strcpy(itc_msg, "Heat Display");
+	}
+	else if (cmode==CM_FANCY)
+	{
+		free(render_modes);
+		render_modes = calloc(4, sizeof(unsigned int));
+		render_mode |= RENDER_FIRE;
+		render_mode |= RENDER_GLOW;
+		render_mode |= RENDER_BLUR;
+		render_modes[0] = RENDER_FIRE;
+		render_modes[1] = RENDER_GLOW;
+		render_modes[2] = RENDER_BLUR;
+		render_modes[3] = 0;
+		free(display_modes);
+		display_modes = calloc(2, sizeof(unsigned int));
+		display_mode |= DISPLAY_WARP;
+		display_modes[0] = DISPLAY_WARP;
+		display_modes[1] = 0;
+		memset(fire_r, 0, sizeof(fire_r));
+		memset(fire_g, 0, sizeof(fire_g));
+		memset(fire_b, 0, sizeof(fire_b));
+		strcpy(itc_msg, "Fancy Display");
+	}
+	else if (cmode==CM_NOTHING)
+	{
+		strcpy(itc_msg, "Nothing Display");
+	}
+	else if (cmode==CM_GRAD)
+	{
+		colour_mode = COLOUR_GRAD;
+		strcpy(itc_msg, "Heat Gradient Display");
+	}
+	else if (cmode==CM_LIFE)
+	{
+		colour_mode = COLOUR_LIFE;
+		strcpy(itc_msg, "Life Gradient Display");
+	}
+	else if (cmode==CM_CRACK)
+	{
+		free(display_modes);
+		display_modes = calloc(2, sizeof(unsigned int));
+		display_mode |= DISPLAY_AIRC;
+		display_modes[0] = DISPLAY_AIRC;
+		display_modes[1] = 0;
+		strcpy(itc_msg, "Alternate Velocity Display");
+	}
+	else //if no special text given, it will display this.
+	{
+		strcpy(itc_msg, "Error: Incorrect Display Number");
+	}
+	save_presets(0);
+}
+
 char *download_ui(pixel *vid_buf, char *uri, int *len)
 {
 	int dstate = 0;
@@ -5241,6 +5419,10 @@ char *console_ui(pixel *vid_buf,char error[255],char console_more) {
 		ui_edit_draw(vid_buf, &ed);
 		ui_edit_process(mx, my, b, &ed);
 		sdl_blit(0, 0, (XRES+BARSIZE), YRES+MENUSIZE, vid_buf, (XRES+BARSIZE));
+#ifdef OGLR
+		clearScreenNP(1.0f);
+		draw_parts_fbo();
+#endif
 		if (sdl_key==SDLK_RETURN)
 		{
 			currentcommand = malloc(sizeof(command_history));
@@ -6297,6 +6479,49 @@ openfin:
 	return;
 }
 
+void drawIcon(pixel * vid_buf, int x, int y, int cmode)
+{
+	switch (cmode)
+	{
+	case CM_VEL:
+		drawtext(vid_buf, x, y, "\x98", 128, 160, 255, 255);
+		break;
+	case CM_PRESS:
+		drawtext(vid_buf, x, y, "\x99", 255, 212, 32, 255);
+		break;
+	case CM_PERS:
+		drawtext(vid_buf, x, y, "\x9A", 212, 212, 212, 255);
+		break;
+	case CM_FIRE:
+		drawtext(vid_buf, x+1, y, "\x9B", 255, 0, 0, 255);
+		drawtext(vid_buf, x+1, y, "\x9C", 255, 255, 64, 255);
+		break;
+	case CM_BLOB:
+		drawtext(vid_buf, x, y, "\xBF", 55, 255, 55, 255);
+		break;
+	case CM_HEAT:
+		drawtext(vid_buf, x+2, y, "\xBE", 255, 0, 0, 255);
+		drawtext(vid_buf, x+2, y, "\xBD", 255, 255, 255, 255);
+		break;
+	case CM_FANCY:
+		drawtext(vid_buf, x, y, "\xC4", 100, 150, 255, 255);
+		break;
+	case CM_NOTHING:
+		drawtext(vid_buf, x, y, "\xD1", 100, 150, 255, 255);//drawtext(vid_buf, x, y, "\x00", 100, 150, 255, 255);
+		break;
+	case CM_GRAD:
+		drawtext(vid_buf, x, y, "\xD3", 255, 50, 255, 255);
+		break;
+	case CM_LIFE:
+		drawtext(vid_buf, x, y, "\xD1", 255, 50, 255, 255);//drawtext(vid_buf, x, y, "\x00", 255, 50, 255, 255);
+		break;
+	case CM_CRACK:
+		drawtext(vid_buf, x, y, "\xD4", 255, 55, 55, 255);
+		drawtext(vid_buf, x, y, "\xD5", 55, 255, 55, 255);
+		break;
+	}
+}
+
 void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 {
 	pixel * o_vid_buf;
@@ -6310,20 +6535,21 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 	ui_checkbox *render_cb;
 	ui_checkbox *display_cb;
 	ui_checkbox *colour_cb;
-	int render_optioncount = 5;
-	int render_options[] = {RENDER_EFFE, RENDER_GLOW, RENDER_FIRE, RENDER_BLUR, RENDER_BASC};
-	int render_optionicons[] = {0xCC, 0xC3, 0x9B, 0xC4, 0xD1};
-	char * render_desc[] = {"Effects", "Glow", "Fire", "Blur", "Basic"};
+
+	int render_optioncount = 6;
+	int render_options[] = {RENDER_EFFE, RENDER_GLOW, RENDER_FIRE, RENDER_BLUR, RENDER_BLOB, RENDER_BASC};
+	int render_optionicons[] = {-1, -1, 3, 6, 4, -1};
+	char * render_desc[] = {"Effects", "Glow", "Fire", "Blur", "Blob", "Basic"};
 
 	int display_optioncount = 7;
 	int display_options[] = {DISPLAY_AIRC, DISPLAY_AIRP, DISPLAY_AIRV, DISPLAY_AIRH, DISPLAY_WARP, DISPLAY_PERS, DISPLAY_EFFE};
-	int display_optionicons[] = {0xCC, 0xC3, 0x9B, 0xC4, 0xD1, 0xD1, 0xD1};
+	int display_optionicons[] = {10, 1, 0, 5, -1, 2, -1};
 	char * display_desc[] = {"Air: Cracker", "Air: Pressure", "Air: Velocity", "Air: Heat", "Warp effect", "Persistent", "Effects"};
-
-	int colour_optioncount = 2;
-	int colour_options[] = {COLOUR_LIFE, COLOUR_HEAT};
-	int colour_optionicons[] = {0xCC, 0xC3};
-	char * colour_desc[] = {"Life", "Heat"};
+	
+	int colour_optioncount = 3;
+	int colour_options[] = {COLOUR_LIFE, COLOUR_HEAT, COLOUR_GRAD};
+	int colour_optionicons[] = {-1, 5, 8};
+	char * colour_desc[] = {"Life", "Heat", "Heat Gradient"};
 
 	yoffset = 16;
 	xoffset = 0;
@@ -6406,13 +6632,14 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 		my /= sdl_scale;
 
 		memcpy(vid_buf, o_vid_buf, ((YRES+MENUSIZE) * (XRES+BARSIZE)) * PIXELSIZE);
+		render_parts(vid_buf);
 
 		clearrect(vid_buf, xcoord-2, ycoord-2, xsize+4, ysize+4);
 		drawrect(vid_buf, xcoord, ycoord, xsize, ysize, 192, 192, 192, 255);
 
 		for(i = 0; i < render_optioncount; i++)
 		{
-			drawchar(vid_buf, render_cb[i].x + 16, render_cb[i].y+2, render_optionicons[i], 255, 255, 255, 255);
+			drawIcon(vid_buf, render_cb[i].x + 16, render_cb[i].y+2, render_optionicons[i]);
 			ui_checkbox_draw(vid_buf, &(render_cb[i]));
 			ui_checkbox_process(mx, my, b, bq, &(render_cb[i]));
 			if(render_cb[i].focus)
@@ -6421,9 +6648,18 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 
 		for(i = 0; i < display_optioncount; i++)
 		{
-			drawchar(vid_buf, display_cb[i].x + 16, display_cb[i].y+2, display_optionicons[i], 255, 255, 255, 255);
-			ui_checkbox_draw(vid_buf, &(display_cb[i]));
-			ui_checkbox_process(mx, my, b, bq, &(display_cb[i]));
+			drawIcon(vid_buf, display_cb[i].x + 16, display_cb[i].y+2, display_optionicons[i]);
+
+			if(display_options[i] & DISPLAY_AIR)
+			{
+				ui_radio_draw(vid_buf, &(display_cb[i]));
+				ui_radio_process(mx, my, b, bq, &(display_cb[i]));
+			}
+			else
+			{
+				ui_checkbox_draw(vid_buf, &(display_cb[i]));
+				ui_checkbox_process(mx, my, b, bq, &(display_cb[i]));
+			}
 			if(display_cb[i].checked && (display_options[i] & DISPLAY_AIR))	//One air type only
 			{
 				for(j = 0; j < display_optioncount; j++)
@@ -6440,9 +6676,9 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 
 		for(i = 0; i < colour_optioncount; i++)
 		{
-			drawchar(vid_buf, colour_cb[i].x + 16, colour_cb[i].y+2, colour_optionicons[i], 255, 255, 255, 255);
-			ui_checkbox_draw(vid_buf, &(colour_cb[i]));
-			ui_checkbox_process(mx, my, b, bq, &(colour_cb[i]));
+			drawIcon(vid_buf, colour_cb[i].x + 16, colour_cb[i].y+2, colour_optionicons[i]);
+			ui_radio_draw(vid_buf, &(colour_cb[i]));
+			ui_radio_process(mx, my, b, bq, &(colour_cb[i]));
 			if(colour_cb[i].checked)	//One colour only
 			{
 				for(j = 0; j < colour_optioncount; j++)
@@ -6458,7 +6694,10 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 		}
 
 		sdl_blit(0, 0, (XRES+BARSIZE), YRES+MENUSIZE, vid_buf, (XRES+BARSIZE));
-
+#ifdef OGLR
+		clearScreenNP(1.0f);
+		draw_parts_fbo();
+#endif
 		if (sdl_key==SDLK_RETURN)
 			break;
 		if (sdl_key==SDLK_ESCAPE)
