@@ -849,7 +849,7 @@ static part_transition ptransitions[PT_NUM] =
 	/* CLST */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			1256.0f,	PT_LAVA},
 	/* WIRE */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
 	/* GBMB */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
-	/* ALCO */ {IPL,    NT,         IPH,    NT,         ITL,    NT,         ITH,    NT},
+	/* ALCO */ {IPL,    NT,         IPH,    NT,         ITL,    NT,         302.15,  PT_GAS},
 	/* FRAN */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			673.0f,	 PT_FIRE},
 	/* WSTE */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITH,	NT},
 	/* FIGH */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			620.0f,	PT_FIRE},

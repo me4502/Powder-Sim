@@ -10,8 +10,15 @@
 //VersionInfoStart
 #define SAVE_VERSION 68
 #define MINOR_VERSION 5
+
 #define BETA
 #define BUILD_NUM 111
+
+#define PS_VERSION 1
+#define PS_MINOR_VERSION 0
+//#define BETA
+#define BUILD_NUM 1
+
 //VersionInfoEnd
 
 /* Powder-Sim Version Info */
