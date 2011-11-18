@@ -24,6 +24,8 @@
 #define LUACON_BERASE 2
 
 
+int *lua_el_func, *lua_el_mode;
+
 void luacon_open();
 int luacon_step(int mx, int my, int selectl, int selectr);
 int luacon_mouseevent(int mx, int my, int mb, int event);
@@ -32,6 +34,7 @@ int luacon_eraseevent(int x, int y, int type, int event);
 int luacon_loadevent(int event);
 int luacon_keyevent(int key, int modifier, int event);
 int luacon_eval(char *command);
+int luacon_part_update(int t, int i, int x, int y, int surround_space, int nt);
 char *luacon_geterror();
 void luacon_close();
 int process_command_lua(pixel *vid_buf, char *console, char *console_error);
@@ -40,6 +43,8 @@ int getPartIndex_curIdx;
 
 //TPT Interface
 int luatpt_test(lua_State* l);
+int luatpt_getelement(lua_State *l);
+int luatpt_element_func(lua_State *l);
 int luatpt_drawtext(lua_State* l);
 int luatpt_create(lua_State* l);
 int luatpt_setpause(lua_State* l);

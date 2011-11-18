@@ -15,7 +15,11 @@ int *create_functions = NULL;
 int erase_function_count = 0;
 int *erase_functions = NULL;
 int tptProperties; //Table for some TPT properties
+int tptPropertiesVersion;
+int tptElements; //Table for TPT element names
 void luacon_open(){
+	int i = 0, j;
+	char tmpname[12];
 	const static struct luaL_reg tptluaapi [] = {
 		{"test", &luatpt_test},
 		{"drawtext", &luatpt_drawtext},
@@ -76,6 +80,8 @@ void luacon_open(){
 		{"watertest",&luatpt_togglewater},
 		{"showcursor",&luatpt_showcursor},
 		{"screenshot",&luatpt_screenshot},
+		{"element",&luatpt_getelement},
+		{"element_func",&luatpt_element_func},
 		{NULL,NULL}
 	};
 
@@ -99,6 +105,42 @@ void luacon_open(){
 	lua_setfield(l, tptProperties, "height");
 	lua_pushinteger(l, 0);
 	lua_setfield(l, tptProperties, "elements");
+	
+	lua_newtable(l);
+	tptPropertiesVersion = lua_gettop(l);
+	lua_pushinteger(l, SAVE_VERSION);
+	lua_setfield(l, tptPropertiesVersion, "major"); 
+	lua_pushinteger(l, MINOR_VERSION);
+	lua_setfield(l, tptPropertiesVersion, "minor"); 
+	lua_pushinteger(l, BUILD_NUM);
+	lua_setfield(l, tptPropertiesVersion, "build"); 
+	lua_setfield(l, tptProperties, "version");
+	
+	lua_newtable(l);
+	tptElements = lua_gettop(l);
+	lua_pushinteger(l, PT_NONE);
+	lua_setfield(l, tptElements, "none");
+	lua_pushinteger(l, PT_PLEX);
+	lua_setfield(l, tptElements, "c4");
+	lua_pushinteger(l, PT_C5);
+	lua_setfield(l, tptElements, "c5");
+	for(i = 1; i < PT_NUM; i++)
+	{
+		for(j = 0; j < strlen(ptypes[i].name); j++)
+			tmpname[j] = tolower(ptypes[i].name[j]);
+		tmpname[strlen(ptypes[i].name)] = 0;
+		lua_pushinteger(l, i);
+		lua_setfield(l, tptElements, tmpname);
+	}
+	lua_setfield(l, tptProperties, "el");
+	//lua_setglobal(l, "pel");
+	
+	lua_el_func = calloc(PT_NUM, sizeof(int));
+	lua_el_mode = calloc(PT_NUM, sizeof(int));
+	for(i = 0; i < PT_NUM; i++)
+	{
+		lua_el_mode[i] = 0;
+	}
 }
 int luacon_keyevent(int key, int modifier, int event){
 	int i = 0, kpcontinue = 1;
@@ -210,6 +252,24 @@ int luacon_step(int mx, int my, int selectl, int selectr){
 int luacon_eval(char *command){
 	return luaL_dostring (l, command);
 }
+int luacon_part_update(int t, int i, int x, int y, int surround_space, int nt)
+{
+	int retval = 0;
+	if(lua_el_func[t]){
+		lua_rawgeti(l, LUA_REGISTRYINDEX, lua_el_func[t]);
+		lua_pushinteger(l, i);
+		lua_pushinteger(l, x);
+		lua_pushinteger(l, y);
+		lua_pushinteger(l, surround_space);
+		lua_pushinteger(l, nt);
+		lua_pcall(l, 5, 1, 0);
+		if(lua_isboolean(l, -1)){
+			retval = lua_toboolean(l, -1);
+		}
+		lua_pop(l, 1);
+	}
+	return retval;
+}
 char *luacon_geterror(){
 	char *error = lua_tostring(l, -1);
 	if(error==NULL || !error[0]){
@@ -258,6 +318,38 @@ int luatpt_test(lua_State* l)
     int testint = 0;
 	testint = luaL_optint(l, 1, 0);
 	printf("Test successful, got %d\n", testint);
+	return 0;
+}
+int luatpt_getelement(lua_State *l)
+{
+	int t;
+	char * name = luaL_optstring(l, 1, "dust");
+	if (!console_parse_type(name, &t, NULL))
+		return luaL_error(l,"Unrecognised element '%s'", name);
+	lua_pushinteger(l, t);
+	return 1;
+}
+int luatpt_element_func(lua_State *l)
+{
+	if(lua_isfunction(l, 1))
+	{
+		int element = luaL_optint(l, 2, 0);
+		int replace = luaL_optint(l, 3, 0);
+		int function = luaL_ref(l, LUA_REGISTRYINDEX);
+		if(element > 0 && element < PT_NUM)
+		{
+			lua_el_func[element] = function;
+			if(replace)
+				lua_el_mode[element] = 2;
+			else
+				lua_el_mode[element] = 1;
+			return 0;
+		}
+		else
+		{
+			return luaL_error(l, "Invalid element");
+		}
+	}
 	return 0;
 }
 int luatpt_error(lua_State* l)
