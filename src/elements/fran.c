@@ -15,7 +15,7 @@ int update_FRAN(UPDATE_FUNC_ARGS) {
 					{
 						parts[i].tmp = PT_FRAN;
 						part_change_type(i,x,y,PT_FIRE);
-						parts[r>>8].temp = parts[i].temp = 2250;
+						parts[r>>8].temp = parts[i].temp = 2000+273.15;
 						parts[i].life = rand()%650+50;
 						pv[y/CELL][x/CELL] += 14.5;
 					}
