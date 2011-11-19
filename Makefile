@@ -4,9 +4,10 @@ OBJS := $(patsubst src/%.c,build/obj/%.o,$(SOURCES))
 
 CFLAGS := -w -std=c99 -D_POSIX_C_SOURCE=200112L -DLUACONSOLE -DGRAVFFT -Iincludes/ -D_GNU_SOURCE
 OFLAGS := -O3 -ffast-math -ftree-vectorize -funsafe-math-optimizations
-LFLAGS := -lpthread -lSDL -lfftw3f -lm -lbz2 -lX11 -llua5.1 -lrt
+LFLAGS_5 := -lpthread -lSDL -lfftw3f -lm -lbz2 -lX11 -llua5.1 -lrt
+LFLAGS := -lpthread -lSDL -lfftw3f -lm -lbz2 -lX11 -llua -lrt
 LFLAGS_X := -lm -lbz2 -lSDLmain
-LFLAGS_WIN := -lmingw32 -lgnurx -lws2_32 -lSDLmain -lpthread -lSDL -lfftw3f -lm -lbz2 -llua5.1
+LFLAGS_WIN := -lmingw32 -lgnurx -lws2_32 -lSDLmain -lpthread -lSDL -lfftw3f -lm -lbz2 -llua
 MFLAGS_SSE3 := -march=native -DX86 -DX86_SSE3 -msse3
 MFLAGS_SSE2 := -march=native -DX86 -DX86_SSE2 -msse2
 MFLAGS_SSE := -march=native -DX86 -DX86_SSE
@@ -19,6 +20,7 @@ CC := gcc
 CC_WIN := i686-w64-mingw32-gcc
 WIN_RES := i686-w64-mingw32-windres
 
+powder-lua: build/powder-lua
 powder: build/powder
 powder-debug: build/powder-debug
 powder-sse3: build/powder-sse3
@@ -33,7 +35,7 @@ powder-sse2.exe: build/powder-sse2.exe
 powder-sse.exe: build/powder-sse.exe
 
 # general compiler flags
-build/powder: CFLAGS += -DINTERNAL -DLIN64 $(OFLAGS)
+build/powder build/powder-lua: CFLAGS += -DINTERNAL -DLIN64 $(OFLAGS)
 build/powder-debug: CFLAGS += -m32 -DLIN32 $(FLAGS_DBUG)
 build/powder-sse3 build/powder-sse2 build/powder-sse: CFLAGS += -m32 -DLIN32 $(OFLAGS)
 build/powder-64-sse3 build/powder-64-sse2 build/powder-64-sse3-opengl: CFLAGS += -m64 -DLIN64 $(OFLAGS)
@@ -41,12 +43,13 @@ build/powder-debug-64: CFLAGS += -m64 -DLIN64 $(FLAGS_DBUG)
 build/powder-sse3.exe build/powder-sse2.exe build/powder-sse.exe: CFLAGS += -mwindows -DWIN32 $(OFLAGS)
 
 # SSE flags:
-build/powder build/powder-sse3 build/powder-64-sse3 build/powder-64-sse3-opengl build/powder-debug build/powder-debug-64 build/powder-sse3.exe: CFLAGS += -march=native -DX86 -DX86_SSE3 -msse3
+build/powder build/powder-sse3 build/powder-64-sse3 build/powder-64-sse3-opengl build/powder-debug build/powder-debug-64 build/powder-sse3.exe build/powder-lua: CFLAGS += -march=native -DX86 -DX86_SSE3 -msse3
 build/powder-sse2 build/powder-64-sse2 build/powder-sse2.exe: CFLAGS += -march=native -DX86 -DX86_SSE2 -msse2
 build/powder-sse build/powder-sse.exe: CFLAGS += -march=native -DX86 -DX86_SSE
 
 # libs:
-build/powder build/powder-debug build/powder-sse3 build/powder-sse2 build/powder-sse build/powder-64-sse3 build/powder-64-sse2 build/powder-64-sse3-opengl: LIBS += $(LFLAGS)
+build/powder-lua : LIBS += $(LFLAGS)
+build/powder build/powder-debug build/powder-sse3 build/powder-sse2 build/powder-sse build/powder-64-sse3 build/powder-64-sse2 build/powder-64-sse3-opengl: LIBS += $(LFLAGS_5)
 build/powder-64-sse3-opengl: LIBS += -lGL -lGLU -DOpenGL
 build/powder-sse3.exe build/powder-sse2.exe build/powder-sse.exe: LIBS += $(LFLAGS_WIN)
 
@@ -58,8 +61,11 @@ build/powder-sse3.exe build/powder-sse2.exe build/powder-sse.exe: build/obj/powd
 build/powder: $(patsubst build/obj/%.o,build/obj/%.powder.o,$(OBJS))
 	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder.o,$(OBJS)) $(LIBS) -o $@ -ggdb
 build/obj/%.powder.o: src/%.c $(HEADERS)
+	$(CC) -c $(CFLAGS) -o $@ $< -ggdb 
+build/powder-lua: $(patsubst build/obj/%.o,build/obj/%.powder-lua.o,$(OBJS))
+	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder-lua.o,$(OBJS)) $(LIBS) -o $@ -ggdb
+build/obj/%.powder-lua.o: src/%.c $(HEADERS)
 	$(CC) -c $(CFLAGS) -o $@ $< #-ggdb 
-
 build/powder-debug: $(patsubst build/obj/%.o,build/obj/%.powder-debug.o,$(OBJS))
 	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder-debug.o,$(OBJS)) $(LIBS) -o $@
 build/obj/%.powder-debug.o: src/%.c $(HEADERS)
