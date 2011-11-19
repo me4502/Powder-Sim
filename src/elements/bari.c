@@ -7,12 +7,13 @@ int update_BARI(UPDATE_FUNC_ARGS) {
 			if (x+rx>=0 && y+ry>0 && x+rx<XRES && y+ry<YRES && (rx || ry))
 			{
 				r = pmap[y+ry][x+rx];
-               			if (!r)
+				if (!r)
 					continue;
 				if ((r&0xFF)==PT_ALCO  || (r&0xFF)==PT_WATR) 
 				{					
-                      			part_change_type(i,x,y,PT_FIRE);
-                        		part_change_type(r>>8,x+rx,y+ry,PT_FIRE);
+					part_change_type(i,x,y,PT_FIRE);
+					part_change_type(r>>8,x+rx,y+ry,PT_FIRE);
+					parts[i].life = 4;
 				}
 			}
 	return 0;
