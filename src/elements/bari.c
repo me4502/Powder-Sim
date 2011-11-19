@@ -9,12 +9,17 @@ int update_BARI(UPDATE_FUNC_ARGS) {
 				r = pmap[y+ry][x+rx];
 				if (!r)
 					continue;
-				if ((r&0xFF)==PT_ALCO  || (r&0xFF)==PT_WATR) 
-				{					
-					part_change_type(i,x,y,PT_FIRE);
+				
+				if (((r&0xFF)==PT_ALCO||(r&0xFF)==PT_WATR) && 1>(rand()%500))
+				{
+					parts[i].tmp = PT_BARI;
+					parts[r>>8].tmp = PT_BARI;
 					part_change_type(r>>8,x+rx,y+ry,PT_FIRE);
-					parts[i].life = 4;
-				}
+					part_change_type(i,x,y,PT_FIRE);
+
+					parts[i].life = 16;
+					parts[r>>8].life = 16;									
+				} 
 			}
 	return 0;
 }
