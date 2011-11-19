@@ -63,6 +63,14 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 		deftype = 1;
 		cleartype = 1;
 	}
+	else if (cpart-> tmp == PT_BARI)
+	{
+		fr = 1;
+		fg = 2;
+		fb = 2;
+		deftype = 1;
+		cleartype = 1;
+	}
 	else
 	{
 		fr = 0;
