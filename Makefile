@@ -20,7 +20,7 @@ CC := gcc
 CC_WIN := i686-w64-mingw32-gcc
 WIN_RES := i686-w64-mingw32-windres
 
-powder-lua: build/powder
+powder-lua: build/powder-lua
 powder: build/powder
 powder-debug: build/powder-debug
 powder-sse3: build/powder-sse3
