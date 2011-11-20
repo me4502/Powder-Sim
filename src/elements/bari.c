@@ -19,7 +19,25 @@ int update_BARI(UPDATE_FUNC_ARGS) {
 
 					parts[i].life = 16;
 					parts[r>>8].life = 16;									
-				} 
+				}
+				/*
+
+				*****************************************************
+				* For when oxidises (OBAR will be Oxidised Barium). *
+				*****************************************************
+
+				else if (((r&0xFF)==PT_O2) && rand()%25000 == 1))
+				{
+					part_change_type(r>>8,x+rx,y+ry,PT_OBAR);
+					return 1;									
+				}
+				*/
+
+				else if (rand()%25000 == 1)
+				{
+					kill_part(r>>8);
+					return 1;
+				}
 			}
 	return 0;
 }
