@@ -8,5 +8,6 @@
 
 	- Make the makefile more versatile - DONE
 	- Make more shit - In Progress
+	- Make a CHANGELOG - On Hold
 
 </pre>
