@@ -30,6 +30,18 @@ int graphics_CLST(GRAPHICS_FUNC_ARGS)
 	*pixel_mode |= PMODE_DSMKE;
 	return 0;
 }
+int graphics_CLNE(GRAPHICS_FUNC_ARGS)
+{
+	int ct = cpart->ctype; 
+	if (ct !=0)
+	{
+		*colr = (PIXR(ptypes[ct].pcolors)) + 20;
+		*colg = (PIXG(ptypes[ct].pcolors)) + 20;
+		*colb = (PIXB(ptypes[ct].pcolors)) + 20;
+		*pixel_mode |= PMODE_DSMKE;
+	}
+	return 0;
+}
 int graphics_CBNW(GRAPHICS_FUNC_ARGS)
 {
 	int z = cpart->tmp2 - 20;//speckles!
