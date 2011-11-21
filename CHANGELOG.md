@@ -9,6 +9,12 @@
 
 [Our Additions]
 
+* Version 1.1
+      o Make the makefile more versatile
+      o Make a CHANGELOG
+      o Make a TODO list
+      o Added Barium
+
 * Version 1.0
       o Bug fixes
       o Francium Added
