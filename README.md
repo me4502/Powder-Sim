@@ -100,23 +100,3 @@ Click on the elements with the mouse and draw in the field, like in MS Paint. Th
 **proxy:server:port** - (eg. proxy:wwwcache.lancs.ac.uk:8080)<br />
 **open <file>** - Opens the file as a stamp or game save<br />
 **ddir <directory>** - Directory used for saving stamps and preferences<br />
-
-## History:
-
----------------------------------------------------------------------------
-### [Our Additions]
-
-<pre>
-* Version 1.0
-      o Bug fixes
-      o Francium Added
-      o Noble Gasses
-      o Fancy Mode
-      o Menu Click
-      o Favourites Menu
-      o Virus Added
-      o Alcohol Added
-      o Decoration Tools
-      o New icons
-      o Fancy Fire
-</pre>
