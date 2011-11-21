@@ -6,8 +6,7 @@
   | | (_) | (_| | (_) |
   |_|\___/ \__,_|\___/ 
 
-	- Make the makefile more versatile - DONE
 	- Make more shit - In Progress
-	- Make a CHANGELOG - On Hold
+	- Fix (add more properties) to Barium - In Progress
 
 </pre>
