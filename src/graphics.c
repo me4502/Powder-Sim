@@ -2973,7 +2973,7 @@ void draw_walls(pixel *vid)
 									drawblob(vid, (x*CELL+i), (y*CELL+j), PIXR(pc), PIXG(pc), PIXB(pc));
 								else if  (i == j+1 || (i == 0 && j == CELL-1))
 									drawblob(vid, (x*CELL+i), (y*CELL+j), PIXR(gc), PIXG(gc), PIXB(gc));
-								else 
+								else
 									drawblob(vid, (x*CELL+i), (y*CELL+j), 0x20, 0x20, 0x20);
 					}
 					if (bmap[y][x]==WL_EWALL)
