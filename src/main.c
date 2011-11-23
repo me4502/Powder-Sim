@@ -996,11 +996,13 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 				if(parts[i-1].life>=10)
 				{
 					parts[i-1].life = 10;
+					parts[i-1].tmp2 = 10;
 					parts[i-1].tmp = 3;
 				}
 				else if(parts[i-1].life<=0)
 				{
 					parts[i-1].life = 0;
+					parts[i-1].tmp2 = 0;
 					parts[i-1].tmp = 0;
 				}
 				else if(parts[i-1].life < 10 && parts[i-1].life > 0)
