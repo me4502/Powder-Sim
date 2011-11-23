@@ -311,9 +311,10 @@ int graphics_BRAY(GRAPHICS_FUNC_ARGS)
 				*colr += (cpart->ctype >> (x+18)) & 1;
 				*colb += (cpart->ctype >>  x)     & 1;
 			}
-			for (x=0; x<12; x++)
+			for (x=0; x<12; x++){
 				*colg += (cpart->ctype >> (x+9))  & 1;
-			x = 624/(*colr+*colg+*colb+1);
+				x = 624/(*colr+*colg+*colb+1);
+			}
 			*colr *= x;
 			*colg *= x;
 			*colb *= x;
@@ -395,9 +396,31 @@ int graphics_LCRY(GRAPHICS_FUNC_ARGS)
 }
 int graphics_PCLN(GRAPHICS_FUNC_ARGS)
 {
-	int lifemod = ((cpart->life>10?10:cpart->life)*10);
-	*colr += lifemod;
-	*colg += lifemod;
+	int ct = cpart->ctype; 
+	if (ct !=0 && fancy_graphics && cpart->life>9)
+	{
+		*colr = (PIXR(ptypes[ct].pcolors)) + 20;
+		*colg = (PIXG(ptypes[ct].pcolors)) + 20;
+		*colb = (PIXB(ptypes[ct].pcolors)) + 10;
+	}
+	else
+	{ 	
+		int lifemod = ((cpart->life>10?10:cpart->life)*10);
+		*colr += lifemod;
+		*colg += lifemod;
+	} 	
+	return 0;
+}
+int graphics_CLNE(GRAPHICS_FUNC_ARGS)
+{
+	int ct = cpart->ctype; 
+	if (ct !=0 && fancy_graphics)
+	{
+		*colr = (PIXR(ptypes[ct].pcolors)) + 20;
+		*colg = (PIXG(ptypes[ct].pcolors)) + 20;
+		*colb = (PIXB(ptypes[ct].pcolors)) + 10;
+		*pixel_mode |= PMODE_DSMKE;
+	}
 	return 0;
 }
 int graphics_PBCN(GRAPHICS_FUNC_ARGS)
