@@ -17,6 +17,16 @@ int graphics_SMKE(GRAPHICS_FUNC_ARGS)
 		*fireb = PIXB(ptypes[cpart-> tmp].pcolors);
 		*pixel_mode |= PMODE_GLOW;
     }
+    else if (cpart->tmp==PT_BARI)
+    {
+		cleartype = 0;
+		*firer = *colr = 194;
+		*fireg = *colg = 0;
+		*fireb = *colb = 168;
+
+        *firea = 99;
+		*pixel_mode |= PMODE_GLOW;
+    }
     else
     {
         *colr = 55;
