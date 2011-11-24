@@ -8,9 +8,9 @@ int update_WSTE(UPDATE_FUNC_ARGS)
             if (x+rx>=0 && y+ry>0 && x+rx<XRES && y+ry<YRES && (rx || ry))
             {
                 r = pmap[y+ry][x+rx];
-                if (!r)
+                if (!r || (r&0xFF)==PT_WSTE)
                     continue;
-                if ((r&0xFF)!=PT_WSTE && (r&0xFF)!=PT_DMND && (r&0xFF)!=PT_URAN && (r&0xFF)!=PT_PLUT && (r&0xFF)!=PT_DEUT && (r&0xFF)!=PT_NEUT && (r&0xFF)!=PT_WATR && (r&0xFF)!=PT_CLNE && (r&0xFF)!=PT_PCLN)
+                if ((r&0xFF)!=PT_DMND && (r&0xFF)!=PT_URAN && (r&0xFF)!=PT_PLUT && (r&0xFF)!=PT_DEUT && (r&0xFF)!=PT_NEUT && (r&0xFF)!=PT_WATR && (r&0xFF)!=PT_CLNE && (r&0xFF)!=PT_PCLN)
                 {
                     if ((r&0xFF)==PT_PLEX || (r&0xFF)==PT_NITR || (r&0xFF)==PT_GUNP || (r&0xFF)==PT_RBDM || (r&0xFF)==PT_LRBD)
                     {
@@ -26,6 +26,10 @@ int update_WSTE(UPDATE_FUNC_ARGS)
                         parts[i].life -= parts[i].life -1;
                         return 1;
                     }
+                }
+                if ((r&0xFF)==PT_WATR||(r&0xFF)==PT_DSTW)
+                {
+                    parts[r>>8].tmp2 += 1;
                 }
             }
     return 0;
