@@ -2354,6 +2354,7 @@ void render_parts(pixel *vid)
 				if((pixel_mode & PMODE_DSMKE) && (parts[i].vx!=0 || parts[i].vy!=0) && fancy_graphics)
 				{
 				    int rx = nx,ry = ny;
+				    int rc,gc,bc;
 				    int am = 0;
 				    int randx, randy, randa;
 				    if (parts[i].vx > 0.5 || parts[i].vx < -0.5)
@@ -2383,6 +2384,16 @@ void render_parts(pixel *vid)
                         randa = 0;
                     }
                     int r = pmap[ny][nx];
+                    if (firea)
+                    {
+                        rc = firer;
+                        gc = fireg;
+                        bc = fireb;
+                    } else {
+                        rc = colr;
+                        gc = colg;
+                        bc = colb;
+                    }
                     if (!r)
                         addpixel(vid, nx+randx, ny+randy, colr/2, colg/2, colb/2, (255-am)-randa);
 				}
