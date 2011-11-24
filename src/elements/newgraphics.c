@@ -369,9 +369,9 @@ int graphics_GLOW(GRAPHICS_FUNC_ARGS)
 int graphics_LCRY(GRAPHICS_FUNC_ARGS)
 {
 	int lifemod = ((cpart->tmp2>10?10:cpart->tmp2)*10);
-	*colr += lifemod; 
-	*colg += lifemod; 
-	*colb += lifemod; 
+	*colr += lifemod;
+	*colg += lifemod;
+	*colb += lifemod;
 	*firer = *colr;
     *fireg = *colg;
     *fireb = *colb;
@@ -396,7 +396,7 @@ int graphics_LCRY(GRAPHICS_FUNC_ARGS)
 }
 int graphics_PCLN(GRAPHICS_FUNC_ARGS)
 {
-	int ct = cpart->ctype; 
+	int ct = cpart->ctype;
 	if (ct !=0 && fancy_graphics && cpart->life>9)
 	{
 		*colr = (PIXR(ptypes[ct].pcolors)) + 20;
@@ -404,16 +404,16 @@ int graphics_PCLN(GRAPHICS_FUNC_ARGS)
 		*colb = (PIXB(ptypes[ct].pcolors)) + 10;
 	}
 	else
-	{ 	
+	{
 		int lifemod = ((cpart->life>10?10:cpart->life)*10);
 		*colr += lifemod;
 		*colg += lifemod;
-	} 	
+	}
 	return 0;
 }
 int graphics_CLNE(GRAPHICS_FUNC_ARGS)
 {
-	int ct = cpart->ctype; 
+	int ct = cpart->ctype;
 	if (ct !=0 && fancy_graphics)
 	{
 		*colr = (PIXR(ptypes[ct].pcolors)) + 20;
@@ -534,6 +534,7 @@ int graphics_BOMB(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp==0) {
 		*pixel_mode |= PMODE_FLARE;
+        *pixel_mode |= PMODE_DSMKE;
 	}
 	else
 	{
@@ -545,6 +546,7 @@ int graphics_GBMB(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->life <= 0) {
 		*pixel_mode |= PMODE_FLARE;
+        *pixel_mode |= PMODE_DSMKE;
 	}
 	else
 	{
@@ -636,4 +638,21 @@ int graphics_SING(GRAPHICS_FUNC_ARGS)
     }
     return 0;
 }
-
+int graphics_WATR(GRAPHICS_FUNC_ARGS)
+{
+    pixel pc = ptypes[cpart->type].pcolors;
+    *colr = PIXR(pc);
+	*colg = PIXG(pc);
+	*colb = PIXB(pc);
+	*colg += cpart->tmp2*2;
+	*colb -= cpart->tmp2*2;
+	if (cpart->tmp2*2>100)
+	{
+        *firea = cpart->tmp2*2;
+        *firer = *colr;
+        *fireb = *colb;
+        *fireg = *colg;
+	    *pixel_mode |= PMODE_GLOW;
+	}
+    return 0;
+}
