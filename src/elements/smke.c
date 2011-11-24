@@ -25,7 +25,6 @@ int graphics_SMKE(GRAPHICS_FUNC_ARGS)
 		*fireb = *colb = 168;
 
         *firea = 99;
-		*pixel_mode |= PMODE_GLOW;
     }
     else
     {
