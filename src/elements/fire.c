@@ -73,11 +73,22 @@ int graphics_FIRE(GRAPHICS_FUNC_ARGS)
 	}
 	else
 	{
-		fr = 0;
-		fg = 1;
-		fb = 2;
-		deftype = 1;
-		cleartype = 1;
+	    if (cpart->tmp3==1)
+	    {
+            fr = 2;
+            fg = 2;
+            fb = 1;
+            deftype = 1;
+            cleartype = 1;
+	    }
+	    else
+        {
+            fr = 0;
+            fg = 1;
+            fb = 2;
+            deftype = 1;
+            cleartype = 1;
+	    }
 	}
     if (cfs)
     {
