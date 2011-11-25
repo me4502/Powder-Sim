@@ -226,6 +226,8 @@
 #define MIN_TEMP 0
 #define O_MAX_TEMP 3500
 #define O_MIN_TEMP -273
+#define FIREPLASMATEMP 3773.0f
+#define BFLMTEMP 2773.0f
 
 #define ST_NONE 0
 #define ST_SOLID 1
@@ -268,9 +270,9 @@ struct particle
 	int flags;
 	int tmp;
 	int tmp2;
-	int tmp3;
 	unsigned int dcolour;
     int disease;
+    int tmp3;
 };
 typedef struct particle particle;
 
