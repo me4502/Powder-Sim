@@ -2971,17 +2971,17 @@ void set_cmode(int cm) // sets to given view mode
 {
 	int cmode = cm;
 	colour_mode = COLOUR_DEFAULT;
-	
+
 	free(render_modes);
 	render_modes = calloc(1, sizeof(unsigned int));
 	render_mode = RENDER_BASC;
 	render_modes[0] = RENDER_BASC;
-	
+
 	free(display_modes);
 	display_mode = 0;
 	display_modes = calloc(1, sizeof(unsigned int));
 	display_modes[0] = 0;
-	
+
 	itc = 51;
 	if (cmode==CM_VEL)
 	{
@@ -5635,10 +5635,28 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 
 		for (i=0; i<DECO_SECTIONS; i++)//check mouse position to see if it is on a menu section
 		{
-			if (!b&&mx>=XRES-2 && mx<XRES+BARSIZE-1 &&my>= (i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16) && my<(i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16)+15)
-			{
-				active_color_menu = i;
-			}
+		    if (clickmenu_enable)
+		    {
+                if (b==1&&mx>=XRES-2 && mx<XRES+BARSIZE-1 &&my>= (i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16) && my<(i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16)+15)
+                {
+                    active_color_menu = i;
+                }
+                else if (b==4&&mx>=XRES-2 && mx<XRES+BARSIZE-1 &&my>= (i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16) && my<(i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16)+15)
+                {
+                    if (i==active_color_menu)
+                        active_color_menu = -1;
+                }
+		    } else {
+                if (!b&&mx>=XRES-2 && mx<XRES+BARSIZE-1 &&my>= (i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16) && my<(i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16)+15)
+                {
+                    active_color_menu = i;
+                }
+                else if (b==4&&mx>=XRES-2 && mx<XRES+BARSIZE-1 &&my>= (i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16) && my<(i*16)+YRES+MENUSIZE-16-(DECO_SECTIONS*16)+15)
+                {
+                    if (i==active_color_menu)
+                        active_color_menu = -1;
+                }
+		    }
 		}
 		if( color_menu_ui(vid_buf, active_color_menu, &currR, &currG, &currB, b, bq, mx, my, &tool) )
 			RGB_to_HSV(currR,currG,currB,&currH,&currS,&currV);
@@ -6545,7 +6563,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 	int display_options[] = {DISPLAY_AIRC, DISPLAY_AIRP, DISPLAY_AIRV, DISPLAY_AIRH, DISPLAY_WARP, DISPLAY_PERS, DISPLAY_EFFE};
 	int display_optionicons[] = {10, 1, 0, 5, -1, 2, -1};
 	char * display_desc[] = {"Air: Cracker", "Air: Pressure", "Air: Velocity", "Air: Heat", "Warp effect", "Persistent", "Effects"};
-	
+
 	int colour_optioncount = 3;
 	int colour_options[] = {COLOUR_LIFE, COLOUR_HEAT, COLOUR_GRAD};
 	int colour_optionicons[] = {-1, 5, 8};

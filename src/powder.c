@@ -144,14 +144,14 @@ void init_can_move()
 	}
 	can_move[PT_ELEC][PT_LCRY] = 2;
 	can_move[PT_PHOT][PT_LCRY] = 3;//varies according to LCRY life
-	
+
 	can_move[PT_PHOT][PT_BIZR] = 2;
 	can_move[PT_ELEC][PT_BIZR] = 2;
 	can_move[PT_PHOT][PT_BIZRG] = 2;
 	can_move[PT_ELEC][PT_BIZRG] = 2;
 	can_move[PT_PHOT][PT_BIZRS] = 2;
 	can_move[PT_ELEC][PT_BIZRS] = 2;
-	
+
 	can_move[PT_NEUT][PT_INVIS] = 2;
 	//whol eats anar
 	can_move[PT_ANAR][PT_WHOL] = 1;
@@ -940,7 +940,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 	if (t==PT_VIRS)
 	{
 	    parts[i].ctype = PT_VIRS;
-	    parts[i].disease = rand()%100+50;
+	    parts[i].disease = rand()%100+500;
 	}
 	//now set various properties that we want at spawn.
 	if (t==PT_ACID || t==PT_CAUS)
