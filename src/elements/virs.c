@@ -10,15 +10,16 @@ int update_VIRS(UPDATE_FUNC_ARGS)
                 r = pmap[y+ry][x+rx];
                 if (!r || (r&0xFF)==PT_VIRS || (r&0xFF)==PT_DMND || parts[r>>8].disease > 0)
                     continue;
-                if (parts[r>>8].type==PT_ALCO)
+                if ((r&0xFF)==PT_ALCO||(r&0xFF)==PT_SOAP)
                 {
-                    kill_part(i);
+                    if (rand()%10==1)
+                        kill_part(i);
                     continue;
                 }
                 parts[r>>8].ctype = parts[r>>8].type;
                 parts[r>>8].tmp2 = parts[r>>8].ctype;
                 parts[r>>8].type = PT_VIRS;
-                parts[r>>8].disease = rand()%100+50;
+                parts[r>>8].disease = rand()%100+500;
             }
     return 0;
 }
