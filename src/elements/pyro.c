@@ -3,14 +3,16 @@
 int update_PYRO(UPDATE_FUNC_ARGS) {
 	int r, rx, ry, rt, t = parts[i].type;
 	int tm = parts[i].tmp;
-	if (t==PT_FIRE && parts[i].temp>2773.0f)
+	if (t==PT_FIRE && parts[i].temp>FIREPLASMATEMP)
 		{
-			if (tm != PT_MAGN) 
-			{		
+			if (tm != PT_MAGN)
+			{
 				part_change_type(i,x,y,PT_PLSM);
 				parts[i].life = rand()%50 + 120;
 			}
 		}
+    if (t==PT_FIRE && parts[i].temp>BFLMTEMP)
+        parts[i].tmp3 = 1;
 	if (t==PT_PLSM&&parts[i].ctype == PT_NBLE)
 	{
 	    if (parts[i].life <=1)
@@ -49,9 +51,9 @@ int update_PYRO(UPDATE_FUNC_ARGS) {
 	{
 
 
-	if (tm == PT_NITR && parts[i].temp < 2773.0f - 100.0f)
+	if (tm == PT_NITR && parts[i].temp < FIREPLASMATEMP - 100.0f)
             parts[i].temp += 100;
-	if (tm == PT_MAGN && parts[i].temp < 2773.0f - 100.0f)
+	if (tm == PT_MAGN && parts[i].temp < FIREPLASMATEMP - 2000.0f)
             parts[i].temp += 2000;
 	}
 	if(t==PT_PLSM && parts[i].life <=1)
