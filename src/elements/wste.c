@@ -23,7 +23,7 @@ int update_WSTE(UPDATE_FUNC_ARGS)
                     else if (rand()%700 == 1)
                     {
                         kill_part(r>>8);
-                        parts[i].life -= parts[i].life -1;
+                        parts[i].life -= 1;
                         return 1;
                     }
                 }
