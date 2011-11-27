@@ -2383,7 +2383,9 @@ void render_parts(pixel *vid)
                         randy = 0;
                         randa = 0;
                     }
-                    int r = pmap[ny][nx];
+                    if (nx+randx>XRES) nx = XRES-randx;
+                    if (ny+randy>YRES) ny = YRES-randy;
+                    int r = pmap[ny+randy][nx+randx];
                     if (firea)
                     {
                         rc = firer;
