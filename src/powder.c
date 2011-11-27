@@ -686,8 +686,10 @@ inline void part_change_type(int i, int x, int y, int t)//changes the type of pa
     if (t==PT_GAS)
         parts[i].ctype = parts[i].type;
 
-    if (t==PT_PLSM)
+    if (t==PT_PLSM && parts[i].type!=PT_FIRE)
         parts[i].ctype = parts[i].type;
+    else if (t==PT_PLSM && parts[i].type==PT_FIRE)
+        parts[i].ctype = parts[i].tmp;
 
 	if (parts[i].type == PT_FIGH)
 	{
@@ -2312,7 +2314,7 @@ killed:
 						continue;
 					}
 					r = pmap[fin_y][fin_x];
-					
+
 					if ((r & 0xFF) == PT_PIPE && !(parts[r>>8].tmp&0xFF))
 					{
 						parts[r>>8].tmp =  (parts[r>>8].tmp&~0xFF) | parts[i].type;

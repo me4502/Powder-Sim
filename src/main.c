@@ -2742,15 +2742,15 @@ int main(int argc, char *argv[])
 					char lowername[6];
 					int ix;
 					strcpy(lowername, ptypes[parts[cr>>8].ctype].name);
-					for (ix = 0; lowername[ix]; ix++)
+					for (ix = 1; lowername[ix]; ix++)
 						lowername[ix] = tolower(lowername[ix]);
                     if (!strcmp(lowername,"nble"))
                     {
                         strcpy(lowername, nmenu[parts[cr>>8].tmp2].name);
-                        for (ix = 0; lowername[ix]; ix++)
+                        for (ix = 1; lowername[ix]; ix++)
                             lowername[ix] = tolower(lowername[ix]);
                     }
-                    sprintf(nametext, "Plasmatic %s", lowername);
+                    sprintf(nametext, "%s plasma", lowername);
 				}
 
 				else if ((cr&0xFF)==PT_FIRE && parts[cr>>8].tmp > 0 && parts[cr>>8].tmp < PT_NUM )
