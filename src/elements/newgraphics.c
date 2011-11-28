@@ -589,7 +589,19 @@ int graphics_NBLE(GRAPHICS_FUNC_ARGS)
 	*firer = *colr;
 	*fireb = *colb;
 	*fireg = *colg;
-	*pixel_mode = PMODE_FLARE;
+	if (fancy_graphics)
+        *pixel_mode = PMODE_FLARE|PMODE_FLAT;
+    else
+    {
+        *pixel_mode &= ~PMODE;
+		*pixel_mode |= FIRE_BLEND;
+		*firer = *colr/2;
+		*fireg = *colg/2;
+		*fireb = *colb/2;
+		*firea = 125;
+		*pixel_mode |= DECO_FIRE;
+    }
+
 	return 0;
 }
 int graphics_WSTE(GRAPHICS_FUNC_ARGS)
