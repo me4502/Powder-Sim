@@ -1808,7 +1808,7 @@ void draw_back(pixel *vid, int over)
                 int g = PIXG(decolour[x][y]);
                 int b = PIXB(decolour[x][y]);
                 if ((r||g||b)||over==1)
-                    drawpixel(vid,x,y,r,g,b,255);
+                    blendpixel(vid,x,y,r,g,b,255);
             }
         }
     }
@@ -1824,7 +1824,7 @@ void update_back(pixel *vid, int over, int x, int y)
         int g = PIXG(decolour[x][y]);
         int b = PIXB(decolour[x][y]);
         if ((r||g||b)||over==1)
-            drawpixel(vid,x,y,r,g,b,255);
+            blendpixel(vid,x,y,r,g,b,255);
     }
 }
 
