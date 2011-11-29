@@ -52,6 +52,9 @@ extern unsigned int *display_modes;
 extern unsigned int display_mode;
 
 extern SDL_Surface *sdl_scrn;
+#ifdef SDL1.3
+extern SDL_Window *winid;
+#endif
 extern int sdl_scale;
 
 extern int sandcolour_r;
