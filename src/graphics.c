@@ -36,6 +36,9 @@ unsigned int *display_modes;
 unsigned int display_mode;
 
 SDL_Surface *sdl_scrn;
+#ifdef SDL1.3
+SDL_Window *winid;
+#endif
 int sdl_scale = 1;
 
 #ifdef OGLR
@@ -4318,7 +4321,7 @@ int sdl_open(void)
 #else
 #ifdef PIX16
 	if (kiosk_enable)
-		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,16,SDL_FULLSCREEN|SDL_SWSURFACE);
+		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,16,SDL_FULLSCREEN|SDL_SWSURFACE|);
 	else
 		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,16,SDL_SWSURFACE);
 #else
@@ -4327,6 +4330,10 @@ int sdl_open(void)
 	else
 		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,32,SDL_SWSURFACE);
 #endif
+#endif
+#ifdef SDL1.3
+	winid = SDL_CreateWindow("Powder Sim Config", 32, 32, 200, 200, SDL_WINDOW_OPENGL);
+	SDL_ShowWindow(winid);
 #endif
 	if (!sdl_scrn)
 	{
