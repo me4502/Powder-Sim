@@ -13,7 +13,7 @@
 #define PS_VERSION 1
 #define PS_MINOR_VERSION 2
 //#define BETA
-#define BUILD_NUM 2
+#define BUILD_NUM 3
 //VersionInfoEnd
 
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter.
