@@ -156,6 +156,10 @@ int update_SPRK(UPDATE_FUNC_ARGS) {
 					if (rt==PT_NTCT||rt==PT_PTCT)
 						conduct_sprk = 0;
 				}
+				if (rt==PT_H2 && parts[r>>8].ctype==1)
+                    conduct_sprk = 1;
+                else if (rt==PT_H2)
+                    conduct_sprk = 0;
 				if (ct==PT_NTCT && !(rt==PT_PSCN || rt==PT_NTCT || (rt==PT_NSCN&&parts[i].temp>373.0f)))
 					conduct_sprk = 0;
 				if (ct==PT_PTCT && !(rt==PT_PSCN || rt==PT_PTCT || (rt==PT_NSCN&&parts[i].temp<373.0f)))
@@ -241,7 +245,7 @@ int graphics_SPRK(GRAPHICS_FUNC_ARGS)
     if (!over)
     {
         *firea = 80;
-	
+
 		*firer = *colr = 170;
 		*fireg = *colg = 200;
 		*fireb = *colb = 220;
