@@ -814,6 +814,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 			return -1;
         if (parts[pmap[y][x]>>8].type==PT_NBLE)
             parts[pmap[y][x]>>8].tmp2 = parts[pmap[y][x]>>8].ctype;
+        if (parts[pmap[y][x]>>8].type==PT_H2 && !parts[pmap[y][x]>>8].ctype) return;
 		parts[pmap[y][x]>>8].type = PT_SPRK;
 		parts[pmap[y][x]>>8].life = 4;
 		parts[pmap[y][x]>>8].ctype = pmap[y][x]&0xFF;
