@@ -5,7 +5,6 @@
 
 ## Thanks:
 
----------------------------------------------------------------------------
 
 ### [Original]
 Stanislaw K Skowronek<br />
@@ -39,7 +38,6 @@ Antonvrg<br />
 
 ## Instructions:
 
----------------------------------------------------------------------------
 
 Click on the elements with the mouse and draw in the field, like in MS Paint. The rest of the game is learning what happens next.
 
@@ -47,7 +45,6 @@ Click on the elements with the mouse and draw in the field, like in MS Paint. Th
 
 ## Controls:
 
----------------------------------------------------------------------------
 
 **Caps Lock**  Specific Element Erase<br />
 **Insert**     Replace mode<br />
@@ -92,7 +89,6 @@ Click on the elements with the mouse and draw in the field, like in MS Paint. Th
 
 ## Command Line:
 
----------------------------------------------------------------------------
 
 **scale:1** - Normal window resolution<br />
 **scale:2** - Doubled window resolution<br />
