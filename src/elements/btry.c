@@ -19,6 +19,8 @@ int update_BTRY(UPDATE_FUNC_ARGS) {
 						part_change_type(r>>8,x+rx,y+ry,PT_SPRK);
 					}
 				}
+				if (rt==PT_CBTY && parts[r>>8].life < 100)
+                    parts[r>>8].life++;
 			}
 	return 0;
 }
