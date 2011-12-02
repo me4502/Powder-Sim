@@ -33,8 +33,14 @@ int update_CBTY(UPDATE_FUNC_ARGS) {
                 {
                     if (parts[i].life != parts[r>>8].life  && parts[i].life > 0 && parts[r>>8].life < 100 && rand()%2)
                     {
-                        parts[i].life--;
-                        parts[r>>8].life++;
+                        if (parts[i].life > parts[r>>8].life)
+                        {
+                            parts[i].life--;
+                            parts[r>>8].life++;
+                        } else {
+                            parts[r>>8].life--;
+                            parts[i].life++;
+                        }
                     }
                 }
 			}
