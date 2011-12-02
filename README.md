@@ -1,4 +1,4 @@
-# Powder Sim - v1.2
+# Powder Sim - v1.3
 
 ##### To use online features such as saving, you need to register at: [website pending]
 
