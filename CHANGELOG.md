@@ -9,6 +9,12 @@
 
 [Our Additions]
 
+* Version 1.2
+      o Added Metallic Hydrogen
+      o Added Rechargable Battery
+      o Bug fix
+      o Upgraded the element limit
+
 * Version 1.1
       o Make the makefile more versatile
       o Make a CHANGELOG
