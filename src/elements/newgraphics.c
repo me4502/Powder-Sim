@@ -673,36 +673,10 @@ int graphics_WATR(GRAPHICS_FUNC_ARGS)
 }
 int graphics_CBTY(GRAPHICS_FUNC_ARGS)
 {
-    pixel pc = ptypes[cpart->type].pcolors;
-    if (cpart->life<25)
-    {
-        *firer = *colr = PIXR(pc);
-        *fireg = *colg = PIXG(pc);
-        *fireb = *colb = PIXB(pc);
-        *firea = cpart->life;
-    }
-    else if (cpart->life<50)
-    {
-        *firer = *colr = 0;
-        *fireg = *colg = 255;
-        *fireb = *colb = 0;
-        *firea = cpart->life;
-    }
-    else if (cpart->life<75)
-    {
-        *firer = *colr = 255;
-        *fireg = *colg = 255;
-        *fireb = *colb = 0;
-        *firea = cpart->life;
-    }
-    else if (cpart->life<=100)
-    {
-        *firer = *colr = 255;
-        *fireg = *colg = 0;
-        *fireb = *colb = 0;
-        *firea = cpart->life;
-    }
-    *pixel_mode |= PMODE_FLAT;
-    *pixel_mode |= FIRE_ADD;
-    return 0;
+    float frequency = 0.0328;
+	int q = cpart->life;
+	*colr = sin(frequency*q + 1) * 127 + 128;
+	*colg = sin(frequency*q + 3) * 127 + 128;
+	*colb = sin(frequency*q + 4) * 127 + 128;
+	return 0;
 }
