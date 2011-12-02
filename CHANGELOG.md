@@ -9,6 +9,9 @@
 
 [Our Additions]
 
+* Version 1.3
+      o Thermite Reacts with LO2, LN2, FRZZ, NICE, DRIC & ICE
+
 * Version 1.2
       o Added Metallic Hydrogen
       o Added Rechargable Battery
