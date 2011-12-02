@@ -520,14 +520,17 @@ int graphics_FIRW(GRAPHICS_FUNC_ARGS)
 
 		*pixel_mode = PMODE_NONE; //Clear default, don't draw pixel
 		*pixel_mode |= FIRE_ADD;
-		*pixel_mode |= PMODE_DSMKE;
 		//Returning 0 means dynamic, do not cache
 	}
 	else if(cpart->tmp > 0)
 	{
 		*pixel_mode |= PMODE_GLOW;
 	}
+	else
+    {
     *pixel_mode |= PMODE_DSMKE;
+    }
+
 	return 0;
 }
 int graphics_BOMB(GRAPHICS_FUNC_ARGS)
