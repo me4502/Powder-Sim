@@ -186,6 +186,7 @@ int pretty_powder = 0;
 int clickmenu_enable = 1;
 int fancy_graphics = 0;
 int tpt_comp = 0;
+int part_loop = 0;
 int amd = 1;
 int FPSB = 0;
 int MSIGN =-1;
@@ -2242,8 +2243,8 @@ int main(int argc, char *argv[])
 				if (sdl_zoom_trig)
 				{
 					ZSIZE -= 1;
-					if (ZSIZE>60)
-						ZSIZE = 60;
+					if (ZSIZE>120)
+						ZSIZE = 120;
 					if (ZSIZE<2)
 						ZSIZE = 2;
 					ZFACTOR = 256/ZSIZE;
@@ -2282,8 +2283,8 @@ int main(int argc, char *argv[])
 				if (sdl_zoom_trig)
 				{
 					ZSIZE += 1;
-					if (ZSIZE>60)
-						ZSIZE = 60;
+					if (ZSIZE>120)
+						ZSIZE = 120;
 					if (ZSIZE<2)
 						ZSIZE = 2;
 					ZFACTOR = 256/ZSIZE;
@@ -2604,8 +2605,8 @@ int main(int argc, char *argv[])
 			if (sdl_zoom_trig)//zoom window change
 			{
 				ZSIZE += sdl_wheel;
-				if (ZSIZE>60)
-					ZSIZE = 60;
+				if (ZSIZE>120)
+					ZSIZE = 120;
 				if (ZSIZE<2)
 					ZSIZE = 2;
 				ZFACTOR = 256/ZSIZE;

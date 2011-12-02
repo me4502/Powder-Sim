@@ -675,8 +675,10 @@ int graphics_CBTY(GRAPHICS_FUNC_ARGS)
 {
     float frequency = 0.0328;
 	int q = cpart->life;
-	*colr = sin(frequency*q + 1) * 127 + 128;
-	*colg = sin(frequency*q + 3) * 127 + 128;
-	*colb = sin(frequency*q + 4) * 127 + 128;
+	*firer = *colr = sin(frequency*q + 1) * 127 + 128;
+	*fireg = *colg = sin(frequency*q + 3) * 127 + 128;
+	*fireb = *colb = sin(frequency*q + 4) * 127 + 128;
+	*pixel_mode |= FIRE_BLEND;
+	*firea = frequency*q;
 	return 0;
 }
