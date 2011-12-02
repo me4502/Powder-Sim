@@ -10,17 +10,8 @@ int update_CBTY(UPDATE_FUNC_ARGS) {
 				if (!r)
 					continue;
 				rt = parts[r>>8].type;
-				if (parts[i].life > 100) parts[i].life = 100;
 				if (parts_avg(i,r>>8,PT_INSL) != PT_INSL)
 				{
-				    if (rt==PT_CBTY)
-                    {
-                        if (parts[i].life != parts[r>>8].life  && parts[i].life > 0 && parts[r>>8].life < 100 && rand()%2)
-                        {
-                            parts[i].life--;
-                            parts[r>>8].life++;
-                        }
-                    }
 					if (rt==PT_SPRK && parts[r>>8].ctype == PT_PSCN)
 						parts[i].life += 1;
 					else if (rt==PT_SPRK && parts[r>>8].ctype ==PT_NSCN && parts[i].life > 0)
@@ -36,6 +27,16 @@ int update_CBTY(UPDATE_FUNC_ARGS) {
 						}
 					}
 				}
+				if (parts[i].life >= 100) parts[i].life = 100;
+				if (parts[i].life <= 0) parts[i].life = 0;
+				if (rt==PT_CBTY)
+                {
+                    if (parts[i].life != parts[r>>8].life  && parts[i].life > 0 && parts[r>>8].life < 100 && rand()%2)
+                    {
+                        parts[i].life--;
+                        parts[r>>8].life++;
+                    }
+                }
 			}
 	return 0;
 }
