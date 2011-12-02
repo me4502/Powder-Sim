@@ -166,6 +166,7 @@ extern int drawgrav_enable;
 extern int clickmenu_enable;
 extern int fancy_graphics;
 extern int tpt_comp;
+extern int part_loop;
 int limitFPS;
 int water_equal_test;
 extern int quickoptions_tooltip_fade;
