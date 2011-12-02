@@ -940,6 +940,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].tmp = -1;
 		parts[i].tmp2 = -1;
 	}
+	if (t==PT_CBTY)
+        parts[i].tmp2 = 255;
 	if (t==PT_VIRS)
 	{
 	    parts[i].ctype = PT_VIRS;
