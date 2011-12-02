@@ -1784,8 +1784,31 @@ void update_particles_i(pixel *vid, int start, int inc)
 			y = (int)(parts[i].y+0.5f);
 
 			//this kills any particle out of the screen, or in a wall where it isn't supposed to go
-			if (x<CELL || y<CELL || x>=XRES-CELL || y>=YRES-CELL ||
-			        (bmap[y/CELL][x/CELL] &&
+			if (part_loop)
+            {
+                if (parts[i].x<CELL*2 && parts[i].vx < 0)
+                {
+                    parts[i].x = XRES - 1;
+                }
+                else if (parts[i].x>=XRES-CELL*2  && parts[i].vx > 0)
+                {
+                    parts[i].x = CELL;
+                }
+                if (parts[i].y<CELL*2  && parts[i].vy < 0)
+                {
+                    parts[i].y = YRES - 1;
+                }
+                else if (parts[i].y>=YRES-CELL*2  && parts[i].vy > 0)
+                {
+                    parts[i].y = CELL;
+                }
+            }
+            if ((x<CELL || y<CELL || x>=XRES-CELL || y>=YRES-CELL)&&!part_loop)
+            {
+                kill_part(i);
+				continue;
+            }
+			if ((bmap[y/CELL][x/CELL] &&
 			         (bmap[y/CELL][x/CELL]==WL_WALL ||
 			          bmap[y/CELL][x/CELL]==WL_WALLELEC ||
 			          bmap[y/CELL][x/CELL]==WL_ALLOWAIR ||
