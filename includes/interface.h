@@ -48,7 +48,11 @@ typedef struct menu_wall menu_wall;
 #define SC_TOOL 12
 #define SC_FAVOURITES 13
 #define SC_HIDDEN 14
+#ifdef DEBUG
+#define SC_TOTAL 15
+#else
 #define SC_TOTAL 14
+#endif
 
 static menu_section msections[] = //doshow does not do anything currently.
 {
