@@ -11,7 +11,7 @@
 #define SAVE_VERSION 68
 #define MINOR_VERSION 7
 #define PS_VERSION 1
-#define PS_MINOR_VERSION 2
+#define PS_MINOR_VERSION 3
 //#define BETA
 #define BUILD_NUM 3
 //VersionInfoEnd
