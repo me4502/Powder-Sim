@@ -2942,10 +2942,6 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
 int quickoptions_tooltip_fade = 0;
 char * quickoptions_tooltip;
 int quickoptions_tooltip_y = 0;
-void quickoptions_menu_v2(pixel *vid_buf, int b, int bq, int x, int y, int maxx)
-{
-
-}
 void quickoptions_menu(pixel *vid_buf, int b, int bq, int x, int y)
 {
 	int i = 0;
