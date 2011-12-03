@@ -1995,7 +1995,7 @@ void menu_ui(pixel *vid_buf, int i, int *sl, int *sr)
 		fillrect(vid_buf, (XRES-BARSIZE)+11, (((YRES/SC_TOTAL)*i)+((YRES/SC_TOTAL)/2))-2, 15, FONT_H+3, 0, 0, 0, 100);
 		drawrect(vid_buf, (XRES-BARSIZE)+10, (((YRES/SC_TOTAL)*i)+((YRES/SC_TOTAL)/2))-2, 16, FONT_H+3, 255, 255, 255, 255);
 		drawrect(vid_buf, (XRES-BARSIZE)+9, (((YRES/SC_TOTAL)*i)+((YRES/SC_TOTAL)/2))-1, 1, FONT_H+1, 0, 0, 0, 255);
-		gradient_fill(vid_buf, (XRES-BARSIZE-width)-7, y-10, width+16, height+16+rows,205,0,0,255,0,0,0,1);
+		gradient_fill(vid_buf, (XRES-BARSIZE-width)-7, y-10, width+16, height+16+rows,205,0,0,130,0,0,0,1);
 		if (i==SC_WALL)
 		{
 			for (n = UI_WALLSTART; n<UI_WALLSTART+UI_WALLCOUNT; n++)
@@ -2942,6 +2942,10 @@ int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int b
 int quickoptions_tooltip_fade = 0;
 char * quickoptions_tooltip;
 int quickoptions_tooltip_y = 0;
+void quickoptions_menu_v2(pixel *vid_buf, int b, int bq, int x, int y, int maxx)
+{
+
+}
 void quickoptions_menu(pixel *vid_buf, int b, int bq, int x, int y)
 {
 	int i = 0;
