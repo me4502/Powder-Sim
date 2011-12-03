@@ -12,6 +12,10 @@
 
 * Version 1.3
       o Thermite Reacts with LO2, LN2, FRZZ, NICE, DRIC & ICE
+      o Made Mettalic Hydrogen conductive
+      o Updated Fancy Display
+      o Added a new menu mode
+      o Added shadows to the menu
 
 * Version 1.2
       o Added Metallic Hydrogen
