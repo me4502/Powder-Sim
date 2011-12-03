@@ -769,7 +769,7 @@ void ui_richtext_process(int mx, int my, int mb, int mbq, ui_richtext *ed)
 void draw_svf_ui(pixel *vid_buf, int alternate)// all the buttons at the bottom
 {
 	int c;
-    gradient_fill(vid_buf, 0,YRES+(MENUSIZE-16),XRES + MENUSIZE,MENUSIZE/2+8,205,0,0,255,0,0,0,1);
+    gradient_fill(vid_buf, 0,YRES+(MENUSIZE-16),XRES + MENUSIZE,MENUSIZE/2+8,255,255,255,90,0,0,0,1);
     //the open browser button
 	if(alternate)
 	{
@@ -1995,7 +1995,7 @@ void menu_ui(pixel *vid_buf, int i, int *sl, int *sr)
 		fillrect(vid_buf, (XRES-BARSIZE)+11, (((YRES/SC_TOTAL)*i)+((YRES/SC_TOTAL)/2))-2, 15, FONT_H+3, 0, 0, 0, 100);
 		drawrect(vid_buf, (XRES-BARSIZE)+10, (((YRES/SC_TOTAL)*i)+((YRES/SC_TOTAL)/2))-2, 16, FONT_H+3, 255, 255, 255, 255);
 		drawrect(vid_buf, (XRES-BARSIZE)+9, (((YRES/SC_TOTAL)*i)+((YRES/SC_TOTAL)/2))-1, 1, FONT_H+1, 0, 0, 0, 255);
-		gradient_fill(vid_buf, (XRES-BARSIZE-width)-7, y-10, width+16, height+16+rows,90,90,90,255,0,0,0,1);
+		gradient_fill(vid_buf, (XRES-BARSIZE-width)-7, y-10, width+16, height+16+rows,255,255,255,18,0,0,0,1);
 		if (i==SC_WALL)
 		{
 			for (n = UI_WALLSTART; n<UI_WALLSTART+UI_WALLCOUNT; n++)
