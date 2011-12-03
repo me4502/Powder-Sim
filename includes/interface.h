@@ -80,7 +80,7 @@ static quick_option quickmenu[] =
 	{"D", "Show Decorations", QM_TOGGLE, &decorations_enable},
 	{"M", "Click to change menus", QM_TOGGLE, &clickmenu_enable},
 	{"F", "Fancy Graphics", QM_TOGGLE, &fancy_graphics},
-	{"L", "Edge Scrolling", QM_TOGGLE, &part_loop},
+	{"L", "Edge Loop", QM_TOGGLE, &part_loop},
 	{NULL}
 };
 
