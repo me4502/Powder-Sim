@@ -7,7 +7,6 @@
   |_|\___/ \__,_|\___/ 
 
 	- Make more shit - In Progress
-	- Finish CBTY - In Progress
 	- Multi-threading - Probably never going to happen, but what the hell?
 
 </pre>
