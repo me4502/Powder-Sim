@@ -769,7 +769,7 @@ void ui_richtext_process(int mx, int my, int mb, int mbq, ui_richtext *ed)
 void draw_svf_ui(pixel *vid_buf, int alternate)// all the buttons at the bottom
 {
 	int c;
-    gradient_fill(vid_buf, 0,YRES+(MENUSIZE-16),XRES + MENUSIZE,MENUSIZE/2+8,205,0,0,255,0,0,0,1);
+    gradient_fill(vid_buf, 0,YRES+(MENUSIZE-16),XRES + MENUSIZE,MENUSIZE/2+8,90,90,90,130,0,0,0,1);
     //the open browser button
 	if(alternate)
 	{

@@ -575,6 +575,8 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 		return 26;
 	if ((b&0xFF) == PT_LIFE)
 	{
+	    if (fancy_graphics)
+            fillrect(vid_buf, x+2, y+2, 27, 15, 90, 90, 90, 130);
 		for (j=1; j<15; j++)
 		{
 			for (i=1; i<27; i++)
@@ -595,6 +597,8 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 	}
 	else if ((b&0xFF) == PT_NBLE)
 	{
+	    if (fancy_graphics)
+            fillrect(vid_buf, x+2, y+2, 27, 15, 90, 90, 90, 130);
 		for (j=1; j<15; j++)
 		{
 			for (i=1; i<27; i++)
@@ -786,6 +790,8 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 	}
 	else
 	{
+	    if (fancy_graphics)
+            fillrect(vid_buf, x+2, y+2, 27, 15, 90, 90, 90, 130);
 		//x = 2+32*(b/2);
 		//y = YRES+2+20*(b%2);
 		for (j=1; j<15; j++)
