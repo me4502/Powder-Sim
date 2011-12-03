@@ -818,6 +818,180 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 	}
 	return 26;
 }
+void draw_tool(pixel *vid_buf, int b, int sl, int sr, unsigned pc, unsigned iswall)
+{
+    int x, y, i, j, c;
+	int bo = b;
+	if(iswall==1){
+		b = b-100;
+		x = (2+32*((b-22)/1));
+		y = YRES+2+40;
+		switch(b){
+			case WL_WALLELEC:
+				for(j=1; j<15; j++){
+					for(i=1; i<27; i++) {
+						if(!(i%2) && !(j%2)) {
+							vid_buf[XRES*(y+j)+(x+i)] = pc;
+						} else {
+							vid_buf[XRES*(y+j)+(x+i)] = PIXPACK(0x808080);
+						}
+					}
+				}
+				break;
+			case 23:
+				for(j=1; j<15; j++) {
+					for(i=1; i<6+j; i++) {
+						if(!(i&j&1)) {
+							vid_buf[XRES*(y+j)+(x+i)] = pc;
+						}
+					}
+					for(; i<27; i++) {
+						if(i&j&1) {
+							vid_buf[XRES*(y+j)+(x+i)] = pc;
+						}
+					}
+				}
+				break;
+			case 24:
+				for(j=1; j<15; j+=2) {
+					for(i=1+(1&(j>>1)); i<27; i+=2) {
+						vid_buf[XRES*(y+j)+(x+i)] = pc;
+					}
+				}
+				break;
+			case 25:
+				for(j=1; j<15; j++) {
+					for(i=1; i<27; i++) {
+						vid_buf[XRES*(y+j)+(x+i)] = i==1||i==26||j==1||j==14 ? PIXPACK(0xA0A0A0) : PIXPACK(0x000000);
+						drawtext(vid_buf, x+4, y+3, "\x8D", 255, 255, 255, 255);
+					}
+				}
+				for(i=9; i<27; i++) {
+					drawpixel(vid_buf, x+i, y+8+(int)(3.9f*cos(i*0.3f)), 255, 255, 255, 255);
+				}
+				break;
+			case 26:
+				for(j=1; j<15; j++) {
+					for(i=1; i<27; i++) {
+						vid_buf[XRES*(y+j)+(x+i)] = i==1||i==26||j==1||j==14 ? PIXPACK(0xA0A0A0) : PIXPACK(0x000000);
+					}
+				}
+				drawtext(vid_buf, x+9, y+3, "\xA1", 32, 64, 128, 255);
+				drawtext(vid_buf, x+9, y+3, "\xA0", 255, 255, 255, 255);
+				break;
+			case 27:
+				for(j=1; j<15; j+=2) {
+					for(i=1+(1&(j>>1)); i<27; i+=2) {
+						vid_buf[XRES*(y+j)+(x+i)] = pc;
+					}
+				}
+				break;
+			case 28:
+				for(j=1; j<15; j++) {
+					for(i=1; i<27; i++) {
+						if(!(i%2) && !(j%2)) {
+							vid_buf[XRES*(y+j)+(x+i)] = pc;
+						}
+					}
+				}
+				break;
+			case 29:
+				for(j=1; j<15; j+=2) {
+					for(i=1+(1&(j>>1)); i<27; i+=2) {
+						vid_buf[XRES*(y+j)+(x+i)] = pc;
+					}
+				}
+				break;
+			case 30:
+				for(j=1; j<15; j+=2) {
+					for(i=1+(1&(j>>1)); i<13; i+=2) {
+						vid_buf[XRES*(y+j)+(x+i)] = pc;
+					}
+				}
+				for(j=1; j<15; j++) {
+					for(i=14; i<27; i++) {
+						vid_buf[XRES*(y+j)+(x+i)] = pc;
+					}
+				}
+				break;
+			case 32:
+				for(j=1; j<15; j+=2) {
+					for(i=1+(1&(j>>1)); i<27; i+=2) {
+						vid_buf[XRES*(y+j)+(x+i)] = pc;
+					}
+				}
+				break;
+			case 33:
+				for(j=1; j<15; j+=2) {
+					for(i=1+(1&(j>>1)); i<27; i+=2) {
+						vid_buf[XRES*(y+j)+(x+i)] = pc;
+					}
+				}
+				break;
+			case 34:
+				for(j=1; j<15; j++) {
+					for(i=1; i<27; i++) {
+						if(!(i%2) && !(j%2)) {
+							vid_buf[XRES*(y+j)+(x+i)] = pc;
+						}
+					}
+				}
+				break;
+			default:
+				for(j=1; j<15; j++) {
+					for(i=1; i<27; i++) {
+						vid_buf[XRES*(y+j)+(x+i)] = pc;
+					}
+				}
+		}
+		if(b==30) {
+			for(j=4; j<12; j++) {
+				vid_buf[XRES*(y+j)+(x+j+6)] = PIXPACK(0xFF0000);
+				vid_buf[XRES*(y+j)+(x+j+7)] = PIXPACK(0xFF0000);
+				vid_buf[XRES*(y+j)+(x-j+21)] = PIXPACK(0xFF0000);
+				vid_buf[XRES*(y+j)+(x-j+22)] = PIXPACK(0xFF0000);
+			}
+		}
+	} else {
+		x = 2+32*(b/2);
+		y = YRES+2+20*(b%2);
+		for(j=1; j<15; j++) {
+			for(i=1; i<27; i++) {
+				vid_buf[XRES*(y+j)+(x+i)] = pc;
+			}
+		}
+		if(b==0) {
+			for(j=4; j<12; j++) {
+				vid_buf[XRES*(y+j)+(x+j+6)] = PIXPACK(0xFF0000);
+				vid_buf[XRES*(y+j)+(x+j+7)] = PIXPACK(0xFF0000);
+				vid_buf[XRES*(y+j)+(x-j+21)] = PIXPACK(0xFF0000);
+				vid_buf[XRES*(y+j)+(x-j+22)] = PIXPACK(0xFF0000);
+			}
+		}
+		c = PIXB(ptypes[b].pcolors) + 3*PIXG(ptypes[b].pcolors) + 2*PIXR(ptypes[b].pcolors);
+		if(c<544) {
+			c = 255;
+		} else {
+			c = 0;
+		}
+		drawtext(vid_buf, x+14-textwidth(ptypes[b].name)/2, y+4, ptypes[b].name, c, c, c, 255);
+	}
+    if(bo==sl || bo==sr) {
+		c = 0;
+		if(bo==sl)
+			c |= PIXPACK(0xFF0000);
+		if(bo==sr)
+			c |= PIXPACK(0x0000FF);
+		for(i=0; i<30; i++) {
+			vid_buf[XRES*(y-1)+(x+i-1)] = c;
+			vid_buf[XRES*(y+16)+(x+i-1)] = c;
+		}
+		for(j=0; j<18; j++) {
+			vid_buf[XRES*(y+j-1)+(x-1)] = c;
+			vid_buf[XRES*(y+j-1)+(x+28)] = c;
+		}
+	}
+}
 void draw_menu_old(pixel *vid_buf, int i, int hover){
 	drawtext(vid_buf, XRES+1, /*(12*i)+2*/((YRES/SC_TOTAL)*i)+((YRES/SC_TOTAL)/2), msections[i].icon, 255, 255, 255, 255);
 }
