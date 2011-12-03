@@ -199,6 +199,7 @@
 #define PT_ELEC 136
 #define PT_ACEL 137
 #define PT_DCEL 138
+#define PT_TNT 139
 
 #define PT_BOYL 141
 
@@ -662,7 +663,7 @@ static const part_type ptypes[PT_NUM] =
 	{"ELEC",	PIXPACK(0xDFEFFF),	0.0f,	0.00f * CFDS,	1.00f,	1.00f,	-0.99f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	0,	1,	1,	-1,		1.0f,   SC_NUCLEAR,		R_TEMP+200.0f+273.15f,	251,	"Electrons", ST_GAS, TYPE_ENERGY|PROP_LIFE_DEC|PROP_LIFE_KILL_DEC, &update_ELEC, &graphics_ELEC},
 	{"ACEL",	PIXPACK(0x0099CC),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	1,	1,	1,	100,	1.0f,   SC_POWERED,		R_TEMP+0.0f	+273.15f,	251,	"Accelerator", ST_NONE, TYPE_SOLID, &update_ACEL, &graphics_ACEL},
 	{"DCEL",	PIXPACK(0x99CC00),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	1,	1,	1,	100,	1.0f,   SC_POWERED,		R_TEMP+0.0f	+273.15f,	251,	"Decelerator", ST_NONE, TYPE_SOLID, &update_DCEL, &graphics_DCEL},
-	{"TNT",		PIXPACK(0xC05050),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	1,	1,	1,	100,	SC_EXPLOSIVE,	R_TEMP+0.0f	+273.15f,	88,		"Explosive.", ST_SOLID, TYPE_SOLID | PROP_NEUTPENETRATE, &update_BANG, NULL},
+	{"TNT",		PIXPACK(0xC05050),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	1,	1,	1,	100,    1.0f,	SC_EXPLOSIVE,	R_TEMP+0.0f	+273.15f,	88,		"Explosive.", ST_SOLID, TYPE_SOLID | PROP_NEUTPENETRATE, &update_BANG, NULL},
 /*FREE*/{"MYST",	PIXPACK(0x0C3C00),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	0,	0,	0,	100,  1.0f,	SC_LIFE,		9000.0f,				40,		"B3458/S05678", ST_NONE, TYPE_SOLID|PROP_LIFE, NULL, NULL},
 	{"BOYL",	PIXPACK(0x0A3200),	1.0f,	0.01f * CFDS,	0.99f,	0.30f,	-0.1f,	0.0f,	0.18f,	0.000f	* CFDS,	0,	0,		0,	0,	1,	1,	1,	1,		1.0f,   SC_GAS,			R_TEMP+2.0f	+273.15f,	42,		"Boyle, variable pressure gas. Expands when heated.", ST_GAS, TYPE_GAS, &update_BOYL, NULL},
 /*FREE*/{"LOTE",	PIXPACK(0xFF0000),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	0,	0,	0,	100,  1.0f,	SC_LIFE,		9000.0f,				40,		"Behaves kinda like Living on the Edge S3458/B37/4", ST_NONE, TYPE_SOLID|PROP_LIFE, NULL, NULL},
