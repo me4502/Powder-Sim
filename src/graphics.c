@@ -818,7 +818,9 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 	}
 	return 26;
 }
-
+void draw_menu_old(pixel *vid_buf, int i, int hover){
+	drawtext(vid_buf, XRES+1, /*(12*i)+2*/((YRES/SC_TOTAL)*i)+((YRES/SC_TOTAL)/2), msections[i].icon, 255, 255, 255, 255);
+}
 void draw_menu(pixel *vid_buf, int i, int hover)
 {
 	if (i==SEC&&SEC!=0)

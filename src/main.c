@@ -187,6 +187,7 @@ int clickmenu_enable = 1;
 int fancy_graphics = 0;
 int tpt_comp = 0;
 int part_loop = 0;
+int menu_type = 1;
 int amd = 1;
 int FPSB = 0;
 int MSIGN =-1;
@@ -2474,6 +2475,8 @@ int main(int argc, char *argv[])
 			}
 			if (sdl_key=='n')
 				pretty_powder = !pretty_powder;
+            if (sdl_key=='o')
+				menu_type = !menu_type;
 			if (sdl_key=='p')
 				dump_frame(vid_buf, XRES, YRES, XRES+BARSIZE);
 			if (sdl_key=='v'&&(sdl_mod & (KMOD_LCTRL|KMOD_RCTRL)))
@@ -2667,39 +2670,53 @@ int main(int argc, char *argv[])
 		luacon_step(x/sdl_scale, y/sdl_scale,sl,sr);
 #endif
 
-		quickoptions_menu(vid_buf, b, bq, x, y);
+        if (menu_type)
+        {
+            quickoptions_menu(vid_buf, b, bq, x, y);
 
-		for (i=0; i<SC_TOTAL; i++)//draw all the menu sections
-		{
-			draw_menu(vid_buf, i, active_menu);
-		}
+            for (i=0; i<SC_TOTAL; i++)//draw all the menu sections
+            {
+                draw_menu(vid_buf, i, active_menu);
+            }
 
-		for (i=0; i<SC_TOTAL; i++)//check mouse position to see if it is on a menu section
-		{
-		    if (clickmenu_enable)
-		    {
-                if (b==1&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+            for (i=0; i<SC_TOTAL; i++)//check mouse position to see if it is on a menu section
+            {
+                if (clickmenu_enable)
                 {
-                    active_menu = i;
+                    if (b==1&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                    {
+                        active_menu = i;
+                    }
+                    else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                    {
+                        if (i==active_menu)
+                            active_menu = -1;
+                    }
+                } else {
+                    if (!b&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                    {
+                        active_menu = i;
+                    }
+                    else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                    {
+                        if (i==active_menu)
+                            active_menu = -1;
+                    }
                 }
-                else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
-                {
-                    if (i==active_menu)
-                        active_menu = -1;
+            }
+            menu_ui_v3(vid_buf, active_menu, &sl, &sr, &dae, b, bq, x, y); //draw the elements in the current menu
+        } else {
+            b = SDL_GetMouseState(&x, &y);
+
+            for(i=0; i<SC_TOTAL; i++){
+                draw_menu_old(vid_buf, i, 0);
+            }
+            for(i=0; i<SC_TOTAL; i++){
+                if(!b&&x>=sdl_scale*(XRES+1) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*(((YRES/SC_TOTAL)*i)+((YRES/SC_TOTAL)/2)-2) && y<sdl_scale*(((YRES/SC_TOTAL)*i)+((YRES/SC_TOTAL)/2)+12)){
+                    menu_ui(vid_buf, i, &sl, &sr);
                 }
-		    } else {
-                if (!b&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
-                {
-                    active_menu = i;
-                }
-                else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
-                {
-                    if (i==active_menu)
-                        active_menu = -1;
-                }
-		    }
-		}
-		menu_ui_v3(vid_buf, active_menu, &sl, &sr, &dae, b, bq, x, y); //draw the elements in the current menu
+            }
+        }
 		if (zoom_en && x>=sdl_scale*zoom_wx && y>=sdl_scale*zoom_wy //change mouse position while it is in a zoom window
 		        && x<sdl_scale*(zoom_wx+ZFACTOR*ZSIZE)
 		        && y<sdl_scale*(zoom_wy+ZFACTOR*ZSIZE))
