@@ -368,15 +368,30 @@ int graphics_GLOW(GRAPHICS_FUNC_ARGS)
 }
 int graphics_LCRY(GRAPHICS_FUNC_ARGS)
 {
-	int lifemod = ((cpart->tmp2>10?10:cpart->tmp2)*10);
-	*colr += lifemod;
-	*colg += lifemod;
+	if(decorations_enable && cpart->dcolour && cpart->dcolour&0xFF000000)
+	{
+		*colr = (cpart->dcolour>>16)&0xFF;
+		*colg = (cpart->dcolour>>8)&0xFF;
+		*colb = (cpart->dcolour)&0xFF;
+
+		if(cpart->tmp2<10){
+			*colr /= 10-cpart->tmp2;
+			*colg /= 10-cpart->tmp2;
+			*colb /= 10-cpart->tmp2;
+		}
+		
+	}
+	else
+	{
+		*colr = *colg = *colb = 0x50+((cpart->tmp2>10?10:cpart->tmp2)*10);
+	}
+	*pixel_mode |= NO_DECO;
+	return 0;
+					
+	/*int lifemod = ((cpart->tmp2>10?10:cpart->tmp2)*10);
+	*colr += lifemod; 
+	*colg += lifemod; 
 	*colb += lifemod;
-	*firer = *colr;
-    *fireg = *colg;
-    *fireb = *colb;
-    if (lifemod==100)
-        *firea = 160;
 	if(decorations_enable && cpart->dcolour && cpart->dcolour&0xFF000000)
 	{
 		lifemod *= 2.5f;
@@ -391,8 +406,8 @@ int graphics_LCRY(GRAPHICS_FUNC_ARGS)
         if (lifemod==100)
             *firea = 160;
 	}
-	*pixel_mode |= NO_DECO|DECO_FIRE|FIRE_ADD;
-	return 0;
+	*pixel_mode |= NO_DECO;
+	return 0;*/
 }
 int graphics_PCLN(GRAPHICS_FUNC_ARGS)
 {
@@ -531,18 +546,6 @@ int graphics_FIRW(GRAPHICS_FUNC_ARGS)
     *pixel_mode |= PMODE_DSMKE;
     }
 
-	return 0;
-}
-int graphics_BOMB(GRAPHICS_FUNC_ARGS)
-{
-	if (cpart->tmp==0) {
-		*pixel_mode |= PMODE_FLARE;
-        *pixel_mode |= PMODE_DSMKE;
-	}
-	else
-	{
-		*pixel_mode |= PMODE_SPARK;
-	}
 	return 0;
 }
 int graphics_GBMB(GRAPHICS_FUNC_ARGS)
