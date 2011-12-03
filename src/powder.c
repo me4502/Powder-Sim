@@ -3224,7 +3224,7 @@ int create_parts(int x, int y, int rx, int ry, int c, int flags)
 	else
 		for (j=-ry; j<=ry; j++)
 			for (i=-rx; i<=rx; i++)
-                if (!pmap[j][i])
+                if (!pmap[y+j][x+i])
                     if (InCurrentBrush(i ,j ,rx ,ry))
                         if (create_part_add_props(-2, x+i, y+j, c, rx, ry)==-1)
                             f = 1;
