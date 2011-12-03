@@ -24,6 +24,22 @@ int update_THRM(UPDATE_FUNC_ARGS) {
 						parts[i].tmp = 20;
 					}
 				}
+				
+				if (((r&0xFF)==PT_LO2 || (r&0xFF)==PT_LNTG || (r&0xFF)==PT_NICE || (r&0xFF)==PT_ICEI || (r&0xFF)==PT_DRIC || (r&0xFF)==PT_FRZZ))
+				{
+					if (1>(rand()%800)) {
+						part_change_type(i,x,y,PT_LAVA);
+						parts[i].ctype = PT_BMTL;
+						parts[i].temp = 3500.0f;
+						pv[y/CELL][x/CELL] += 50.0f;
+					} else {
+						part_change_type(i,x,y,PT_LAVA);
+						parts[i].life = 400;
+						parts[i].ctype = PT_THRM;
+						parts[i].temp = 3500.0f;
+						parts[i].tmp = 20;
+					}
+				}
 			}
 	return 0;
 }

@@ -7,7 +7,8 @@
   |_|\___/ \__,_|\___/ 
 
 	- Make more shit - In Progress
-	- Finish CBTY - Working on it
+	- Finish CBTY - In Progress
+	- More Barium Reactions (check file for details) - In Progress
 	- Multi-threading - Probably never going to happen, but what the hell?
 
 </pre>
