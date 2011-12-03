@@ -7,16 +7,16 @@ int update_FOG(UPDATE_FUNC_ARGS) {
 			if (x+rx>=0 && y+ry>0 && x+rx<XRES && y+ry<YRES && (rx || ry))
 			{
 				r = pmap[y+ry][x+rx];
-				if (!r && rand()%200==1)
+				if (!r && rand()%1000==1)
                 {
                     if (parts[i].temp > 253.15)
                     {
-                        create_part(-1, rx, ry, PT_WATR);
+                        create_part(-1, x+rx, y+ry, PT_WATR);
                         kill_part(i);
                     }
                     else
                     {
-                        create_part(-1, rx, ry, PT_SNOW);
+                        create_part(-1, rx+rx, y+ry, PT_SNOW);
                         part_change_type(i,x,y,PT_RIME);
                     }
                 }
