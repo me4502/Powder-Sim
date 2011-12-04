@@ -1002,6 +1002,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 	}
 	if (t==PT_FRZW)
 		parts[i].life = 100;
+    if (t==PT_FOG)
+        parts[i].life = rand()%100+50;
     if (t==PT_GAS)
         parts[i].ctype = PT_OIL;
     if (t==PT_SMKE)
