@@ -7,7 +7,7 @@ int update_FOG(UPDATE_FUNC_ARGS) {
 			if (x+rx>=0 && y+ry>0 && x+rx<XRES && y+ry<YRES && (rx || ry))
 			{
 				r = pmap[y+ry][x+rx];
-				if (!r && rand()%1000==1)
+				if (!r && rand()%2500==0)
                 {
                     if (parts[i].temp > 253.15)
                     {
