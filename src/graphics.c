@@ -3258,7 +3258,7 @@ void flood_decorations(int x, int y, int currR, int currG, int currB, int click,
     int r = currR;
     int g = currG;
     int b = currB;
-    int col = PIXRGBA(r,g,b,255);
+    int col = PIXRGB(r,g,b);
     if (tool==DECO_DARKEN||tool==DECO_LIGHTEN||tool==DECO_INVERT)
     {
         col = vid_buf[(y)*(XRES+BARSIZE)+(x)];
@@ -3271,14 +3271,14 @@ void flood_decorations(int x, int y, int currR, int currG, int currB, int click,
         r = rand()%256;
         g = rand()%256;
         b = rand()%256;
-        col = PIXRGBA(r, g, b, 255);
+        col = PIXRGB(r, g, b);
     }
     else if (tool==DECO_INVERT)
     {
         r = 0x000000FF & (0xFF - r);
         g = 0x000000FF & (0xFF - g);
         b = 0x000000FF & (0xFF - b);
-        col = PIXRGBA(r, g, b, 255);
+        col = PIXRGB(r, g, b);
     }
     else if (tool==DECO_DARKEN)
         col = ((col&0xFF000000)|(clamp_flt(r-(r)*0.02, 0,255)<<16)|(clamp_flt(g-(g)*0.02, 0,255)<<8)|clamp_flt(b-(b)*0.02, 0,255));
