@@ -5703,7 +5703,7 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 	ui_edit box_R;
 	ui_edit box_G;
 	ui_edit box_B;
-	int col = PIXRGBA(currR, currG, currB, 255);
+	int col = PIXRGB(currR, currG, currB);
 
 	zoom_en = 0;
 
