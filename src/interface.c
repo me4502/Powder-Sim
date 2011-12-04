@@ -5703,6 +5703,7 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 	ui_edit box_R;
 	ui_edit box_G;
 	ui_edit box_B;
+	int col = PIXRGBA(currR, currG, currB, 255);
 
 	zoom_en = 0;
 
@@ -6009,6 +6010,10 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 					xor_line(mx, my, mx, ly, vid_buf);
 					xor_line(mx, ly, lx, ly, vid_buf);
 				}
+				else if (lm==3)//flood tool
+                {
+                    flood_decorations(mx,my,currR,currG,currB,b,tool);
+                }
 				else if(lb!=3)//while mouse is held down, it draws lines between previous and current positions
 				{
 					line_decorations(lx, ly, mx, my, *bsx, *bsy, currR, currG, currB, b, tool);
@@ -6054,6 +6059,11 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 					lb = 0;
 					lm = 0;
 				}
+				else if ((sdl_mod & (KMOD_SHIFT)) && (sdl_mod & (KMOD_CTRL)))
+                {
+                    lm = 3;
+                    lb = b;
+                }
 				else //normal click, draw deco
 				{
 					create_decorations(mx,my,*bsx,*bsy,currR,currG,currB,b, tool);
@@ -6070,6 +6080,8 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 			{
 				if (lm == 1)//line
 					line_decorations(lx, ly, mx, my, *bsx, *bsy, currR, currG, currB, lb, tool);
+                else if (lm==3) //flood
+                    flood_decorations(mx,my,currR,currG,currB,b,tool);
 				else//box
 					box_decorations(lx, ly, mx, my, currR, currG, currB, lb, tool);
 				lm = 0;
