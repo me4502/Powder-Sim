@@ -2669,11 +2669,9 @@ int main(int argc, char *argv[])
 		}
 		luacon_step(x/sdl_scale, y/sdl_scale,sl,sr);
 #endif
-        if (sdl_mod & (KMOD_LCTRL|KMOD_RCTRL))
-            quickoptions_menu(vid_buf, b, bq, x, y);
-        else if (menu_type)
+        if (menu_type)
         {
-
+            quickoptions_menu(vid_buf, b, bq, x, y);
             for (i=0; i<SC_TOTAL; i++)//draw all the menu sections
             {
                 draw_menu(vid_buf, i, active_menu);
@@ -2705,7 +2703,9 @@ int main(int argc, char *argv[])
                 }
             }
             menu_ui_v3(vid_buf, active_menu, &sl, &sr, &dae, b, bq, x, y); //draw the elements in the current menu
-        } else {
+        } else if (sdl_mod & (KMOD_LCTRL|KMOD_RCTRL))
+                quickoptions_menu(vid_buf, b, bq, x, y);
+        else {
             b = SDL_GetMouseState(&x, &y);
             for(i=0; i<SC_TOTAL; i++){
                 draw_menu_old(vid_buf, i, 0);

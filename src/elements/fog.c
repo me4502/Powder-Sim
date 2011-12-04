@@ -17,7 +17,7 @@ int update_FOG(UPDATE_FUNC_ARGS) {
                     else
                     {
                         create_part(-1, rx+rx, y+ry, PT_SNOW);
-                        part_change_type(i,x,y,PT_RIME);
+                        part_change_type(i,x,y,PT_SNOW);
                     }
                 }
 				if (!r)
