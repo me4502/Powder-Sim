@@ -196,6 +196,8 @@ void draw_parts(pixel *vid);
 
 void draw_walls(pixel *vid);
 
+void flood_decorations(int x, int y, int currR, int currG, int currB, int click, int tool);
+
 void create_decorations(int x, int y, int rx, int ry, int r, int g, int b, int click, int tool);
 
 void create_decoration(int x, int y, int r, int g, int b, int click, int tool);

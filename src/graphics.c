@@ -3253,6 +3253,39 @@ void create_decorations(int x, int y, int rx, int ry, int r, int g, int b, int c
 					create_decoration(x+i,y+j,r,g,b,click,tool);
 				}
 }
+void flood_decorations(int x, int y, int currR, int currG, int currB, int click, int tool)
+{
+    int r = currR;
+    int g = currG;
+    int b = currB;
+    int col = PIXRGBA(r,g,b,255);
+    if (tool==DECO_DARKEN||tool==DECO_LIGHTEN||tool==DECO_INVERT)
+    {
+        col = vid_buf[(y)*(XRES+BARSIZE)+(x)];
+        r = PIXR(col);
+        g = PIXG(col);
+        b = PIXB(col);
+    }
+    if (tool==DECO_NOISE)
+    {
+        r = rand()%256;
+        g = rand()%256;
+        b = rand()%256;
+        col = PIXRGBA(r, g, b, 255);
+    }
+    else if (tool==DECO_INVERT)
+    {
+        r = 0x000000FF & (0xFF - r);
+        g = 0x000000FF & (0xFF - g);
+        b = 0x000000FF & (0xFF - b);
+        col = PIXRGBA(r, g, b, 255);
+    }
+    else if (tool==DECO_DARKEN)
+        col = ((col&0xFF000000)|(clamp_flt(r-(r)*0.02, 0,255)<<16)|(clamp_flt(g-(g)*0.02, 0,255)<<8)|clamp_flt(b-(b)*0.02, 0,255));
+    else if (tool==DECO_LIGHTEN)
+        col = ((col&0xFF000000)|(clamp_flt(r+(255-r)*0.02+1, 0,255)<<16)|(clamp_flt(g+(255-g)*0.02+1, 0,255)<<8)|clamp_flt(b+(255-b)*0.02+1, 0,255));
+    flood_prop(x,y,offsetof(particle, dcolour),&col, 0);
+}
 void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 {
 	int rp, tr,tg,tb;
@@ -3591,6 +3624,7 @@ void render_fire(pixel *vid)
 	for (j=0; j<YRES/CELL; j++)
 		for (i=0; i<XRES/CELL; i++)
 		{
+		    if (!fire_alpha[y+CELL][x+CELL]) continue;
 			r = fire_r[j][i];
 			g = fire_g[j][i];
 			b = fire_b[j][i];
