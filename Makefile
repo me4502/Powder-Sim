@@ -2,7 +2,7 @@ SOURCES := $(wildcard src/*.c src/elements/*.c)
 HEADERS := $(wildcard includes/*.h)
 OBJS := $(patsubst src/%.c,build/obj/%.o,$(SOURCES))
 
-CFLAGS := -w -std=c99 -D_POSIX_C_SOURCE=200112L -DLUACONSOLE -DGRAVFFT -Iincludes/ -D_GNU_SOURCE
+CFLAGS := -w -std=c99 -D_POSIX_C_SOURCE=200112L -DLUACONSOLE -DGRAVFFT -Iincludes/ -D_GNU_SOURCE -DPIXALPHA
 OFLAGS := -O3 -ffast-math -ftree-vectorize -funsafe-math-optimizations
 LFLAGS_5 := -lpthread -lSDL -lfftw3f -lm -lbz2 -lX11 -llua5.1 -lrt
 LFLAGS := -lpthread -lSDL -lfftw3f -lm -lbz2 -lX11 -llua -lrt
