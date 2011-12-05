@@ -3,6 +3,7 @@
 #include <powder.h>
 #include <console.h>
 #include <luaconsole.h>
+#include <powdergraphics.h>
 
 lua_State *l;
 int step_functions[6] = {0, 0, 0, 0, 0, 0};
@@ -82,6 +83,9 @@ void luacon_open(){
 		{"screenshot",&luatpt_screenshot},
 		{"element",&luatpt_getelement},
 		{"element_func",&luatpt_element_func},
+		{"override_graphic",&luatpt_overgraph},
+		{"set_graphic",&luatpt_setgraph},
+		{"graphic_mode",&luatpt_setgraphmode},
 		{NULL,NULL}
 	};
 
@@ -1560,5 +1564,119 @@ int luatpt_screenshot(lua_State* l)
 	}
 	return luaL_error(l, "Screen buffer does not exist");
 }
+int luatpt_overgraph(lua_State* l)
+{
+	int graph = luaL_optint(l, 2, 0);
+	int t;
+	char *name;
+	if(lua_isnumber(l, 1)){
+        t = luaL_optint(l, 1, 0);
+	} else {
+		name = luaL_optstring(l, 1, "dust");
+		if (!console_parse_type(name, &t, NULL))
+			return luaL_error(l, "Unrecognised element '%s'", name);
+	}
+	graphicscache[t].isready = graph;
+}
+int luatpt_setgraph(lua_State* l)
+{
+    int t;
+    char *name;
+	int r = luaL_optint(l, 2, 256);
+	int g = luaL_optint(l, 3, 256);
+	int b = luaL_optint(l, 4, 256);
+	int a = luaL_optint(l, 5, 256);
+	int fr = luaL_optint(l, 6, 256);
+	int fg = luaL_optint(l, 7, 256);
+	int fb = luaL_optint(l, 8, 256);
+	int fa = luaL_optint(l, 9, 256);
 
+	if(lua_isnumber(l, 1)){
+        t = luaL_optint(l, 1, 0);
+	} else {
+		name = luaL_optstring(l, 1, "dust");
+		if (!console_parse_type(name, &t, NULL))
+			return luaL_error(l, "Unrecognised element '%s'", name);
+	}
+	graphicscache[t].colb = b;
+	graphicscache[t].colg = g;
+	graphicscache[t].colr = r;
+	graphicscache[t].cola = a;
+	graphicscache[t].fireb = fb;
+	graphicscache[t].fireg = fg;
+	graphicscache[t].firer = fr;
+	graphicscache[t].firea = fa;
+}
+int luatpt_setgraphmode(lua_State* l)
+{
+    int t;
+    char *name;
+
+    //PMODE
+	int pnone = luaL_optint(l, 2, 1);
+	int pflat = luaL_optint(l, 3, 1);
+	int pblob = luaL_optint(l, 4, 1);
+	int pblur = luaL_optint(l, 5, 1);
+	int pglow = luaL_optint(l, 6, 1);
+	int psprk = luaL_optint(l, 7, 1);
+	int pflre = luaL_optint(l, 8, 1);
+	int plfle = luaL_optint(l, 9, 1);
+	int padd = luaL_optint(l, 10, 1);
+	int pblen = luaL_optint(l, 11, 1);
+	int pstik = luaL_optint(l, 12, 1);
+	int pdmke = luaL_optint(l, 13, 1);
+
+	//DECO
+	int dnone = luaL_optint(l, 14, 1);
+	int dfire = luaL_optint(l, 15, 1);
+
+	//FIRE
+	int fadd = luaL_optint(l, 16, 1);
+	int fblen = luaL_optint(l, 17, 1);
+
+	if(lua_isnumber(l, 1)){
+        t = luaL_optint(l, 1, 0);
+	} else {
+		name = luaL_optstring(l, 1, "dust");
+		if (!console_parse_type(name, &t, NULL))
+			return luaL_error(l, "Unrecognised element '%s'", name);
+	}
+
+	graphicscache[t].pixel_mode = PMODE_NONE;
+	//PMODE
+    if (pnone)//2
+        graphicscache[t].pixel_mode |= PMODE_NONE;
+    if (pflat)//3
+        graphicscache[t].pixel_mode |= PMODE_FLAT;
+    if (pblob)//4
+        graphicscache[t].pixel_mode |= PMODE_BLOB;
+    if (pblur)//5
+        graphicscache[t].pixel_mode |= PMODE_BLUR;
+    if (pglow)//6
+        graphicscache[t].pixel_mode |= PMODE_GLOW;
+    if (psprk)//7
+        graphicscache[t].pixel_mode |= PMODE_SPARK;
+    if (pflre)//8
+        graphicscache[t].pixel_mode |= PMODE_FLARE;
+    if (plfle)//9
+        graphicscache[t].pixel_mode |= PMODE_LFLARE;
+    if (padd)//10
+        graphicscache[t].pixel_mode |= PMODE_ADD;
+    if (pblen)//11
+        graphicscache[t].pixel_mode |= PMODE_BLEND;
+    if (pstik)//12
+        graphicscache[t].pixel_mode |= PSPEC_STICKMAN;
+    if (pdmke)//13
+        graphicscache[t].pixel_mode |= PMODE_DSMKE;
+    //DECO
+    if (dnone)//14
+        graphicscache[t].pixel_mode |= NO_DECO;
+    if (dfire)//15
+        graphicscache[t].pixel_mode |= DECO_FIRE;
+    //FIRE
+    if (fadd)//16
+        graphicscache[t].pixel_mode |= FIRE_ADD;
+    if (fblen)//17
+        graphicscache[t].pixel_mode |= FIRE_BLEND;
+}
 #endif
