@@ -4,10 +4,12 @@
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
+#include <CaLua.h>
 #else
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
+#include <CaLua.h>
 #endif
 #include <defines.h>
 
@@ -99,4 +101,7 @@ int luatpt_getscript(lua_State* l);
 int luatpt_setwindowsize(lua_State* l);
 int luatpt_showcursor(lua_State* l);
 int luatpt_screenshot(lua_State* l);
+int luatpt_overgraph(lua_State* l);
+int luatpt_setgraph(lua_State* l);
+int luatpt_setgraphmode(lua_State* l);
 #endif
