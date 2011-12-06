@@ -4,12 +4,10 @@
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
-#include <CaLua.h>
 #else
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
-#include <CaLua.h>
 #endif
 #include <defines.h>
 
