@@ -1,4 +1,4 @@
-#ifdef MACOSX
+s#ifdef MACOSX
 #include <CoreFoundation/CFString.h>
 #endif
 #include <stdio.h>
@@ -3153,8 +3153,7 @@ void set_cmode(int cm) // sets to given view mode
 	render_modes = calloc(2, sizeof(unsigned int));
 	render_mode = RENDER_BASC;
 	render_modes[0] = RENDER_BASC;
-	
->>>>>>> upstream/master
+
 	free(display_modes);
 	display_mode = 0;
 	display_modes = calloc(1, sizeof(unsigned int));
