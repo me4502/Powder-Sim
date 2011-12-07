@@ -1,4 +1,4 @@
-s#ifdef MACOSX
+#ifdef MACOSX
 #include <CoreFoundation/CFString.h>
 #endif
 #include <stdio.h>
