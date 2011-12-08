@@ -282,7 +282,6 @@ void ui_edit_draw(pixel *vid_buf, ui_edit *ed)
 	}
 	else
 		str = ed->str;
-
 	if (ed->str[0])
 	{
 		if (ed->multiline) {
@@ -546,6 +545,7 @@ void ui_list_draw(pixel *vid_buf, ui_list *ed)
 void ui_checkbox_draw(pixel *vid_buf, ui_checkbox *ed)
 {
 	int w = 12;
+    gradient_fill(vid_buf, ed->x,ed->y,w,w,90,90,90,130,0,0,0,1);
 	if (ed->checked)
 	{
 		drawtext(vid_buf, ed->x+2, ed->y+2, "\xCF", 128, 128, 128, 255);
@@ -769,7 +769,7 @@ void ui_richtext_process(int mx, int my, int mb, int mbq, ui_richtext *ed)
 void draw_svf_ui(pixel *vid_buf, int alternate)// all the buttons at the bottom
 {
 	int c;
-    gradient_fill(vid_buf, 0,YRES+(MENUSIZE-16),XRES + MENUSIZE,MENUSIZE/2+8,255,255,255,90,0,0,0,1);
+    gradient_fill(vid_buf, 0,YRES+(MENUSIZE-16),XRES + MENUSIZE,MENUSIZE/2+8,255,0,0,255,0,0,0,1);
     //the open browser button
 	if(alternate)
 	{
