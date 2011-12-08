@@ -2544,12 +2544,12 @@ void render_parts(pixel *vid)
 				    int randx, randy, randa;
 				    if (parts[i].vx > 0.5 || parts[i].vx < -0.5)
 				    {
-				        nx -= parts[i].vx*16;
+				        rx -= parts[i].vx*16;
 				        am -= nx/CELL;
 				    }
 				    if (parts[i].vy > 0.5 || parts[i].vy < -0.5)
 				    {
-				        ny -= parts[i].vy*16;
+				        ry -= parts[i].vy*16;
 				        am -= ny/CELL;
 				    }
                     if (am<0)am = -am;
@@ -2570,7 +2570,7 @@ void render_parts(pixel *vid)
                     }
                     if (nx+randx>XRES) nx = XRES-randx;
                     if (ny+randy>YRES) ny = YRES-randy;
-                    int r = pmap[ny+randy][nx+randx];
+                    int r = pmap[ry+randy][rx+randx];
                     if (firea)
                     {
                         rc = firer;
@@ -2582,7 +2582,7 @@ void render_parts(pixel *vid)
                         bc = colb;
                     }
                     if (!r)
-                        addpixel(vid, nx+randx, ny+randy, colr/2, colg/2, colb/2, (255-am)-randa);
+                        addpixel(vid, rx+randx, ry+randy, colr/2, colg/2, colb/2, (255-am)-randa);
 				}
 				if(pixel_mode & PMODE_FLARE)
 				{
