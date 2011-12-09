@@ -8,7 +8,7 @@
 #endif
 
 #define GPUR
-#define MT
+//#define MT
 
 //VersionInfoStart
 #define SAVE_VERSION 69
