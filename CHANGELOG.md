@@ -10,9 +10,6 @@
 [Our Additions]
 
 
-* Version 1.4
-      o Noble Gasses have a more realistic colour.
-
 * Version 1.3
       o Thermite Reacts with LO2, LN2, FRZZ, NICE, DRIC & ICE.
       o Made Mettalic Hydrogen conductive.
