@@ -7,6 +7,9 @@
 #define PATH_SEP "/"
 #endif
 
+#define GPUR
+#define MT
+
 //VersionInfoStart
 #define SAVE_VERSION 69
 #define MINOR_VERSION 1
@@ -173,6 +176,8 @@ int water_equal_test;
 extern int quickoptions_tooltip_fade;
 
 int menlock;
+
+extern int numCores;
 
 extern int debug_flags;
 #define DEBUG_PERF_FRAMECOUNT 256
