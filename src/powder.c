@@ -7,6 +7,9 @@
 #ifdef LUACONSOLE
 #include <luaconsole.h>
 #endif
+#ifdef MT
+#include <pthread.h>
+#endif
 
 int gravwl_timeout = 0;
 
@@ -1501,7 +1504,12 @@ void update_particles_i(pixel *vid, int start, int inc)
         lighting_recreate=21;
 
 	if (sys_pause&&!framerender)//do nothing if paused
+    {
+        #ifdef MT
+        pthread_exit(0);
+        #endif
 		return;
+    }
 
 	if (ISGRAV==1)//crappy grav color handling, i will change this someday
 	{
@@ -2211,8 +2219,8 @@ void update_particles_i(pixel *vid, int start, int inc)
 			if (ptypes[t].update_func)
 #endif
 			{
-				if ((*(ptypes[t].update_func))(i,x,y,surround_space,nt))
-					continue;
+                if ((*(ptypes[t].update_func))(i,x,y,surround_space,nt))
+                    continue;
 			}
 #ifdef LUACONSOLE
 			if(lua_el_mode[t])
@@ -2650,6 +2658,9 @@ killed:
 movedone:
 			continue;
 		}
+		#ifdef MT
+        pthread_exit(0);
+        #endif
 }
 
 int parts_lastActiveIndex = NPART-1;
@@ -2713,8 +2724,15 @@ void update_particles(pixel *vid)//doesn't update the particles themselves, but 
 			}
 		}
 	}
-
-	update_particles_i(vid, 0, 1);
+    #ifdef MT
+        int amount = numCores;
+        if (ngrav_enable) amount--;
+        if (amount>4) amount = 4;
+        for (int p = 0;p<amount;p++)
+            pthread_create(&InterThreads,NULL,update_particles_i,(vid,0,1));
+    #else
+        update_particles_i(vid,0,1);
+	#endif
 
 	// this should probably be elsewhere
 	for (y=0; y<YRES/CELL; y++)
