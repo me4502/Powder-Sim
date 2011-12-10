@@ -1770,9 +1770,11 @@ int main(int argc, char *argv[])
 		frameidx %= 30;
 		if (!sys_pause||framerender) //only update air if not paused
 		{
+		    //pthread_t airThread;
+		    //pthread_create(&airThread,NULL,update_air,NULL);
 			update_air();
 			if(aheat_enable)
-				update_airh();
+				update_airh();//pthread_create(&airThread,NULL,update_airh,NULL);
 		}
 
 #ifdef OGLR

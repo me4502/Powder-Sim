@@ -1465,53 +1465,10 @@ void create_arc(int sx, int sy, int dx, int dy, int midpoints, int variance, int
 	free(ymid);
 }
 
-//the main function for updating particles
-void update_particles_i(pixel *vid, int start, int inc)
+void update_special_i()
 {
-	int i, j, x, y, t, nx, ny, r, surround_space, s, lt, rt, nt, nnx, nny, q, golnum, goldelete, z, neighbors, createdsomething;
-	float mv, dx, dy, ix, iy, lx, ly, nrx, nry, dp, ctemph, ctempl, gravtot;
-	int fin_x, fin_y, clear_x, clear_y, stagnant;
-	float fin_xf, fin_yf, clear_xf, clear_yf;
-	float nn, ct1, ct2, swappage;
-	float pt = R_TEMP;
-	float c_heat = 0.0f;
-	int h_count = 0;
-	int starti = (start*-1);
-	int surround[8];
-	int surround_hconduct[8];
-	int lighting_ok=1;
-	float pGravX, pGravY, pGravD;
-
-	if (sys_pause&&lighting_recreate>0)
-    {
-        for (i=0; i<=parts_lastActiveIndex; i++)
-        {
-            if (parts[i].type==PT_LIGH && parts[i].tmp2>0)
-            {
-                lighting_ok=0;
-                break;
-            }
-        }
-    }
-
-	if (lighting_ok)
-        lighting_recreate--;
-
-    if (lighting_recreate<0)
-        lighting_recreate=1;
-
-    if (lighting_recreate>21)
-        lighting_recreate=21;
-
-	if (sys_pause&&!framerender)//do nothing if paused
-    {
-        #ifdef MT
-        pthread_exit(0);
-        #endif
-		return;
-    }
-
-	if (ISGRAV==1)//crappy grav color handling, i will change this someday
+    int nx, ny, r, rt, nnx, nny, q, golnum, goldelete, z, neighbors, createdsomething;
+    if (ISGRAV==1)//crappy grav color handling, i will change this someday
 	{
 		ISGRAV = 0;
 		GRAV ++;
@@ -1759,6 +1716,56 @@ void update_particles_i(pixel *vid, int start, int inc)
 			else
 				wireless[q][1] = 0;
 	}
+	#ifdef MT
+    pthread_exit(0);
+    #endif
+}
+
+//the main function for updating particles
+void update_particles_i(pixel *vid, int start, int inc)
+{
+	int i, j, x, y, t, nx, ny, r, surround_space, s, lt, rt, nt, nnx, nny, q, golnum, goldelete, z, neighbors, createdsomething;
+	float mv, dx, dy, ix, iy, lx, ly, nrx, nry, dp, ctemph, ctempl, gravtot;
+	int fin_x, fin_y, clear_x, clear_y, stagnant;
+	float fin_xf, fin_yf, clear_xf, clear_yf;
+	float nn, ct1, ct2, swappage;
+	float pt = R_TEMP;
+	float c_heat = 0.0f;
+	int h_count = 0;
+	int starti = (start*-1);
+	int surround[8];
+	int surround_hconduct[8];
+	int lighting_ok=1;
+	float pGravX, pGravY, pGravD;
+
+	if (sys_pause&&lighting_recreate>0)
+    {
+        for (i=0; i<=parts_lastActiveIndex; i++)
+        {
+            if (parts[i].type==PT_LIGH && parts[i].tmp2>0)
+            {
+                lighting_ok=0;
+                break;
+            }
+        }
+    }
+
+	if (lighting_ok)
+        lighting_recreate--;
+
+    if (lighting_recreate<0)
+        lighting_recreate=1;
+
+    if (lighting_recreate>21)
+        lighting_recreate=21;
+
+	if (sys_pause&&!framerender)//do nothing if paused
+    {
+        #ifdef MT
+        pthread_exit(0);
+        #endif
+		return;
+    }
 	//the main particle loop function, goes over all particles.
 	for (i=0; i<=parts_lastActiveIndex; i++)
 		if (parts[i].type)
@@ -2658,9 +2665,6 @@ killed:
 movedone:
 			continue;
 		}
-		#ifdef MT
-        pthread_exit(0);
-        #endif
 }
 
 int parts_lastActiveIndex = NPART-1;
@@ -2672,7 +2676,7 @@ void update_particles(pixel *vid)//doesn't update the particles themselves, but 
 	int lastPartUnused = -1;
 #ifdef MT
 	int pt = 0, pc = 0;
-	pthread_t *InterThreads;
+	pthread_t InterThreads;
 #endif
 
 	memset(pmap, 0, sizeof(pmap));
@@ -2724,15 +2728,14 @@ void update_particles(pixel *vid)//doesn't update the particles themselves, but 
 			}
 		}
 	}
+	if (ISGRAV==1||ISLOVE==1||ISLOLZ==1||wire_placed==1||ISWIRE==1||ISGOL==1)
     #ifdef MT
-        int amount = numCores;
-        if (ngrav_enable) amount--;
-        if (amount>4) amount = 4;
-        for (int p = 0;p<amount;p++)
-            pthread_create(&InterThreads,NULL,update_particles_i,(vid,0,1));
+        pthread_create(&InterThreads,NULL,&update_special_i,NULL);
     #else
-        update_particles_i(vid,0,1);
+        update_special_i();
 	#endif
+
+    update_particles_i(vid,0,1);
 
 	// this should probably be elsewhere
 	for (y=0; y<YRES/CELL; y++)
@@ -3491,7 +3494,7 @@ inline void orbitalparts_set(int *block1, int *block2, int resblock1[], int resb
 }
 void grav_mask_r(int x, int y, char checkmap[YRES/CELL][XRES/CELL], char shape[YRES/CELL][XRES/CELL], char *shapeout)
 {
-	if(x < 0 || x >= XRES/CELL || y < 0 || y >= YRES/CELL)
+	if(x < 0 || x >= (XRES/CELL) || y < 0 || y >= (YRES/CELL))
 		return;
 	if(x == 0 || y ==0 || y == (YRES/CELL)-1 || x == (XRES/CELL)-1)
 		*shapeout = 1;
@@ -3501,9 +3504,9 @@ void grav_mask_r(int x, int y, char checkmap[YRES/CELL][XRES/CELL], char shape[Y
 		grav_mask_r(x-1, y, checkmap, shape, shapeout);
 	if(y-1 >= 0 && !checkmap[y-1][x] && bmap[y-1][x]!=WL_GRAV)
 		grav_mask_r(x, y-1, checkmap, shape, shapeout);
-	if(x+1 < XRES/CELL && !checkmap[y][x+1] && bmap[y][x+1]!=WL_GRAV)
+	if(x+1 < (XRES/CELL) && !checkmap[y][x+1] && bmap[y][x+1]!=WL_GRAV)
 		grav_mask_r(x+1, y, checkmap, shape, shapeout);
-	if(y+1 < YRES/CELL && !checkmap[y+1][x] && bmap[y+1][x]!=WL_GRAV)
+	if(y+1 < (YRES/CELL) && !checkmap[y+1][x] && bmap[y+1][x]!=WL_GRAV)
 		grav_mask_r(x, y+1, checkmap, shape, shapeout);
 	return;
 }
