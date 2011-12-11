@@ -16,6 +16,7 @@ struct menu_section
 typedef struct menu_section menu_section;
 
 #define QM_TOGGLE	1
+#define QM_THREE 2
 
 struct quick_option
 {
@@ -81,7 +82,7 @@ static quick_option quickmenu[] =
 	{"M", "Click to change menus", QM_TOGGLE, &clickmenu_enable},
 	{"F", "Fancy Graphics", QM_TOGGLE, &fancy_graphics},
 	{"L", "Edge Loop", QM_TOGGLE, &part_loop},
-	{"S", "Old Computer No-Lag", QM_TOGGLE, &fix_lag},
+	{"S", "Simulation Speed", QM_THREE, &fix_lag},
 	{NULL}
 };
 

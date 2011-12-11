@@ -188,12 +188,13 @@ int fancy_graphics = 0;
 int tpt_comp = 0;
 int part_loop = 0;
 int menu_type = 1;
-int fix_lag = 0;
+int fix_lag = 1;
 int amd = 1;
 int FPSB = 0;
 int MSIGN =-1;
 int frameidx = 0;
 int mecool = 0;
+int speedtick[2] = {0,0};
 //int CGOL = 0;
 //int GSPEED = 1;//causes my .exe to crash..
 int sound_enable = 0;
@@ -1772,19 +1773,32 @@ int main(int argc, char *argv[])
 		{
 		    //pthread_t airThread;
 		    //pthread_create(&airThread,NULL,update_air,NULL);
-		    if (!fix_lag)
+		    if (fix_lag==0)
+            {
+                if (speedtick[0]==1)
+                {
+                    update_air();
+                    if(aheat_enable)
+                        update_airh();
+                    speedtick[0]==0;
+                } else speedtick[0]=1;
+            }
+            else if (fix_lag==1)
             {
                 update_air();
                 if(aheat_enable)
-                    update_airh();//pthread_create(&airThread,NULL,update_airh,NULL);
+                    update_airh();
             }
-            else if (rand()%2)
+            else if (fix_lag==2)
             {
                 update_air();
                 if(aheat_enable)
-                    update_airh();//pthread_create(&airThread,NULL,update_airh,NULL);
-            }
+                    update_airh();
 
+                update_air();
+                if(aheat_enable)
+                    update_airh();
+            }
 		}
 
 #ifdef OGLR
