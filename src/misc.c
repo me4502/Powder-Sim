@@ -121,7 +121,7 @@ void clean_text(char *text, int vwidth)
 void save_presets(int do_update)
 {
 	char * outputdata;
-	int count, i;
+	int count, i, q = 0;
 	cJSON *root, *userobj, *versionobj, *graphicsobj;
 	FILE* f;
 
@@ -171,8 +171,7 @@ void save_presets(int do_update)
 	cJSON_AddNumberToObject(root, "scale", sdl_scale);
 	cJSON_AddItemToObject(root,"favourites",cJSON_CreateIntArray(favourites, menuitems));
 
-    int q = 0;
-
+    
 	while(quickmenu[q].icon!=NULL)
 	{
 	    cJSON_AddNumberToObject(root, quickmenu[q].name, *quickmenu[q].variable);
@@ -234,7 +233,7 @@ void load_presets(void)
 	char * prefdata = file_load("powder.pref", &prefdatasize);
 	if(prefdata)
 	{
-		cJSON *root, *userobj, *versionobj, *tmpobj, *graphicsobj, *tmparray;
+		cJSON *root, *userobj, *versionobj, *tmpobj, *graphicsobj, *tmparray, *tmpobj2;
 		root = cJSON_Parse(prefdata);
 
 		//Read user data
@@ -316,11 +315,10 @@ void load_presets(void)
 		//TODO: Translate old cmode value into new *_mode values
 		if(tmpobj = cJSON_GetObjectItem(root, "scale")) sdl_scale = tmpobj->valueint;
 
-		cJSON *tmpobj2;
 		if (tmpobj = cJSON_GetObjectItem(root, "favourites"))
 		{
 		    menuitems = 0;
-		    for(int i = 0; i < cJSON_GetArrayItem(tmpobj, i);i++)
+		    for(i = 0; i < cJSON_GetArrayItem(tmpobj, i);i++)
 		    {
 		        //if (tmpobj2->valueint!=NULL)
                     //printf("%i\n", tmpobj2->valueint);
@@ -328,7 +326,7 @@ void load_presets(void)
 		    }
 		}
 
-        int i = 0;
+        i = 0;
 
         while(quickmenu[i].icon!=NULL)
         {
