@@ -318,15 +318,13 @@ void load_presets(void)
 		//TODO: Translate old cmode value into new *_mode values
 		if(tmpobj = cJSON_GetObjectItem(root, "scale")) sdl_scale = tmpobj->valueint;
 
-		if (tmpobj = cJSON_GetObjectItem(root, "favourites"))
+		if(tmpobj = cJSON_GetObjectItem(root, "favourites"))
 		{
-		    menuitems = 0;
-		    for(i = 0; i < cJSON_GetArrayItem(tmpobj, i);i++)
-		    {
-		        //if (tmpobj2->valueint!=NULL)
-                    //printf("%i\n", tmpobj2->valueint);
-           //     favourites[menuitems++] = tmpobj2->valueint;
-		    }
+			menuitems = cJSON_GetArraySize(tmpobj);
+			for(i = 0; i < menuitems; i++)
+			{
+				favourites[i] = cJSON_GetArrayItem(tmpobj, i)->valueint;
+			}
 		}
 
         i = 0;
