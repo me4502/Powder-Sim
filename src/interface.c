@@ -2944,8 +2944,8 @@ char * quickoptions_tooltip;
 int quickoptions_tooltip_y = 0;
 void quickoptions_menu(pixel *vid_buf, int b, int bq, int x, int y)
 {
-    quickoptions_shown = 1;
 	int i = 0;
+    quickoptions_shown = 1;
 	x /= sdl_scale;
 	y /= sdl_scale;
 	if(quickoptions_tooltip_fade && quickoptions_tooltip)
