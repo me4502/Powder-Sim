@@ -3056,8 +3056,11 @@ int main(int argc, char *argv[])
 		if (sdl_key=='z' && zoom_en==2 && sys_shortcuts==1)
 			zoom_en = 1;
 
-        drawrect(vid_buf,XRES+1,1,14,14,255,255,255,255);
-        drawtext(vid_buf, XRES+4, 4, "\xCF", 255, 255, 255, 255);
+        if (menu_type || !menu_type && (sdl_mod & (KMOD_LCTRL|KMOD_RCTRL)))
+        {
+            drawrect(vid_buf,XRES+1,1,14,14,255,255,255,255);
+            drawtext(vid_buf, XRES+4, 4, "\xCF", 255, 255, 255, 255);
+        }
         if (!quickoptions_shown && menu_type)
         {
             quickoptions_tooltip_fade_invert = 255;
@@ -3072,7 +3075,7 @@ int main(int argc, char *argv[])
         } else if (menu_type) {
             if (x > XRES+1 && x < XRES+15)
             {
-                if (y > 1 && y <(14*8)+11)
+                if (y > 1 && y <(14*9))
                     quickoptions_menu(vid_buf,b,bq,x,y);
                 else quickoptions_shown = 0;
             }
