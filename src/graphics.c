@@ -3382,7 +3382,7 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
             tr = 0x000000FF & (0xFF - tr);
             tg = 0x000000FF & (0xFF - tg);
             tb = 0x000000FF & (0xFF - tb);
-            parts[rp>>8].dcolour = PIXRGB(tr,tg,tb);
+            parts[rp>>8].dcolour = ((255)<<24|(tr)<<16|(tg)<<8|(tb));
 		    return;
 		}
 		tr = (parts[rp>>8].dcolour>>16)&0xFF;
@@ -3391,14 +3391,14 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 		tr = 0x000000FF & (0xFF - tr);
         tg = 0x000000FF & (0xFF - tg);
         tb = 0x000000FF & (0xFF - tb);
-		parts[rp>>8].dcolour = PIXRGB(tr,tg,tb);
+		parts[rp>>8].dcolour = ((parts[rp>>8].dcolour&0xFF000000)|(tr)<<16|(tg)<<8|(tb));
 	}
     else if (tool == DECO_NOISE)
 	{
 		tr = rand()%256;
 		tg = rand()%256;
 		tb = rand()%256;
-		parts[rp>>8].dcolour = PIXRGB(tr,tg,tb);
+		parts[rp>>8].dcolour = ((255)<<24|(tr)<<16|(tg)<<8|(tb));
 	}
 }
 void line_decorations(int x1, int y1, int x2, int y2, int rx, int ry, int r, int g, int b, int click, int tool)
