@@ -175,6 +175,7 @@ extern int fix_lag;
 int limitFPS;
 int water_equal_test;
 extern int quickoptions_tooltip_fade;
+extern int quickoptions_shown;
 
 int menlock;
 
