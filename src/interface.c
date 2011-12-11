@@ -2403,10 +2403,14 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
                 break;
             if (!favourites[n])
                 continue;
-            if (n < UI_WALLSTART)
+            if (favourites[n] < UI_WALLSTART)
                 x -= draw_tool_xy(vid_buf, x-xoff, y, favourites[n], ptypes[favourites[n]].pcolors)+5;
+			else if (favourites[n]%256 == PT_LIFE)
+                x -= draw_tool_xy(vid_buf, x-xoff, y, favourites[n], gmenu[favourites[n]/256].colour)+5;
+			else if (favourites[n]%256 == PT_NBLE)
+                x -= draw_tool_xy(vid_buf, x-xoff, y, favourites[n], nmenu[favourites[n]/256].colour)+5;
             else
-                x -= draw_tool_xy(vid_buf, x-xoff, y, favourites[n+UI_WALLSTART], wtypes[favourites[n]].colour)+5;
+                x -= draw_tool_xy(vid_buf, x-xoff, y, favourites[n], wtypes[favourites[n]-UI_WALLSTART].colour)+5;
             if (!bq && mx>=x+32-xoff && mx<x+58-xoff && my>=y && my< y+15)
             {
                 drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 255, 55, 55, 255);
@@ -2672,8 +2676,12 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     }
     else if (i==SC_FAVOURITES)
     {
-        if (h < UI_WALLSTART)
+		if (h < UI_WALLSTART)
             drawtext(vid_buf, XRES-textwidth((char *)ptypes[h].descs)-BARSIZE, sy-10, (char *)ptypes[h].descs, 255, 255, 255, 255);
+		else if (h%256 == PT_LIFE)
+            drawtext(vid_buf, XRES-textwidth((char *)gmenu[(h>>8)&0xFF].description)-BARSIZE, sy-10, (char *)gmenu[(h>>8)&0xFF].description, 255, 255, 255, 255);
+		else if (h%256 == PT_NBLE)
+            drawtext(vid_buf, XRES-textwidth((char *)nmenu[(h>>8)&0xFF].description)-BARSIZE, sy-10, (char *)nmenu[(h>>8)&0xFF].description, 255, 255, 255, 255);
         else
             drawtext(vid_buf, XRES-textwidth((char *)wtypes[h-UI_WALLSTART].descs)-BARSIZE, sy-10, (char *)wtypes[h-UI_WALLSTART].descs, 255, 255, 255, 255);
     }
@@ -2742,7 +2750,7 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
             }
             favourites[maxint] = 0;
             mecool = 30;
-            menuitems = maxint+1;
+            menuitems--;
             save_presets(0);
         }
         else
