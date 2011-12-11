@@ -1519,7 +1519,7 @@ int main(int argc, char *argv[])
 		for(i=0; i<30; i++){
 			memset(vid_buf, 0, (XRES+BARSIZE)*YRES*PIXELSIZE);
 			draw_walls(vid_buf);
-			draw_back(vid_buf);
+			draw_back(vid_buf,0);
 			update_particles(vid_buf);
 			render_parts(vid_buf);
 			render_fire(vid_buf);
@@ -1911,12 +1911,7 @@ int main(int argc, char *argv[])
 				debug_perf_time = ts.tv_nsec;
 			#endif
 		}
-		#ifdef MT
-		pthread_t thread;
-        pthread_create(&thread,NULL,draw_back,(vid_buf,0));
-		#else
-        draw_back(vid_buf, 0);
-        #endif
+        draw_back(part_vbuf, 0);
 		render_parts(part_vbuf); //draw particles
 		draw_other(part_vbuf);
 

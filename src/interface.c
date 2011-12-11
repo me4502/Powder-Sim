@@ -5751,7 +5751,6 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 	ui_edit box_R;
 	ui_edit box_G;
 	ui_edit box_B;
-	int col = PIXRGB(currR, currG, currB);
 
 	zoom_en = 0;
 
@@ -5798,8 +5797,9 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 		my /= sdl_scale;
 
 		memcpy(vid_buf,old_buf,(XRES+BARSIZE)*(YRES+MENUSIZE)*PIXELSIZE);
-		draw_back(vid_buf, 1);
-		render_parts(vid_buf);
+        draw_back(vid_buf, 1);
+        render_parts(vid_buf);
+
 		ui_edit_process(mx, my, b, &box_R);
 		ui_edit_process(mx, my, b, &box_G);
 		ui_edit_process(mx, my, b, &box_B);
