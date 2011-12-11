@@ -188,6 +188,7 @@ int fancy_graphics = 0;
 int tpt_comp = 0;
 int part_loop = 0;
 int menu_type = 1;
+int fix_lag = 0;
 int amd = 1;
 int FPSB = 0;
 int MSIGN =-1;
@@ -1769,9 +1770,19 @@ int main(int argc, char *argv[])
 		{
 		    //pthread_t airThread;
 		    //pthread_create(&airThread,NULL,update_air,NULL);
-			update_air();
-			if(aheat_enable)
-				update_airh();//pthread_create(&airThread,NULL,update_airh,NULL);
+		    if (!fix_lag)
+            {
+                update_air();
+                if(aheat_enable)
+                    update_airh();//pthread_create(&airThread,NULL,update_airh,NULL);
+            }
+            else if (rand()%2)
+            {
+                update_air();
+                if(aheat_enable)
+                    update_airh();//pthread_create(&airThread,NULL,update_airh,NULL);
+            }
+
 		}
 
 #ifdef OGLR
@@ -1884,7 +1895,12 @@ int main(int argc, char *argv[])
 				debug_perf_time = ts.tv_nsec;
 			#endif
 		}
+		#ifdef MT
+		pthread_t thread;
+        pthread_create(&thread,NULL,draw_back,(vid_buf,0));
+		#else
         draw_back(vid_buf, 0);
+        #endif
 		render_parts(part_vbuf); //draw particles
 		draw_other(part_vbuf);
 
