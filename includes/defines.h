@@ -172,6 +172,7 @@ extern int tpt_comp;
 extern int part_loop;
 extern int menu_type;
 extern int fix_lag;
+extern int speedtick[2];
 int limitFPS;
 int water_equal_test;
 extern int quickoptions_tooltip_fade;

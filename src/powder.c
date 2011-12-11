@@ -2732,16 +2732,28 @@ void update_particles(pixel *vid)//doesn't update the particles themselves, but 
 			}
 		}
 	}
-	if (!fix_lag) update_special_i();
-	else
-        if (rand()%2)
+    if (fix_lag==0)
+    {
+        if (speedtick[1]==1)
+        {
             update_special_i();
-
-    if (!fix_lag) update_particles_i(vid,0,1);
-    else
-        if (rand()%2)
             update_particles_i(vid,0,1);
+            speedtick[1] = 0;
+        } else speedtick[1] = 1;
+    }
+	else if (fix_lag==1)
+    {
+        update_special_i();
+        update_particles_i(vid,0,1);
+    }
+    else if (fix_lag==2)
+    {
+        update_special_i();
+        update_particles_i(vid,0,1);
 
+        update_special_i();
+        update_particles_i(vid,0,1);
+    }
 
 	// this should probably be elsewhere
 	for (y=0; y<YRES/CELL; y++)
