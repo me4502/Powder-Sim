@@ -379,7 +379,7 @@ int graphics_LCRY(GRAPHICS_FUNC_ARGS)
 			*colg /= 10-cpart->tmp2;
 			*colb /= 10-cpart->tmp2;
 		}
-		
+
 	}
 	else
 	{
@@ -387,10 +387,10 @@ int graphics_LCRY(GRAPHICS_FUNC_ARGS)
 	}
 	*pixel_mode |= NO_DECO;
 	return 0;
-					
+
 	/*int lifemod = ((cpart->tmp2>10?10:cpart->tmp2)*10);
-	*colr += lifemod; 
-	*colg += lifemod; 
+	*colr += lifemod;
+	*colg += lifemod;
 	*colb += lifemod;
 	if(decorations_enable && cpart->dcolour && cpart->dcolour&0xFF000000)
 	{
@@ -585,30 +585,14 @@ int graphics_COAL(GRAPHICS_FUNC_ARGS) //Both COAL and Broken Coal
 }
 int graphics_NBLE(GRAPHICS_FUNC_ARGS)
 {
-    pixel pc;
-    pc = nmenu[cpart->ctype].colour;
-	*colr = PIXR(pc);
-	*colg = PIXG(pc);
-	*colb = PIXB(pc);
-	*cola = 255;
-	*firea = 160;
-	*firer = *colr;
-	*fireb = *colb;
-	*fireg = *colg;
-	if (fancy_graphics)
-        *pixel_mode = PMODE_FLARE|PMODE_FLAT;
-    else
-    {
-        *pixel_mode &= ~PMODE;
-		*pixel_mode |= FIRE_BLEND;
-		*firer = *colr/2;
-		*fireg = *colg/2;
-		*fireb = *colb/2;
-		*firea = 125;
-		*pixel_mode |= DECO_FIRE;
-    }
+	*colr = 230;
+	*colg = 230;
+    *colb = 230;
+	*cola = 60;
 
-	return 0;
+    *pixel_mode = PMODE_ADD;
+
+	return 1;
 }
 int graphics_WSTE(GRAPHICS_FUNC_ARGS)
 {
