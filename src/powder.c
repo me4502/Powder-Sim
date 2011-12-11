@@ -982,6 +982,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].tmp = grule[v+1][9] - 1;
 		parts[i].ctype = v;
 	}
+	if (t==PT_ACEL||t==PT_DCEL)
+        parts[i].tmp2 = 2;
 	if (t==PT_DEUT)
 		parts[i].life = 10;
 	if (t==PT_MERC)
