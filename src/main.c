@@ -198,6 +198,8 @@ int mecool = 0;
 //int GSPEED = 1;//causes my .exe to crash..
 int sound_enable = 0;
 
+int quickoptions_shown = 0;
+
 int debug_flags = 0;
 int debug_perf_istart = 1;
 int debug_perf_iend = 0;
@@ -2686,38 +2688,40 @@ int main(int argc, char *argv[])
 #endif
         if (menu_type)
         {
-            quickoptions_menu(vid_buf, b, bq, x, y);
-            for (i=0; i<SC_TOTAL; i++)//draw all the menu sections
+            if (!quickoptions_shown)
             {
-                draw_menu(vid_buf, i, active_menu);
-            }
-
-            for (i=0; i<SC_TOTAL; i++)//check mouse position to see if it is on a menu section
-            {
-                if (clickmenu_enable)
+                for (i=0; i<SC_TOTAL; i++)//draw all the menu sections
                 {
-                    if (b==1&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                    draw_menu(vid_buf, i, active_menu);
+                }
+
+                for (i=0; i<SC_TOTAL; i++)//check mouse position to see if it is on a menu section
+                {
+                    if (clickmenu_enable)
                     {
-                        active_menu = i;
-                    }
-                    else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
-                    {
-                        if (i==active_menu)
-                            active_menu = -1;
-                    }
-                } else {
-                    if (!b&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
-                    {
-                        active_menu = i;
-                    }
-                    else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
-                    {
-                        if (i==active_menu)
-                            active_menu = -1;
+                        if (b==1&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                        {
+                            active_menu = i;
+                        }
+                        else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                        {
+                            if (i==active_menu)
+                                active_menu = -1;
+                        }
+                    } else {
+                        if (!b&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                        {
+                            active_menu = i;
+                        }
+                        else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                        {
+                            if (i==active_menu)
+                                active_menu = -1;
+                        }
                     }
                 }
+                menu_ui_v3(vid_buf, active_menu, &sl, &sr, &dae, b, bq, x, y); //draw the elements in the current menu
             }
-            menu_ui_v3(vid_buf, active_menu, &sl, &sr, &dae, b, bq, x, y); //draw the elements in the current menu
         } else if (sdl_mod & (KMOD_LCTRL|KMOD_RCTRL))
                 quickoptions_menu(vid_buf, b, bq, x, y);
         else {
@@ -3042,6 +3046,29 @@ int main(int argc, char *argv[])
 
 		if (sdl_key=='z' && zoom_en==2 && sys_shortcuts==1)
 			zoom_en = 1;
+
+        if (!quickoptions_shown && menu_type)
+        {
+            quickoptions_tooltip_fade_invert = 255;
+            quickoptions_tooltip_fade = 0;
+            if (x > XRES+1 && x < XRES+15)
+            {
+                if (y > 1 && y <15)
+                    quickoptions_menu(vid_buf,b,bq,x,y);
+                else quickoptions_shown = 0;
+            }
+            else quickoptions_shown = 0;
+            drawrect(vid_buf,XRES+1,1,14,14,255,255,255,255);
+            drawtext(vid_buf, XRES+4, 4, "\xCF", 255, 255, 255, 255);
+        } else if (menu_type) {
+            if (x > XRES+1 && x < XRES+15)
+            {
+                if (y > 1 && y <(14*7)+11)
+                    quickoptions_menu(vid_buf,b,bq,x,y);
+                else quickoptions_shown = 0;
+            }
+            else quickoptions_shown = 0;
+        }
 
 		if (load_mode)
 		{
