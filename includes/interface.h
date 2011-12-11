@@ -81,6 +81,7 @@ static quick_option quickmenu[] =
 	{"M", "Click to change menus", QM_TOGGLE, &clickmenu_enable},
 	{"F", "Fancy Graphics", QM_TOGGLE, &fancy_graphics},
 	{"L", "Edge Loop", QM_TOGGLE, &part_loop},
+	{"S", "Old Computer No-Lag", QM_TOGGLE, &fix_lag},
 	{NULL}
 };
 
