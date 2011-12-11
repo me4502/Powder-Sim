@@ -2944,6 +2944,7 @@ char * quickoptions_tooltip;
 int quickoptions_tooltip_y = 0;
 void quickoptions_menu(pixel *vid_buf, int b, int bq, int x, int y)
 {
+    quickoptions_shown = 1;
 	int i = 0;
 	x /= sdl_scale;
 	y /= sdl_scale;
@@ -2954,28 +2955,69 @@ void quickoptions_menu(pixel *vid_buf, int b, int bq, int x, int y)
 	}
 	while(quickmenu[i].icon!=NULL)
 	{
+	    int ii = i+1;
 		if(quickmenu[i].type == QM_TOGGLE)
 		{
-			drawrect(vid_buf, (XRES+BARSIZE)-16, (i*16)+1, 14, 14, 255, 255, 255, 255);
+			drawrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 255, 255, 255, 255);
 			if(*(quickmenu[i].variable))
 			{
-				fillrect(vid_buf, (XRES+BARSIZE)-16, (i*16)+1, 14, 14, 255, 255, 255, 255);
-				drawtext(vid_buf, (XRES+BARSIZE)-11, (i*16)+5, quickmenu[i].icon, 0, 0, 0, 255);
+				fillrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 255, 255, 255, 255);
+				drawtext(vid_buf, (XRES+BARSIZE)-11, (ii*16)+5, quickmenu[i].icon, 0, 0, 0, 255);
 			}
 			else
 			{
-				fillrect(vid_buf, (XRES+BARSIZE)-16, (i*16)+1, 14, 14, 0, 0, 0, 255);
-				drawtext(vid_buf, (XRES+BARSIZE)-11, (i*16)+5, quickmenu[i].icon, 255, 255, 255, 255);
+				fillrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 0, 0, 0, 255);
+				drawtext(vid_buf, (XRES+BARSIZE)-11, (ii*16)+5, quickmenu[i].icon, 255, 255, 255, 255);
 			}
-			if(x >= (XRES+BARSIZE)-16 && x <= (XRES+BARSIZE)-2 && y >= (i*16)+1 && y <= (i*16)+15)
+			if(x >= (XRES+BARSIZE)-16 && x <= (XRES+BARSIZE)-2 && y >= (ii*16)+1 && y <= (ii*16)+15)
 			{
 				quickoptions_tooltip_fade+=2;
 				quickoptions_tooltip = quickmenu[i].name;
-				quickoptions_tooltip_y = (i*16)+5;
+				quickoptions_tooltip_y = (ii*16)+5;
 				if(b && !bq)
 				{
 					*(quickmenu[i].variable) = !(*(quickmenu[i].variable));
 					save_presets(0);
+				}
+			}
+		}
+		if(quickmenu[i].type == QM_THREE)
+		{
+			drawrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 255, 255, 255, 255);
+			if(*(quickmenu[i].variable)==2)
+			{
+				fillrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 255, 255, 255, 255);
+				drawtext(vid_buf, (XRES+BARSIZE)-11, (ii*16)+5, quickmenu[i].icon, 0, 0, 0, 255);
+			}
+			else if (*(quickmenu[i].variable)==1)
+			{
+				fillrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 123, 123, 123, 255);
+				drawtext(vid_buf, (XRES+BARSIZE)-11, (ii*16)+5, quickmenu[i].icon, 0, 0, 0, 255);
+			}
+			else if (*(quickmenu[i].variable)==0)
+			{
+				fillrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 0, 0, 0, 255);
+				drawtext(vid_buf, (XRES+BARSIZE)-11, (ii*16)+5, quickmenu[i].icon, 255, 255, 255, 255);
+			}
+			if(x >= (XRES+BARSIZE)-16 && x <= (XRES+BARSIZE)-2 && y >= (ii*16)+1 && y <= (ii*16)+15)
+			{
+				quickoptions_tooltip_fade+=2;
+				quickoptions_tooltip = quickmenu[i].name;
+				quickoptions_tooltip_y = (ii*16)+5;
+				if(b && !bq)
+				{
+				    if (b==4)
+                    {
+                        if (*(quickmenu[i].variable)<=0) *(quickmenu[i].variable) = 2;
+                        else *(quickmenu[i].variable) -= 1;
+                        save_presets(0);
+                    }
+                    else
+                    {
+                        if (*(quickmenu[i].variable)>=2) *(quickmenu[i].variable) = 0;
+                        else *(quickmenu[i].variable) += 1;
+                        save_presets(0);
+                    }
 				}
 			}
 		}
@@ -2985,6 +3027,7 @@ void quickoptions_menu(pixel *vid_buf, int b, int bq, int x, int y)
 		quickoptions_tooltip_fade = 12;
 	if(quickoptions_tooltip_fade < 0)
 		quickoptions_tooltip_fade = 0;
+    quickoptions_shown = 1;
 }
 
 int sdl_poll(void)
@@ -5709,7 +5752,6 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 	ui_edit box_R;
 	ui_edit box_G;
 	ui_edit box_B;
-	int col = PIXRGB(currR, currG, currB);
 
 	zoom_en = 0;
 
@@ -5756,8 +5798,9 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 		my /= sdl_scale;
 
 		memcpy(vid_buf,old_buf,(XRES+BARSIZE)*(YRES+MENUSIZE)*PIXELSIZE);
-		draw_back(vid_buf, 1);
-		render_parts(vid_buf);
+        draw_back(vid_buf, 1);
+        render_parts(vid_buf);
+
 		ui_edit_process(mx, my, b, &box_R);
 		ui_edit_process(mx, my, b, &box_G);
 		ui_edit_process(mx, my, b, &box_B);

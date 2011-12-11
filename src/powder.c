@@ -29,7 +29,6 @@ particle *cb_parts;
 int gravityMode = 0; // starts enabled in "vertical" mode...
 int airMode = 0;
 
-
 unsigned char bmap[YRES/CELL][XRES/CELL];
 unsigned char emap[YRES/CELL][XRES/CELL];
 
@@ -435,8 +434,11 @@ int do_move(int i, int x, int y, float nxf, float nyf)
 			else if ((photons[y][x]>>8)==i) photons[y][x] = 0;
 			if (nx<CELL || nx>=XRES-CELL || ny<CELL || ny>=YRES-CELL)//kill_part if particle is out of bounds
 			{
-				kill_part(i);
-				return -1;
+			    if (!(part_loop))
+                {
+                    kill_part(i);
+                    return -1;
+                }
 			}
 			if (t==PT_PHOT||t==PT_NEUT||t==PT_ELEC)
 				photons[ny][nx] = t|(i<<8);
@@ -979,6 +981,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].tmp = grule[v+1][9] - 1;
 		parts[i].ctype = v;
 	}
+	if (t==PT_ACEL||t==PT_DCEL)
+        parts[i].tmp2 = 2;
 	if (t==PT_DEUT)
 		parts[i].life = 10;
 	if (t==PT_MERC)
@@ -1126,7 +1130,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		}
 		return -1;
 	}
-	if (t==PT_BIZR||t==PT_BIZRG)
+	if (t==PT_BIZR||t==PT_BIZRG||t==PT_BIZRS)
 		parts[i].ctype = 0x47FFFF;
 	//and finally set the pmap/photon maps to the newly created particle
 	if (t==PT_PHOT||t==PT_NEUT||t==PT_ELEC)
@@ -1467,7 +1471,34 @@ void create_arc(int sx, int sy, int dx, int dy, int midpoints, int variance, int
 
 void update_special_i()
 {
-    int nx, ny, r, rt, nnx, nny, q, golnum, goldelete, z, neighbors, createdsomething;
+    int i, nx, ny, r, rt, nnx, nny, q, golnum, goldelete, z, neighbors, createdsomething, lighting_ok=1;
+
+    if (sys_pause&&lighting_recreate>0)
+    {
+        for (i=0; i<=parts_lastActiveIndex; i++)
+        {
+            if (parts[i].type==PT_LIGH && parts[i].tmp2>0)
+            {
+                lighting_ok=0;
+                break;
+            }
+        }
+    }
+
+	if (lighting_ok)
+        lighting_recreate--;
+
+    if (lighting_recreate<0)
+        lighting_recreate=1;
+
+    if (lighting_recreate>21)
+        lighting_recreate=21;
+
+    if (ISGRAV!=1&&ISLOVE!=1&&ISLOLZ!=1&&wire_placed!=1&&ISWIRE!=1&&ISGOL!=1)
+    {
+        return;
+    }
+
     if (ISGRAV==1)//crappy grav color handling, i will change this someday
 	{
 		ISGRAV = 0;
@@ -1716,9 +1747,6 @@ void update_special_i()
 			else
 				wireless[q][1] = 0;
 	}
-	#ifdef MT
-    pthread_exit(0);
-    #endif
 }
 
 //the main function for updating particles
@@ -1738,32 +1766,8 @@ void update_particles_i(pixel *vid, int start, int inc)
 	int lighting_ok=1;
 	float pGravX, pGravY, pGravD;
 
-	if (sys_pause&&lighting_recreate>0)
-    {
-        for (i=0; i<=parts_lastActiveIndex; i++)
-        {
-            if (parts[i].type==PT_LIGH && parts[i].tmp2>0)
-            {
-                lighting_ok=0;
-                break;
-            }
-        }
-    }
-
-	if (lighting_ok)
-        lighting_recreate--;
-
-    if (lighting_recreate<0)
-        lighting_recreate=1;
-
-    if (lighting_recreate>21)
-        lighting_recreate=21;
-
 	if (sys_pause&&!framerender)//do nothing if paused
     {
-        #ifdef MT
-        pthread_exit(0);
-        #endif
 		return;
     }
 	//the main particle loop function, goes over all particles.
@@ -1797,32 +1801,6 @@ void update_particles_i(pixel *vid, int start, int inc)
 				kill_part(i);
 				continue;
 			}
-			if (part_loop && parts[i].type!=PT_LIFE)
-            {
-                int moved = 0;
-                if (parts[i].x<CELL*2 && parts[i].vx < 0)
-                {
-                    parts[i].x = XRES - CELL;
-                    moved = 1;
-                }
-                else if (parts[i].x>=XRES-CELL*2  && parts[i].vx > 0)
-                {
-                    parts[i].x = CELL;
-                    moved = 1;
-                }
-                if (parts[i].y<=CELL*2 && parts[i].vy < 0)
-                {
-                    parts[i].y = YRES - CELL;
-                    moved = 1;
-                }
-                else if (parts[i].y>=YRES-CELL*2 && parts[i].vy > 0)
-                {
-                    parts[i].y = CELL;
-                    moved = 1;
-                }
-                if(moved==1)
-                    continue;
-            }
 
 			x = (int)(parts[i].x+0.5f);
 			y = (int)(parts[i].y+0.5f);
@@ -2662,6 +2640,34 @@ killed:
 					}
 				}
 			}
+            if (part_loop && t!=PT_LIFE)
+            {
+                int moved = 0;
+                if (parts[i].x<CELL*2 && parts[i].vx < 0)
+                {
+                    parts[i].x = XRES - CELL;
+                    moved = 1;
+                }
+                else if (parts[i].x>=XRES-CELL*2  && parts[i].vx > 0)
+                {
+                    parts[i].x = CELL;
+                    moved = 1;
+                }
+                if (parts[i].y<=CELL*2 && parts[i].vy < 0)
+                {
+                    parts[i].y = YRES - CELL;
+                    moved = 1;
+                }
+                else if (parts[i].y>=YRES-CELL*2 && parts[i].vy > 0)
+                {
+                    parts[i].y = CELL;
+                    moved = 1;
+                }
+                if(moved==1)
+                {
+                    goto movedone;
+                }
+            }
 movedone:
 			continue;
 		}
@@ -2728,14 +2734,28 @@ void update_particles(pixel *vid)//doesn't update the particles themselves, but 
 			}
 		}
 	}
-	if (ISGRAV==1||ISLOVE==1||ISLOLZ==1||wire_placed==1||ISWIRE==1||ISGOL==1)
-    #ifdef MT
-        pthread_create(&InterThreads,NULL,&update_special_i,NULL);
-    #else
+    if (fix_lag==0)
+    {
+        if (speedtick[1]==1)
+        {
+            update_special_i();
+            update_particles_i(vid,0,1);
+            speedtick[1] = 0;
+        } else speedtick[1] = 1;
+    }
+	else if (fix_lag==1)
+    {
         update_special_i();
-	#endif
+        update_particles_i(vid,0,1);
+    }
+    else if (fix_lag==2)
+    {
+        update_special_i();
+        update_particles_i(vid,0,1);
 
-    update_particles_i(vid,0,1);
+        update_special_i();
+        update_particles_i(vid,0,1);
+    }
 
 	// this should probably be elsewhere
 	for (y=0; y<YRES/CELL; y++)

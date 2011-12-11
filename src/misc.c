@@ -177,6 +177,9 @@ void save_presets(int do_update)
 	    cJSON_AddNumberToObject(root, quickmenu[q].name, *quickmenu[q].variable);
 		q++;
 	}
+
+	cJSON_AddNumberToObject(root,"Menu Type", menu_type);
+
 	outputdata = cJSON_Print(root);
 	cJSON_Delete(root);
 
@@ -334,6 +337,8 @@ void load_presets(void)
                 if(tmpobj = cJSON_GetObjectItem(root, quickmenu[i].name)) *quickmenu[i].variable = tmpobj->valueint;
             i++;
         }
+
+        if(tmpobj = cJSON_GetObjectItem(root, "Menu Type")) menu_type = tmpobj->valueint;
 
 		cJSON_Delete(root);
 		free(prefdata);
