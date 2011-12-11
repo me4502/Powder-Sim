@@ -2127,9 +2127,9 @@ void menu_ui(pixel *vid_buf, int i, int *sl, int *sr)
 		}
 		else if(i==SC_LIFE)
         {
-            msections[i].itemcount = NGOLALT;
-            int xoff = 0;
+			int xoff = 0;
             int n2;
+            msections[i].itemcount = NGOLALT;
             for (n2 = 0; n2<NGOLALT; n2++)
             {
                 n = PT_LIFE | (n2<<8);
@@ -2156,9 +2156,9 @@ void menu_ui(pixel *vid_buf, int i, int *sl, int *sr)
         }
         else if(i==SC_NBLE)
         {
-            msections[i].itemcount = NNBLALT;
-            int xoff = 0;
+			int xoff = 0;
             int n2;
+            msections[i].itemcount = NNBLALT;
             for (n2 = 0; n2<NNBLALT; n2++)
             {
                 n = PT_NBLE | (n2<<8);
@@ -2776,12 +2776,12 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
 int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int bq, int mx, int my, int *tool)
 {
 	int h,x,y,n=0,height,width,sy,rows=0,xoff=0,fwidth,a,c;
+	int ir,ig,ib,tr,tg,tb;
 	fwidth = colorsections[i].itemcount*31;
 	h = -1;
 	x = XRES-BARSIZE-18;
 	y = YRES+5;
 	sy = y;
-	int ir,ig,ib,tr,tg,tb;
 	tr = (int) *cr;
 	tg = (int) *cg;
 	tb = (int) *cb;
