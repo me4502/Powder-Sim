@@ -1801,32 +1801,6 @@ void update_particles_i(pixel *vid, int start, int inc)
 				kill_part(i);
 				continue;
 			}
-			if (part_loop && t!=PT_LIFE)
-            {
-                int moved = 0;
-                if (parts[i].x<CELL*2 && parts[i].vx < 0)
-                {
-                    parts[i].x = XRES - CELL;
-                    moved = 1;
-                }
-                else if (parts[i].x>=XRES-CELL*2  && parts[i].vx > 0)
-                {
-                    parts[i].x = CELL;
-                    moved = 1;
-                }
-                if (parts[i].y<=CELL*2 && parts[i].vy < 0)
-                {
-                    parts[i].y = YRES - CELL;
-                    moved = 1;
-                }
-                else if (parts[i].y>=YRES-CELL*2 && parts[i].vy > 0)
-                {
-                    parts[i].y = CELL;
-                    moved = 1;
-                }
-                if(moved==1)
-                    continue;
-            }
 
 			x = (int)(parts[i].x+0.5f);
 			y = (int)(parts[i].y+0.5f);
@@ -2666,6 +2640,34 @@ killed:
 					}
 				}
 			}
+            if (part_loop && t!=PT_LIFE)
+            {
+                int moved = 0;
+                if (parts[i].x<CELL*2 && parts[i].vx < 0)
+                {
+                    parts[i].x = XRES - CELL;
+                    moved = 1;
+                }
+                else if (parts[i].x>=XRES-CELL*2  && parts[i].vx > 0)
+                {
+                    parts[i].x = CELL;
+                    moved = 1;
+                }
+                if (parts[i].y<=CELL*2 && parts[i].vy < 0)
+                {
+                    parts[i].y = YRES - CELL;
+                    moved = 1;
+                }
+                else if (parts[i].y>=YRES-CELL*2 && parts[i].vy > 0)
+                {
+                    parts[i].y = CELL;
+                    moved = 1;
+                }
+                if(moved==1)
+                {
+                    goto movedone;
+                }
+            }
 movedone:
 			continue;
 		}
