@@ -588,9 +588,14 @@ int graphics_NBLE(GRAPHICS_FUNC_ARGS)
 	*colr = 230;
 	*colg = 230;
     *colb = 230;
-	*cola = 60;
-
-    *pixel_mode = PMODE_ADD;
+	*cola = 255;
+    *pixel_mode &= ~PMODE;
+    *pixel_mode |= FIRE_BLEND;
+    *firer = *colr/2;
+    *fireg = *colg/2;
+    *fireb = *colb/2;
+    *firea = 50;
+    *pixel_mode |= DECO_FIRE;
 
 	return 1;
 }
