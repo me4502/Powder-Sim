@@ -29,7 +29,6 @@ particle *cb_parts;
 int gravityMode = 0; // starts enabled in "vertical" mode...
 int airMode = 0;
 
-
 unsigned char bmap[YRES/CELL][XRES/CELL];
 unsigned char emap[YRES/CELL][XRES/CELL];
 
@@ -1497,11 +1496,7 @@ void update_special_i()
 
     if (ISGRAV!=1&&ISLOVE!=1&&ISLOLZ!=1&&wire_placed!=1&&ISWIRE!=1&&ISGOL!=1)
     {
-        #ifdef MT
-        pthread_exit(0);
-        #else
         return;
-        #endif
     }
 
     if (ISGRAV==1)//crappy grav color handling, i will change this someday
@@ -1752,9 +1747,6 @@ void update_special_i()
 			else
 				wireless[q][1] = 0;
 	}
-	#ifdef MT
-    pthread_exit(0);
-    #endif
 }
 
 //the main function for updating particles
@@ -2740,13 +2732,16 @@ void update_particles(pixel *vid)//doesn't update the particles themselves, but 
 			}
 		}
 	}
-    #ifdef MT
-        pthread_create(&InterThreads,NULL,&update_special_i,NULL);
-    #else
-        update_special_i();
-	#endif
+	if (!fix_lag) update_special_i();
+	else
+        if (rand()%2)
+            update_special_i();
 
-    update_particles_i(vid,0,1);
+    if (!fix_lag) update_particles_i(vid,0,1);
+    else
+        if (rand()%2)
+            update_particles_i(vid,0,1);
+
 
 	// this should probably be elsewhere
 	for (y=0; y<YRES/CELL; y++)
