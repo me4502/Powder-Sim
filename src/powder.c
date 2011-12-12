@@ -231,7 +231,7 @@ int try_move(int i, int x, int y, int nx, int ny)
 	if ((nx<0 || ny<0 || nx>=XRES || ny>=YRES)&&part_loop==0)
 		return 1;
 
-		t = parts[i].type;
+	t = parts[i].type;
 
 	e = eval_move(parts[i].type, nx, ny, &r);
 
@@ -1759,22 +1759,24 @@ void update_loop(pixel *vid)
 		    t = parts[i].type;
             if (t!=PT_LIFE)
             {
-                if (parts[i].x<CELL*2 && parts[i].vx < 0)
+                if (parts[i].x + parts[i].vx<CELL*2 && parts[i].vx < 0)
                 {
-                    parts[i].x = XRES - CELL;
+                    parts[i].x = XRES - CELL + parts[i].vx;
                 }
-                else if (parts[i].x>=XRES-CELL*2  && parts[i].vx > 0)
+                else if (parts[i].x + parts[i].vx>=XRES-CELL*2  && parts[i].vx > 0)
                 {
-                    parts[i].x = CELL;
+                    parts[i].x = CELL + parts[i].vx;
                 }
-                if (parts[i].y<=CELL*2 && parts[i].vy < 0)
+                if (parts[i].y + parts[i].vy<=CELL*2 && parts[i].vy < 0)
                 {
-                    parts[i].y = YRES - CELL;
+                    parts[i].y = YRES - CELL + parts[i].vy;
                 }
-                else if (parts[i].y>=YRES-CELL*2 && parts[i].vy > 0)
+                else if (parts[i].y + parts[i].vy>=YRES-CELL*2 && parts[i].vy > 0)
                 {
-                    parts[i].y = CELL;
+                    parts[i].y = CELL + parts[i].vy;
                 }
+                if (parts[i].x<0 || parts[i].y<0 || parts[i].x>=XRES || parts[i].y>=YRES)
+                    kill_part(i);
             }
 		}
 }
