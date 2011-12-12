@@ -1091,11 +1091,7 @@ inline int drawchar(pixel *vid, int x, int y, int c, int r, int g, int b, int a)
 	return x + w;
 }
 
-#if defined(WIN32) && !defined(__GNUC__)
-_inline int addchar(pixel *vid, int x, int y, int c, int r, int g, int b, int a)
-#else
-inline int addchar(pixel *vid, int x, int y, int c, int r, int g, int b, int a)
-#endif
+int addchar(pixel *vid, int x, int y, int c, int r, int g, int b, int a)
 {
 	int i, j, w, bn = 0, ba = 0;
 	char *rp = font_data + font_ptrs[c];
@@ -1277,12 +1273,12 @@ void drawrect(pixel *vid, int x, int y, int w, int h, int r, int g, int b, int a
 
 void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int sb, int a, int er, int eg, int eb, int dir)
 {
-    if (fancy_graphics!=1)
-        return;
     int i, j;
-    int gradr[h][w];
-    int gradg[h][w];
-    int gradb[h][w];
+    int* gradr = malloc(h*w*sizeof(int));
+    int* gradg = malloc(h*w*sizeof(int));
+    int* gradb = malloc(h*w*sizeof(int));
+	if (fancy_graphics!=1)
+        return;
     for (j=1; j<h; j++)
     {
         for (i=1; i<w; i++)
@@ -1291,31 +1287,31 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
             {
                 float hf = (float)j/(float)h;
                 float wf = (float)i/(float)w;
-                gradr[j][i] = (sr*hf) + ((1.0f-hf)*er);
-                gradg[j][i] = (sg*hf) + ((1.0f-hf)*eg);
-                gradb[j][i] = (sb*hf) + ((1.0f-hf)*eb);
+                gradr[j*w+i] = (sr*hf) + ((1.0f-hf)*er);
+                gradg[j*w+i] = (sg*hf) + ((1.0f-hf)*eg);
+                gradb[j*w+i] = (sb*hf) + ((1.0f-hf)*eb);
             }
             else if (dir==2)//Left/Right
             {
                 float hf = (float)j/(float)h;
                 float wf = (float)i/(float)w;
-                gradr[j][i] = (sr*wf) + ((1.0f-wf)*er);
-                gradg[j][i] = (sg*wf) + ((1.0f-wf)*eg);
-                gradb[j][i] = (sb*wf) + ((1.0f-wf)*eb);
+                gradr[j*w+i] = (sr*wf) + ((1.0f-wf)*er);
+                gradg[j*w+i] = (sg*wf) + ((1.0f-wf)*eg);
+                gradb[j*w+i] = (sb*wf) + ((1.0f-wf)*eb);
             }
             else if (dir==3) //Diagonal Right
             {
                 float of = ((float)j+(float)i)/((float)h+(float)w);
-                gradr[j][i] = (sr*of) + ((1.0f-of)*er);
-                gradg[j][i] = (sg*of) + ((1.0f-of)*eg);
-                gradb[j][i] = (sb*of) + ((1.0f-of)*eb);
+                gradr[j*w+i] = (sr*of) + ((1.0f-of)*er);
+                gradg[j*w+i] = (sg*of) + ((1.0f-of)*eg);
+                gradb[j*w+i] = (sb*of) + ((1.0f-of)*eb);
             }
             else if (dir==4) //Diagonal Left
             {
                 float of = ((float)j+(float)i)/((float)h+(float)w);
-                gradr[j][w-i] = (sr*of) + ((1.0f-of)*er);
-                gradg[j][w-i] = (sg*of) + ((1.0f-of)*eg);
-                gradb[j][w-i] = (sb*of) + ((1.0f-of)*eb);
+                gradr[j*w+w-i] = (sr*of) + ((1.0f-of)*er);
+                gradg[j*w+w-i] = (sg*of) + ((1.0f-of)*eg);
+                gradb[j*w+w-i] = (sb*of) + ((1.0f-of)*eb);
             }
         }
     }
@@ -1323,16 +1319,18 @@ void gradient_fill(pixel *vid, int x, int y, int w, int h, int sr, int sg, int s
     {
         for (i=1; i<w; i++)
         {
-            if (gradr[j][i]<0)gradr[j][i]=0;
-            if (gradg[j][i]<0)gradg[j][i]=0;
-            if (gradb[j][i]<0)gradb[j][i]=0;
-            if (gradr[j][i]>255)gradr[j][i]=255;
-            if (gradg[j][i]>255)gradg[j][i]=255;
-            if (gradb[j][i]>255)gradb[j][i]=255;
-            drawpixel(vid, x+i, y+j, gradr[j][i], gradg[j][i], gradb[j][i], a);
+            if (gradr[j*w+i]<0)gradr[j*w+i]=0;
+            if (gradg[j*w+i]<0)gradg[j*w+i]=0;
+            if (gradb[j*w+i]<0)gradb[j*w+i]=0;
+            if (gradr[j*w+i]>255)gradr[j*w+i]=255;
+            if (gradg[j*w+i]>255)gradg[j*w+i]=255;
+            if (gradb[j*w+i]>255)gradb[j*w+i]=255;
+            drawpixel(vid, x+i, y+j, gradr[j*w+i], gradg[j*w+i], gradb[j*w+i], a);
         }
     }
-
+	free(gradr);
+	free(gradg);
+	free(gradb);
 }
 
 //draws a rectangle and fills it in as well.
@@ -1981,11 +1979,12 @@ GLfloat lineC[(((YRES*XRES)*2)*6)];
 
 void draw_back(pixel *vid, int over)
 {
+	int x, y;
     if (decorations_enable)
     {
-        for (int y=0; y<YRES; y++)
+        for (y=0; y<YRES; y++)
         {
-            for (int x=0; x<XRES; x++)
+            for (x=0; x<XRES; x++)
             {
                 int nx = (int)(x + 0.5f);
                 int ny = (int)(y + 0.5f);
@@ -2542,6 +2541,7 @@ void render_parts(pixel *vid)
 				    int rc,gc,bc;
 				    int am = 0;
 				    int randx, randy, randa;
+					int r;
 				    if (parts[i].vx > 0.5 || parts[i].vx < -0.5)
 				    {
 				        rx -= parts[i].vx*16;
@@ -2570,7 +2570,7 @@ void render_parts(pixel *vid)
                     }
                     if (nx+randx>XRES) nx = XRES-randx;
                     if (ny+randy>YRES) ny = YRES-randy;
-                    int r = pmap[ry+randy][rx+randx];
+                    r = pmap[ry+randy][rx+randx];
                     if (firea)
                     {
                         rc = firer;
@@ -3645,7 +3645,7 @@ void render_fire(pixel *vid)
 	for (j=0; j<YRES/CELL; j++)
 		for (i=0; i<XRES/CELL; i++)
 		{
-		    if (!fire_alpha[y+CELL][x+CELL]) continue;
+		    //if (!fire_alpha[y+CELL][x+CELL]) continue;
 			r = fire_r[j][i];
 			g = fire_g[j][i];
 			b = fire_b[j][i];
