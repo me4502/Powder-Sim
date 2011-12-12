@@ -417,7 +417,7 @@ void update_air(void)
                 vy[YRES/CELL-2][i] = vy[YRES/CELL-3][i]*0.9f;
                 vy[YRES/CELL-1][i] = vy[YRES/CELL-2][i]*0.9f;
             }
-        } else {
+        } else if (part_loop) {
             for (i=0; i<YRES/CELL; i++) //reduces pressure/velocity on the edges every frame
             {
                 pv[i][0] = pv[i][XRES/CELL-2];
