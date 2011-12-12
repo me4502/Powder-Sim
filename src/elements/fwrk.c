@@ -43,6 +43,9 @@ int update_FWRK(UPDATE_FUNC_ARGS)
                                 parts[np].ctype=e;
                                 parts[np].temp= rand()%20+6000;
                                 parts[np].dcolour = parts[i].dcolour;
+                                int news = create_part(-1,x,y+2,PT_DUST);
+                                if (news != -1)
+                                    parts[news].vy = 2;
                             }
                         }
                     }
