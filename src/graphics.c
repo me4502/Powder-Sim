@@ -3144,9 +3144,10 @@ void draw_walls(pixel *vid)
 				}
                 else if (bmap[y][x]==WL_STREAM)
                 {
+                    int t;
                     lx = x*CELL + CELL*0.5f;
                     ly = y*CELL + CELL*0.5f;
-                    for (int t=0; t<1024; t++)
+                    for (t=0; t<1024; t++)
                     {
                         nx = (int)(lx+0.5f);
                         ny = (int)(ly+0.5f);
