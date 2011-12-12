@@ -39,7 +39,7 @@ float cb_hv[YRES/CELL][XRES/CELL];
 
 float fvx[YRES/CELL][XRES/CELL], fvy[YRES/CELL][XRES/CELL];
 
-float hv[YRES/CELL][XRES/CELL], ohv[YRES/CELL][XRES/CELL]; // For Ambient Heat 
+float hv[YRES/CELL][XRES/CELL], ohv[YRES/CELL][XRES/CELL]; // For Ambient Heat
 
 void make_kernel(void) //used for velocity
 {
@@ -91,7 +91,7 @@ void update_airh(void)
 					        x+i>0 && x+i<XRES/CELL-2 &&
 					        bmap[y+j][x+i]!=WL_WALL &&
 					        bmap[y+j][x+i]!=WL_WALLELEC &&
-					        bmap[y+j][x+i]!=WL_GRAV && 
+					        bmap[y+j][x+i]!=WL_GRAV &&
 					        (bmap[y+j][x+i]!=WL_EWALL || emap[y+j][x+i]))
 						{
 						f = kernel[i+1+(j+1)*3];
@@ -125,7 +125,7 @@ void update_airh(void)
 			if(!gravityMode){ //Vertical gravity only for the time being
 				float airdiff = dh-hv[y][x];
 				pv[y][x] += airdiff/5000.0f;
-				if(airdiff>0)	
+				if(airdiff>0)
 					vy[y][x] -= airdiff/5000.0f;
 			}
 			ohv[y][x] = dh;
@@ -155,7 +155,7 @@ void bilinear_interpolation(float *src, float *dst, int sw, int sh, int rw, int 
 			tl = src[sw*(int)floor(fy)+(int)floor(fx)];
 			br = src[sw*fyceil+fxceil];
 			bl = src[sw*fyceil+(int)floor(fx)];
-			dst[rw*y+x] = ((tl*(1.0f-fxc))+(tr*(fxc)))*(1.0f-fyc) + ((bl*(1.0f-fxc))+(br*(fxc)))*(fyc);				
+			dst[rw*y+x] = ((tl*(1.0f-fxc))+(tr*(fxc)))*(1.0f-fyc) + ((bl*(1.0f-fxc))+(br*(fxc)))*(fyc);
 		}
 }
 
@@ -383,39 +383,74 @@ void update_air(void)
 			bmap_blockair[y][x] = (bmap[y][x]==WL_WALL || bmap[y][x]==WL_WALLELEC || (bmap[y][x]==WL_EWALL && !emap[y][x]));
 		}
 	if (airMode != 4) { //airMode 4 is no air/pressure update
-
-		for (i=0; i<YRES/CELL; i++) //reduces pressure/velocity on the edges every frame
-		{
-			pv[i][0] = pv[i][0]*0.8f;
-			pv[i][1] = pv[i][1]*0.8f;
-			pv[i][2] = pv[i][2]*0.8f;
-			pv[i][XRES/CELL-2] = pv[i][XRES/CELL-2]*0.8f;
-			pv[i][XRES/CELL-1] = pv[i][XRES/CELL-1]*0.8f;
-			vx[i][0] = vx[i][1]*0.9f;
-			vx[i][1] = vx[i][2]*0.9f;
-			vx[i][XRES/CELL-2] = vx[i][XRES/CELL-3]*0.9f;
-			vx[i][XRES/CELL-1] = vx[i][XRES/CELL-2]*0.9f;
-			vy[i][0] = vy[i][1]*0.9f;
-			vy[i][1] = vy[i][2]*0.9f;
-			vy[i][XRES/CELL-2] = vy[i][XRES/CELL-3]*0.9f;
-			vy[i][XRES/CELL-1] = vy[i][XRES/CELL-2]*0.9f;
-		}
-		for (i=0; i<XRES/CELL; i++) //reduces pressure/velocity on the edges every frame
-		{
-			pv[0][i] = pv[0][i]*0.8f;
-			pv[1][i] = pv[1][i]*0.8f;
-			pv[2][i] = pv[2][i]*0.8f;
-			pv[YRES/CELL-2][i] = pv[YRES/CELL-2][i]*0.8f;
-			pv[YRES/CELL-1][i] = pv[YRES/CELL-1][i]*0.8f;
-			vx[0][i] = vx[1][i]*0.9f;
-			vx[1][i] = vx[2][i]*0.9f;
-			vx[YRES/CELL-2][i] = vx[YRES/CELL-3][i]*0.9f;
-			vx[YRES/CELL-1][i] = vx[YRES/CELL-2][i]*0.9f;
-			vy[0][i] = vy[1][i]*0.9f;
-			vy[1][i] = vy[2][i]*0.9f;
-			vy[YRES/CELL-2][i] = vy[YRES/CELL-3][i]*0.9f;
-			vy[YRES/CELL-1][i] = vy[YRES/CELL-2][i]*0.9f;
-		}
+        if (!part_loop)
+        {
+            for (i=0; i<YRES/CELL; i++) //reduces pressure/velocity on the edges every frame
+            {
+                pv[i][0] = pv[i][0]*0.8f;
+                pv[i][1] = pv[i][1]*0.8f;
+                pv[i][2] = pv[i][2]*0.8f;
+                pv[i][XRES/CELL-2] = pv[i][XRES/CELL-2]*0.8f;
+                pv[i][XRES/CELL-1] = pv[i][XRES/CELL-1]*0.8f;
+                vx[i][0] = vx[i][1]*0.9f;
+                vx[i][1] = vx[i][2]*0.9f;
+                vx[i][XRES/CELL-2] = vx[i][XRES/CELL-3]*0.9f;
+                vx[i][XRES/CELL-1] = vx[i][XRES/CELL-2]*0.9f;
+                vy[i][0] = vy[i][1]*0.9f;
+                vy[i][1] = vy[i][2]*0.9f;
+                vy[i][XRES/CELL-2] = vy[i][XRES/CELL-3]*0.9f;
+                vy[i][XRES/CELL-1] = vy[i][XRES/CELL-2]*0.9f;
+            }
+            for (i=0; i<XRES/CELL; i++) //reduces pressure/velocity on the edges every frame
+            {
+                pv[0][i] = pv[0][i]*0.8f;
+                pv[1][i] = pv[1][i]*0.8f;
+                pv[2][i] = pv[2][i]*0.8f;
+                pv[YRES/CELL-2][i] = pv[YRES/CELL-2][i]*0.8f;
+                pv[YRES/CELL-1][i] = pv[YRES/CELL-1][i]*0.8f;
+                vx[0][i] = vx[1][i]*0.9f;
+                vx[1][i] = vx[2][i]*0.9f;
+                vx[YRES/CELL-2][i] = vx[YRES/CELL-3][i]*0.9f;
+                vx[YRES/CELL-1][i] = vx[YRES/CELL-2][i]*0.9f;
+                vy[0][i] = vy[1][i]*0.9f;
+                vy[1][i] = vy[2][i]*0.9f;
+                vy[YRES/CELL-2][i] = vy[YRES/CELL-3][i]*0.9f;
+                vy[YRES/CELL-1][i] = vy[YRES/CELL-2][i]*0.9f;
+            }
+        } else {
+            for (i=0; i<YRES/CELL; i++) //reduces pressure/velocity on the edges every frame
+            {
+                pv[i][0] = pv[i][XRES/CELL-2];
+                pv[i][1] = pv[i][XRES/CELL-1];
+                pv[i][2] = pv[i][XRES/CELL];
+                pv[i][XRES/CELL-2] = pv[i][0];
+                pv[i][XRES/CELL-1] = pv[i][1];
+                vx[i][0] = vx[i][XRES/CELL-2];
+                vx[i][1] = vx[i][XRES/CELL-1];
+                vx[i][XRES/CELL-2] = vx[i][0];
+                vx[i][XRES/CELL-1] = vx[i][1];
+                vy[i][0] = vy[i][XRES/CELL-2];
+                vy[i][1] = vy[i][XRES/CELL-1];
+                vy[i][XRES/CELL-2] = vy[i][0];
+                vy[i][XRES/CELL-1] = vy[i][1];
+            }
+            for (i=0; i<XRES/CELL; i++) //reduces pressure/velocity on the edges every frame
+            {
+                pv[0][i] = pv[YRES/CELL-2][i];
+                pv[1][i] = pv[YRES/CELL-1][i];
+                pv[2][i] = pv[YRES/CELL-0][i];
+                pv[YRES/CELL-2][i] = pv[0][i];
+                pv[YRES/CELL-1][i] = pv[1][i];
+                vx[0][i] = vx[YRES/CELL-2][i];
+                vx[1][i] = vx[YRES/CELL-1][i];
+                vx[YRES/CELL-2][i] = vx[0][i];
+                vx[YRES/CELL-1][i] = vx[1][i];
+                vy[0][i] = vy[YRES/CELL-2][i];
+                vy[1][i] = vy[YRES/CELL-1][i];
+                vy[YRES/CELL-2][i] = vy[0][i];
+                vy[YRES/CELL-1][i] = vy[1][i];
+            }
+        }
 
 		for (j=1; j<YRES/CELL; j++) //clear some velocities near walls
 		{
