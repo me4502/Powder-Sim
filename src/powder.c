@@ -171,7 +171,7 @@ int eval_move(int pt, int nx, int ny, unsigned *rr)
 	unsigned r;
 	int result;
 
-	if (nx<0 || ny<0 || nx>=XRES || ny>=YRES)
+	if ((nx<0 || ny<0 || nx>=XRES || ny>=YRES) && !part_loop)
 		return 0;
 
 	r = pmap[ny][nx];
@@ -228,7 +228,7 @@ int try_move(int i, int x, int y, int nx, int ny)
 
 	if (x==nx && y==ny)
 		return 1;
-	if (nx<0 || ny<0 || nx>=XRES || ny>=YRES)
+	if ((nx<0 || ny<0 || nx>=XRES || ny>=YRES)&&!part_loop)
 		return 1;
 
 		t = parts[i].type;
@@ -1749,6 +1749,36 @@ void update_special_i()
 	}
 }
 
+void update_loop(pixel *vid)
+{
+    int i,t;
+
+    for (i=0; i<=parts_lastActiveIndex; i++)
+		if (parts[i].type)
+		{
+		    t = parts[i].type;
+            if (t!=PT_LIFE)
+            {
+                if (parts[i].x<CELL*2 && parts[i].vx < 0)
+                {
+                    parts[i].x = XRES - CELL;
+                }
+                else if (parts[i].x>=XRES-CELL*2  && parts[i].vx > 0)
+                {
+                    parts[i].x = CELL;
+                }
+                if (parts[i].y<=CELL*2 && parts[i].vy < 0)
+                {
+                    parts[i].y = YRES - CELL;
+                }
+                else if (parts[i].y>=YRES-CELL*2 && parts[i].vy > 0)
+                {
+                    parts[i].y = CELL;
+                }
+            }
+		}
+}
+
 //the main function for updating particles
 void update_particles_i(pixel *vid, int start, int inc)
 {
@@ -1766,10 +1796,6 @@ void update_particles_i(pixel *vid, int start, int inc)
 	int lighting_ok=1;
 	float pGravX, pGravY, pGravD;
 
-	if (sys_pause&&!framerender)//do nothing if paused
-    {
-		return;
-    }
 	//the main particle loop function, goes over all particles.
 	for (i=0; i<=parts_lastActiveIndex; i++)
 		if (parts[i].type)
@@ -2640,34 +2666,6 @@ killed:
 					}
 				}
 			}
-            if (part_loop && t!=PT_LIFE)
-            {
-                int moved = 0;
-                if (parts[i].x<CELL*2 && parts[i].vx < 0)
-                {
-                    parts[i].x = XRES - CELL;
-                    moved = 1;
-                }
-                else if (parts[i].x>=XRES-CELL*2  && parts[i].vx > 0)
-                {
-                    parts[i].x = CELL;
-                    moved = 1;
-                }
-                if (parts[i].y<=CELL*2 && parts[i].vy < 0)
-                {
-                    parts[i].y = YRES - CELL;
-                    moved = 1;
-                }
-                else if (parts[i].y>=YRES-CELL*2 && parts[i].vy > 0)
-                {
-                    parts[i].y = CELL;
-                    moved = 1;
-                }
-                if(moved==1)
-                {
-                    goto movedone;
-                }
-            }
 movedone:
 			continue;
 		}
@@ -2677,7 +2675,6 @@ int parts_lastActiveIndex = NPART-1;
 void update_particles(pixel *vid)//doesn't update the particles themselves, but some other things
 {
 	int i, j, x, y, t, nx, ny, r, cr,cg,cb, l = -1;
-	float lx, ly;
 	int lastPartUsed = 0;
 	int lastPartUnused = -1;
 #ifdef MT
@@ -2734,10 +2731,15 @@ void update_particles(pixel *vid)//doesn't update the particles themselves, but 
 			}
 		}
 	}
+    if (sys_pause&&!framerender)//do nothing if paused
+    {
+		return;
+    }
     if (fix_lag==0)
     {
         if (speedtick[1]==1)
         {
+            update_loop(vid);
             update_special_i();
             update_particles_i(vid,0,1);
             speedtick[1] = 0;
@@ -2745,42 +2747,20 @@ void update_particles(pixel *vid)//doesn't update the particles themselves, but 
     }
 	else if (fix_lag==1)
     {
+        update_loop(vid);
         update_special_i();
         update_particles_i(vid,0,1);
     }
     else if (fix_lag==2)
     {
+        update_loop(vid);
         update_special_i();
         update_particles_i(vid,0,1);
 
+        update_loop(vid);
         update_special_i();
         update_particles_i(vid,0,1);
     }
-
-	// this should probably be elsewhere
-	for (y=0; y<YRES/CELL; y++)
-		for (x=0; x<XRES/CELL; x++)
-			if (bmap[y][x]==WL_STREAM)
-			{
-				lx = x*CELL + CELL*0.5f;
-				ly = y*CELL + CELL*0.5f;
-				for (t=0; t<1024; t++)
-				{
-					nx = (int)(lx+0.5f);
-					ny = (int)(ly+0.5f);
-					if (nx<0 || nx>=XRES || ny<0 || ny>=YRES)
-						break;
-					addpixel(vid, nx, ny, 255, 255, 255, 64);
-					i = nx/CELL;
-					j = ny/CELL;
-					lx += vx[j][i]*0.125f;
-					ly += vy[j][i]*0.125f;
-					if (bmap[j][i]==WL_STREAM && i!=x && j!=y)
-						break;
-				}
-				drawtext(vid, x*CELL, y*CELL-2, "\x8D", 255, 255, 255, 128);
-			}
-
 }
 
 void clear_area(int area_x, int area_y, int area_w, int area_h)
