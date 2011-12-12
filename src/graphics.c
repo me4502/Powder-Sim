@@ -2358,7 +2358,7 @@ void render_parts(pixel *vid)
                     flatC[cflatC++] = 1.0f;
                     cflat++;
 #else
-					vid[ny*(XRES+BARSIZE)+nx] = PIXRGB(colr,colg,colb);
+					vid[ny*(XRES+BARSIZE)+nx] = ((cola<<24)|(colr<<16)|(colg<<8)|colb);
 #endif
 				}
 				if(pixel_mode & PMODE_BLEND)
