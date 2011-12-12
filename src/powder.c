@@ -171,7 +171,7 @@ int eval_move(int pt, int nx, int ny, unsigned *rr)
 	unsigned r;
 	int result;
 
-	if ((nx<0 || ny<0 || nx>=XRES || ny>=YRES) && !part_loop)
+	if ((nx<0 || ny<0 || nx>=XRES || ny>=YRES) && part_loop==0)
 		return 0;
 
 	r = pmap[ny][nx];
@@ -228,7 +228,7 @@ int try_move(int i, int x, int y, int nx, int ny)
 
 	if (x==nx && y==ny)
 		return 1;
-	if ((nx<0 || ny<0 || nx>=XRES || ny>=YRES)&&!part_loop)
+	if ((nx<0 || ny<0 || nx>=XRES || ny>=YRES)&&part_loop==0)
 		return 1;
 
 		t = parts[i].type;
@@ -434,7 +434,7 @@ int do_move(int i, int x, int y, float nxf, float nyf)
 			else if ((photons[y][x]>>8)==i) photons[y][x] = 0;
 			if (nx<CELL || nx>=XRES-CELL || ny<CELL || ny>=YRES-CELL)//kill_part if particle is out of bounds
 			{
-			    if (!(part_loop))
+			    if (part_loop==0)
                 {
                     kill_part(i);
                     return -1;
@@ -1832,7 +1832,7 @@ void update_particles_i(pixel *vid, int start, int inc)
 			y = (int)(parts[i].y+0.5f);
 
 			//this kills any particle out of the screen, or in a wall where it isn't supposed to go
-            if ((x<CELL || y<CELL || x>=XRES-CELL || y>=YRES-CELL)&&(!part_loop||parts[i].type==PT_LIFE))
+            if ((x<CELL || y<CELL || x>=XRES-CELL || y>=YRES-CELL)&&(part_loop==0||parts[i].type==PT_LIFE))
             {
                 kill_part(i);
 				continue;
@@ -2739,7 +2739,8 @@ void update_particles(pixel *vid)//doesn't update the particles themselves, but 
     {
         if (speedtick[1]==1)
         {
-            update_loop(vid);
+            if (part_loop)
+                update_loop(vid);
             update_special_i();
             update_particles_i(vid,0,1);
             speedtick[1] = 0;
@@ -2747,17 +2748,20 @@ void update_particles(pixel *vid)//doesn't update the particles themselves, but 
     }
 	else if (fix_lag==1)
     {
-        update_loop(vid);
+        if (part_loop)
+            update_loop(vid);
         update_special_i();
         update_particles_i(vid,0,1);
     }
     else if (fix_lag==2)
     {
-        update_loop(vid);
+        if (part_loop)
+            update_loop(vid);
         update_special_i();
         update_particles_i(vid,0,1);
 
-        update_loop(vid);
+        if (part_loop)
+            update_loop(vid);
         update_special_i();
         update_particles_i(vid,0,1);
     }
