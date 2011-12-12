@@ -3049,7 +3049,8 @@ void draw_parts_fbo()
 
 void draw_walls(pixel *vid)
 {
-	int x, y, i, j, cr, cg, cb;
+	int x, y, i, j, cr, cg, cb, nx, ny;
+	float lx, ly;
 	unsigned char wt;
 	pixel pc;
 	pixel gc;
@@ -3141,6 +3142,26 @@ void draw_walls(pixel *vid)
 								vid[(y*CELL+j)*(XRES+BARSIZE)+(x*CELL+i)] = PIXPACK(0x242424);
 					}
 				}
+                else if (bmap[y][x]==WL_STREAM)
+                {
+                    lx = x*CELL + CELL*0.5f;
+                    ly = y*CELL + CELL*0.5f;
+                    for (int t=0; t<1024; t++)
+                    {
+                        nx = (int)(lx+0.5f);
+                        ny = (int)(ly+0.5f);
+                        if (nx<0 || nx>=XRES || ny<0 || ny>=YRES)
+                            break;
+                        addpixel(vid, nx, ny, 255, 255, 255, 64);
+                        i = nx/CELL;
+                        j = ny/CELL;
+                        lx += vx[j][i]*0.125f;
+                        ly += vy[j][i]*0.125f;
+                        if (bmap[j][i]==WL_STREAM && i!=x && j!=y)
+                            break;
+                    }
+                    drawtext(vid, x*CELL, y*CELL-2, "\x8D", 255, 255, 255, 128);
+                }
 				if (render_mode & PMODE_BLOB)
 				{
 					// when in blob view, draw some blobs...
