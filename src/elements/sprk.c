@@ -229,9 +229,9 @@ int graphics_SPRK(GRAPHICS_FUNC_ARGS)
     int pix = 1, ret = 0, over = 0;
     if (cpart->ctype==PT_NBLE)
     {
+		pixel pc;
         pix = 0;
         over = 1;
-        pixel pc;
         pc = nmenu[cpart->tmp2].colour;
         *firea = 255;
         *fireg = PIXG(pc);

@@ -3047,6 +3047,7 @@ int create_part_add_props(int p, int x, int y, int tv, int rx, int ry)
 int create_parts(int x, int y, int rx, int ry, int c, int flags)
 {
 	int i, j, r, f = 0, u, v, oy, ox, b = 0, dw = 0, stemp = 0, p;//n;
+	int wall = c - 100;
 	if (x>XRES||y>YRES)
         return 0;
 #ifdef LUACONSOLE
@@ -3055,7 +3056,6 @@ int create_parts(int x, int y, int rx, int ry, int c, int flags)
 			return 0;
 #endif
 
-	int wall = c - 100;
 	if (c==SPC_WIND || c==PT_FIGH)
 		return 0;
 
