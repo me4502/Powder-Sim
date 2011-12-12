@@ -26,6 +26,8 @@ int update_FOG(UPDATE_FUNC_ARGS) {
 				{
 					part_change_type(i,x,y,PT_RIME);
 				}
+				if ((r&0xFF)==PT_O2||(r&0xFF)==PT_H2)
+                    parts[r>>8].type==PT_FOG;
 				if ((r&0xFF)==PT_SPRK)
 				{
 					parts[i].life += rand()%20;
