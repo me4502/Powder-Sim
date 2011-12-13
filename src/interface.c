@@ -7199,31 +7199,49 @@ void simulation_ui(pixel * vid_buf)
 			break;
 	}
 }
-void cfancy_ui(pixel * vid_buf)
+void cfancy_ui(pixel *vid_buf)
 {
 	int xsize = 300;
 	int ysize = 192;
 	int x0=(XRES-xsize)/2,y0=(YRES-MENUSIZE-ysize)/2,b=1,bq,mx,my;
-		
-	while (!sdl_poll())
+
+    while (!sdl_poll())
 	{
 		b = SDL_GetMouseState(&mx, &my);
 		if (!b)
 			break;
 	}
+
 	while (!sdl_poll())
 	{
 		bq = b;
 		b = SDL_GetMouseState(&mx, &my);
 		mx /= sdl_scale;
 		my /= sdl_scale;
-		
+
 		clearrect(vid_buf, x0-2, y0-2, xsize+4, ysize+4);
 		drawrect(vid_buf, x0, y0, xsize, ysize, 192, 192, 192, 255);
-		drawtext(vid_buf, x0+8, y0+8, "fancy colour", 255, 216, 32, 255);
-		
-		//if (b && !bq && mx>=x0 && mx<x0+xsize && my>=y0+ysize-16 && my<=y0+ysize)
-		//	break;
+		drawtext(vid_buf, x0+8, y0+8, "Fancy Options", 255, 216, 32, 255);
+
+		drawtext(vid_buf, x0+8, y0+26, "Test 1", 255, 255, 255, 255);
+		drawtext(vid_buf, x0+12+textwidth("Test 1"), y0+26, "Tests functionality.", 255, 255, 255, 180);
+		drawtext(vid_buf, x0+12, y0+40, "Will be too awesome for your computer.", 255, 255, 255, 120);
+
+		drawtext(vid_buf, x0+8, y0+54, "Test 2", 255, 255, 255, 255);
+		drawtext(vid_buf, x0+12+textwidth("Test 2"), y0+54, "Tests functionality.", 255, 255, 255, 180);
+		drawtext(vid_buf, x0+12, y0+68, "Will be too awesome for your computer.", 255, 255, 255, 120);
+
+		drawtext(vid_buf, x0+8, y0+82, "Test 3", 255, 255, 255, 255);
+		drawtext(vid_buf, x0+12+textwidth("Test 3"), y0+82, "Tests functionality.", 255, 255, 255, 180);
+		drawtext(vid_buf, x0+12, y0+96, "Will be too awesome for your computer", 255, 255, 255, 120);
+
+		drawtext(vid_buf, x0+5, y0+ysize-11, "OK", 255, 255, 255, 255);
+		drawrect(vid_buf, x0, y0+ysize-16, xsize, 16, 192, 192, 192, 255);
+
+		sdl_blit(0, 0, (XRES+BARSIZE), YRES+MENUSIZE, vid_buf, (XRES+BARSIZE));
+
+		if (b && !bq && mx>=x0 && mx<x0+xsize && my>=y0+ysize-16 && my<=y0+ysize)
+			break;
 
 		if (sdl_key==SDLK_RETURN)
 			break;
@@ -7235,6 +7253,6 @@ void cfancy_ui(pixel * vid_buf)
 		b = SDL_GetMouseState(&mx, &my);
 		if (!b)
 			break;
-	}*/ 
+	}*/
 }
 
