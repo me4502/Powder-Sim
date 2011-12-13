@@ -7204,7 +7204,6 @@ void cfancy_ui(pixel * vid_buf)
 	int xsize = 300;
 	int ysize = 192;
 	int x0=(XRES-xsize)/2,y0=(YRES-MENUSIZE-ysize)/2,b=1,bq,mx,my;
-	int new_scale, new_kiosk;
 		
 	while (!sdl_poll())
 	{
@@ -7218,15 +7217,24 @@ void cfancy_ui(pixel * vid_buf)
 		b = SDL_GetMouseState(&mx, &my);
 		mx /= sdl_scale;
 		my /= sdl_scale;
+		
 		clearrect(vid_buf, x0-2, y0-2, xsize+4, ysize+4);
 		drawrect(vid_buf, x0, y0, xsize, ysize, 192, 192, 192, 255);
 		drawtext(vid_buf, x0+8, y0+8, "fancy colour", 255, 216, 32, 255);
-		if (b && !bq && mx>=x0 && mx<x0+xsize && my>=y0+ysize-16 && my<=y0+ysize)
-			break;
+		
+		//if (b && !bq && mx>=x0 && mx<x0+xsize && my>=y0+ysize-16 && my<=y0+ysize)
+		//	break;
 
 		if (sdl_key==SDLK_RETURN)
 			break;
 		if (sdl_key==SDLK_ESCAPE)
 			break;
 	}
+	/*while (!sdl_poll())
+	{
+		b = SDL_GetMouseState(&mx, &my);
+		if (!b)
+			break;
+	}*/ 
 }
+
