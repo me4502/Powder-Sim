@@ -383,7 +383,7 @@ void update_air(void)
 			bmap_blockair[y][x] = (bmap[y][x]==WL_WALL || bmap[y][x]==WL_WALLELEC || (bmap[y][x]==WL_EWALL && !emap[y][x]));
 		}
 	if (airMode != 4) { //airMode 4 is no air/pressure update
-        if (!part_loop)
+        if (part_loop==0)
         {
             for (i=0; i<YRES/CELL; i++) //reduces pressure/velocity on the edges every frame
             {
