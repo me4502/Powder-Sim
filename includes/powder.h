@@ -1041,22 +1041,7 @@ struct nbl_menu
 typedef struct nbl_menu nbl_menu;
 
 static nbl_menu nmenu[NNBL] =
-{
-	/*
-	
-	##################################
-	#     MORE REALISTIC COLOURS     #
-	##################################
-	
-	{"HELI",   PIXPACK(0xF57F5B), 0, "Helium Noble Gas, Floats up, Ionizes under Electricity"},
-	{"NEON",   PIXPACK(0xF5635B), 1, "Neon Noble Gas, Ionizes under Electricity"},
-	{"ARGN",   PIXPACK(0xC47DFF), 2, "Argon Noble Gas, Ionizes under Electricity"},
-	{"KPTN",   PIXPACK(0xAAE3F2), 3, "Krypton Noble Gas, Ionizes under Electricity"},
-	{"XNON",   PIXPACK(0xE8F7FF), 4, "Xenon Noble Gas, Ionizes under Electricity"},
-	{"RDON",   PIXPACK(0x88E300), 5, "Radon Noble Gas, Ionizes under Electricity"},
-	{"UNCM",   PIXPACK(0x590000), 6, "Ununoctium Noble Gas, Ionizes under Electricity"},
-	*/
-	
+{	
 	{"HELI",   PIXPACK(0xF55B5B), 0, "Helium Noble Gas, Floats up, Ionizes under Electricity"},
 	{"NEON",   PIXPACK(0xFF7700), 1, "Neon Noble Gas, Ionizes under Electricity"},
 	{"ARGN",   PIXPACK(0x7DF9FF), 2, "Argon Noble Gas, Ionizes under Electricity"},
