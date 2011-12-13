@@ -7206,11 +7206,11 @@ void cfancy_ui(pixel *vid_buf)
 	int x0=(XRES-xsize)/2,y0=(YRES-MENUSIZE-ysize)/2,b=1,bq,mx,my;
 	int cr,cb,cg,hh,ss;
 	int length = 52;
-	char *rt = malloc(3);
+	char *rt = malloc(20);
 	sprintf(rt, "%i", PIXR(gradCol));
-	char *gt = malloc(3);
+	char *gt = malloc(20);
 	sprintf(gt, "%i", PIXG(gradCol));
-	char *bt = malloc(3);
+	char *bt = malloc(20);
 	sprintf(bt, "%i", PIXB(gradCol));
 
 	//Gradient
