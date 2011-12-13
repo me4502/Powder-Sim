@@ -769,7 +769,7 @@ void ui_richtext_process(int mx, int my, int mb, int mbq, ui_richtext *ed)
 void draw_svf_ui(pixel *vid_buf, int alternate)// all the buttons at the bottom
 {
 	int c;
-    gradient_fill(vid_buf, 0,YRES+(MENUSIZE-16),XRES + MENUSIZE,MENUSIZE/2+8,255,0,0,255,0,0,0,1);
+    gradient_fill(vid_buf, 0,YRES+(MENUSIZE-16),XRES + MENUSIZE,MENUSIZE/2+8,PIXR(gradCol),PIXG(gradCol),PIXB(gradCol),255,0,0,0,1);
     //the open browser button
 	if(alternate)
 	{
@@ -7202,11 +7202,55 @@ void simulation_ui(pixel * vid_buf)
 void cfancy_ui(pixel *vid_buf)
 {
 	int xsize = 300;
-	int ysize = 300;
+	int ysize = 80;
 	int x0=(XRES-xsize)/2,y0=(YRES-MENUSIZE-ysize)/2,b=1,bq,mx,my;
 	int cr,cb,cg,hh,ss;
-	int grid_offset_y = 45;
-	int grid_offset_x = 180;	
+	int length = 52;
+	char *rt = malloc(3);
+	sprintf(rt, "%i", PIXR(gradCol));
+	char *gt = malloc(3);
+	sprintf(gt, "%i", PIXG(gradCol));
+	char *bt = malloc(3);
+	sprintf(bt, "%i", PIXB(gradCol));
+
+	//Gradient
+	ui_edit box_R;
+	ui_edit box_G;
+	ui_edit box_B;
+
+	box_R.x = x0+5+length;
+	box_R.y = y0+20;
+	box_R.w = 30;
+	box_R.nx = 1;
+	box_R.def = "";
+	strcpy(box_R.str, rt);
+	box_R.focus = 0;
+	box_R.hide = 0;
+	box_R.multiline = 0;
+	box_R.cursor = 0;
+
+	box_G.x = x0+5+length;
+	box_G.y = y0+35;
+	box_G.w = 30;
+	box_G.nx = 1;
+	box_G.def = "";
+    strcpy(box_G.str, gt);
+	box_G.focus = 0;
+	box_G.hide = 0;
+	box_G.multiline = 0;
+	box_G.cursor = 0;
+
+	box_B.x = x0+5+length;
+	box_B.y = y0+50;
+	box_B.w = 30;
+	box_B.nx = 1;
+	box_B.def = "";
+	strcpy(box_B.str, bt);
+	box_B.focus = 0;
+	box_B.hide = 0;
+	box_B.multiline = 0;
+	box_B.cursor = 0;
+
     while (!sdl_poll())
 	{
 		b = SDL_GetMouseState(&mx, &my);
@@ -7221,37 +7265,63 @@ void cfancy_ui(pixel *vid_buf)
 		mx /= sdl_scale;
 		my /= sdl_scale;
 
+		ui_edit_process(mx, my, b, &box_R);
+		ui_edit_process(mx, my, b, &box_G);
+		ui_edit_process(mx, my, b, &box_B);
+
 		clearrect(vid_buf, x0-2, y0-2, xsize+4, ysize+4);
 		drawrect(vid_buf, x0, y0, xsize, ysize, 192, 192, 192, 255);
 		drawtext(vid_buf, x0+8, y0+8, "Fancy Options", 255, 216, 32, 255);
 
+		drawtext(vid_buf, box_R.x-length, box_R.y, "Gradient R:", 255, 216, 32, 255);
+		drawtext(vid_buf, box_G.x-length, box_G.y, "Gradient G:", 255, 216, 32, 255);
+		drawtext(vid_buf, box_B.x-length, box_B.y, "Gradient B:", 255, 216, 32, 255);
+
 		drawtext(vid_buf, x0+5, y0+ysize-11, "OK", 255, 255, 255, 255);
 		drawrect(vid_buf, x0, y0+ysize-16, xsize, 16, 192, 192, 192, 255);
-		
-		for(ss=0; ss<=255; ss++)
-				for(hh=0;hh<=359;hh++)
-				{
-					cr = 0;
-					cg = 0;
-					cb = 0;
-					HSV_to_RGB(hh,255-ss,255-ss,&cr,&cg,&cb);
-					vid_buf[(ss+grid_offset_y)*(XRES+BARSIZE)+(clamp_flt(hh, 0, 359)+grid_offset_x)] = PIXRGB(cr, cg, cb);
-				}
-		
+
+        ui_edit_draw(vid_buf, &box_R);
+        ui_edit_draw(vid_buf, &box_G);
+        ui_edit_draw(vid_buf, &box_B);
+
 		sdl_blit(0, 0, (XRES+BARSIZE), YRES+MENUSIZE, vid_buf, (XRES+BARSIZE));
 
 		if (b && !bq && mx>=x0 && mx<x0+xsize && my>=y0+ysize-16 && my<=y0+ysize)
 			break;
+
+        if (sdl_key==SDLK_TAB)
+            if (box_R.focus==1)
+            {
+                box_G.focus=1;
+                box_R.focus=0;
+            }
+            else if (box_G.focus==1)
+            {
+                box_B.focus=1;
+                box_G.focus=0;
+            }
+            else if (box_B.focus==1)
+            {
+                box_R.focus=1;
+                box_B.focus=0;
+            }
 
 		if (sdl_key==SDLK_RETURN)
 			break;
 		if (sdl_key==SDLK_ESCAPE)
 			break;
 	}
-	/*while (!sdl_poll())
-	{
-		b = SDL_GetMouseState(&mx, &my);
-		if (!b)
-			break;
-	}*/
+	int rc = atoi(box_R.str);
+	int gc = atoi(box_G.str);
+	int bc = atoi(box_B.str);
+    if (rc<0) rc=0;
+	if (rc>255) rc=255;
+    if (gc<0) gc=0;
+    if (gc>255) gc=255;
+    if (bc<0) bc=0;
+    if (bc>255) bc=255;
+    gradCol = ((255<<24)|(rc<<16)|(gc<<8)|bc);
+    free(rt);
+    free(gt);
+    free(bt);
 }

@@ -248,6 +248,7 @@ int DEBUG_MODE;
 int GENERATION;
 int ISSPAWN1;
 int ISSPAWN2;
+extern unsigned int gradCol;
 extern sign signs[MAXSIGNS];
 extern stamp stamps[STAMP_MAX];
 extern int stamp_count;
