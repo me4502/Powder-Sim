@@ -2488,6 +2488,10 @@ int main(int argc, char *argv[])
 			{
 				hud_enable = !hud_enable;
 			}
+			if (sdl_key=='f' && (sdl_mod & KMOD_LCTRL))
+				cfancy_ui(vid_buf);
+
+
 			if (sdl_key==SDLK_F1 || (sdl_key=='h' && (sdl_mod & KMOD_LCTRL)))
 			{
 				if(!it)
