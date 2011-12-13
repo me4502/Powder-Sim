@@ -7202,9 +7202,11 @@ void simulation_ui(pixel * vid_buf)
 void cfancy_ui(pixel *vid_buf)
 {
 	int xsize = 300;
-	int ysize = 192;
+	int ysize = 300;
 	int x0=(XRES-xsize)/2,y0=(YRES-MENUSIZE-ysize)/2,b=1,bq,mx,my;
-
+	int cr,cb,cg,hh,ss;
+	int grid_offset_y = 45;
+	int grid_offset_x = 180;	
     while (!sdl_poll())
 	{
 		b = SDL_GetMouseState(&mx, &my);
@@ -7223,21 +7225,19 @@ void cfancy_ui(pixel *vid_buf)
 		drawrect(vid_buf, x0, y0, xsize, ysize, 192, 192, 192, 255);
 		drawtext(vid_buf, x0+8, y0+8, "Fancy Options", 255, 216, 32, 255);
 
-		drawtext(vid_buf, x0+8, y0+26, "Test 1", 255, 255, 255, 255);
-		drawtext(vid_buf, x0+12+textwidth("Test 1"), y0+26, "Tests functionality.", 255, 255, 255, 180);
-		drawtext(vid_buf, x0+12, y0+40, "Will be too awesome for your computer.", 255, 255, 255, 120);
-
-		drawtext(vid_buf, x0+8, y0+54, "Test 2", 255, 255, 255, 255);
-		drawtext(vid_buf, x0+12+textwidth("Test 2"), y0+54, "Tests functionality.", 255, 255, 255, 180);
-		drawtext(vid_buf, x0+12, y0+68, "Will be too awesome for your computer.", 255, 255, 255, 120);
-
-		drawtext(vid_buf, x0+8, y0+82, "Test 3", 255, 255, 255, 255);
-		drawtext(vid_buf, x0+12+textwidth("Test 3"), y0+82, "Tests functionality.", 255, 255, 255, 180);
-		drawtext(vid_buf, x0+12, y0+96, "Will be too awesome for your computer", 255, 255, 255, 120);
-
 		drawtext(vid_buf, x0+5, y0+ysize-11, "OK", 255, 255, 255, 255);
 		drawrect(vid_buf, x0, y0+ysize-16, xsize, 16, 192, 192, 192, 255);
-
+		
+		for(ss=0; ss<=255; ss++)
+				for(hh=0;hh<=359;hh++)
+				{
+					cr = 0;
+					cg = 0;
+					cb = 0;
+					HSV_to_RGB(hh,255-ss,255-ss,&cr,&cg,&cb);
+					vid_buf[(ss+grid_offset_y)*(XRES+BARSIZE)+(clamp_flt(hh, 0, 359)+grid_offset_x)] = PIXRGB(cr, cg, cb);
+				}
+		
 		sdl_blit(0, 0, (XRES+BARSIZE), YRES+MENUSIZE, vid_buf, (XRES+BARSIZE));
 
 		if (b && !bq && mx>=x0 && mx<x0+xsize && my>=y0+ysize-16 && my<=y0+ysize)
@@ -7255,4 +7255,3 @@ void cfancy_ui(pixel *vid_buf)
 			break;
 	}*/
 }
-
