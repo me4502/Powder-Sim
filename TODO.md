@@ -6,7 +6,7 @@
   | | (_) | (_| | (_) |
   |_|\___/ \__,_|\___/ 
 
+	- Add colour wheel for fancy display - In Progress
 	- Make more shit - In Progress
-	- Multi-threading - Probably never going to happen, but what the hell?
 
 </pre>
