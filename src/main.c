@@ -3247,6 +3247,12 @@ int main(int argc, char *argv[])
 						{
 							catalogue_ui(vid_buf);
 						}
+					}
+					if (x>=(XRES+BARSIZE-(510-351)) && x<(XRES+BARSIZE-(510-366)) && !bq)
+					{
+						//legacy_enable = !legacy_enable;
+						cfancy_ui(pixel * vid_buf)
+					
 					} else {
 						if (x>=37 && x<=187 && svf_login)
 						{
