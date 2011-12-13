@@ -2,9 +2,11 @@
 
 int update_ACEL(UPDATE_FUNC_ARGS) {
 	int r, rx, ry;
+	int rad = parts[i].tmp2;
+	int nrad = rad-1;
 	parts[i].tmp = 0;
-	for (rx=-1; rx<2; rx++)
-		for (ry=-1; ry<2; ry++)
+	for (rx=-nrad; rx<rad; rx++)
+		for (ry=-nrad; ry<rad; ry++)
 			if (x+rx>=0 && y+ry>0 && x+rx<XRES && y+ry<YRES && (rx || ry) && !(rx && ry))
 			{
 				r = pmap[y+ry][x+rx];
@@ -30,9 +32,11 @@ int graphics_ACEL(GRAPHICS_FUNC_ARGS)
 }
 int update_DCEL(UPDATE_FUNC_ARGS) {
 	int r, rx, ry;
+	int rad = parts[i].tmp2;
+	int nrad = rad-1;
 	parts[i].tmp = 0;
-	for (rx=-1; rx<2; rx++)
-		for (ry=-1; ry<2; ry++)
+	for (rx=-nrad; rx<rad; rx++)
+		for (ry=-nrad; ry<rad; ry++)
 			if (x+rx>=0 && y+ry>0 && x+rx<XRES && y+ry<YRES && (rx || ry) && !(rx && ry))
 			{
 				r = pmap[y+ry][x+rx];
