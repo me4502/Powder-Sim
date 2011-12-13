@@ -16,8 +16,8 @@ int update_VIRS(UPDATE_FUNC_ARGS)
                         kill_part(i);
                     continue;
                 }
-                parts[r>>8].ctype = parts[r>>8].type;
                 parts[r>>8].tmp2 = parts[r>>8].ctype;
+                parts[r>>8].ctype = parts[r>>8].type;
                 parts[r>>8].type = PT_VIRS;
                 parts[r>>8].disease = rand()%100+500;
             }

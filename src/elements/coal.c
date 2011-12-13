@@ -11,8 +11,8 @@ int update_COAL(UPDATE_FUNC_ARGS)
     }
     else if (parts[i].life < 100)
     {
+		int p;
         parts[i].life--;
-        int p;
         if (p = create_part(-1, x+rand()%3-1, y+rand()%3-1, PT_FIRE))
         {
             parts[p].tmp = PT_COAL;

@@ -170,7 +170,7 @@ static const char *old_ver_msg = "A new version is available - click here!";
 char new_message_msg[255];
 float mheat = 0.0f;
 
-int favourites[PT_NUM] = {};
+int favourites[PT_NUM] = {NULL};
 
 int do_open = 0;
 int sys_pause = 0;
@@ -188,14 +188,18 @@ int fancy_graphics = 0;
 int tpt_comp = 0;
 int part_loop = 0;
 int menu_type = 1;
+int fix_lag = 1;
 int amd = 1;
 int FPSB = 0;
 int MSIGN =-1;
 int frameidx = 0;
 int mecool = 0;
+int speedtick[2] = {0,0};
 //int CGOL = 0;
 //int GSPEED = 1;//causes my .exe to crash..
 int sound_enable = 0;
+
+int quickoptions_shown = 0;
 
 int debug_flags = 0;
 int debug_perf_istart = 1;
@@ -714,35 +718,32 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 				if (pmap[y][x])
 				{
 					k = pmap[y][x]>>8;
-					memset(parts+k, 0, sizeof(particle));
-					parts[k].type = j;
-					if (j == PT_PHOT)
-						parts[k].ctype = 0x3fffffff;
-					if (j == PT_SOAP)
-						parts[k].ctype = 0;
-					parts[k].x = (float)x;
-					parts[k].y = (float)y;
-					m[(x-x0)+(y-y0)*w] = k+1;
 				}
-				else if (i < nf)
+				else if (i<nf)
 				{
-					memset(parts+fp[i], 0, sizeof(particle));
-					parts[fp[i]].type = j;
-					if (j == PT_COAL)
-						parts[fp[i]].tmp = 50;
-					if (j == PT_FUSE)
-						parts[fp[i]].tmp = 50;
-					if (j == PT_PHOT)
-						parts[fp[i]].ctype = 0x3fffffff;
-					if (j == PT_SOAP)
-						parts[fp[i]].ctype = 0;
-					parts[fp[i]].x = (float)x;
-					parts[fp[i]].y = (float)y;
-					m[(x-x0)+(y-y0)*w] = fp[i]+1;
+					k = fp[i];
 					i++;
 				}
 				else
+				{
 					m[(x-x0)+(y-y0)*w] = NPART+1;
+					continue;
+				}
+				memset(parts+k, 0, sizeof(particle));
+				parts[k].type = j;
+				if (j == PT_COAL)
+					parts[k].tmp = 50;
+				if (j == PT_FUSE)
+					parts[k].tmp = 50;
+				if (j == PT_PHOT)
+					parts[k].ctype = 0x3fffffff;
+				if (j == PT_SOAP)
+					parts[k].ctype = 0;
+				if (j==PT_BIZR || j==PT_BIZRG || j==PT_BIZRS)
+					parts[k].ctype = 0x47FFFF;
+				parts[k].x = (float)x;
+				parts[k].y = (float)y;
+				m[(x-x0)+(y-y0)*w] = k+1;
 			}
 		}
 
@@ -1518,7 +1519,7 @@ int main(int argc, char *argv[])
 		for(i=0; i<30; i++){
 			memset(vid_buf, 0, (XRES+BARSIZE)*YRES*PIXELSIZE);
 			draw_walls(vid_buf);
-			draw_back(vid_buf);
+			draw_back(vid_buf,0);
 			update_particles(vid_buf);
 			render_parts(vid_buf);
 			render_fire(vid_buf);
@@ -1770,9 +1771,34 @@ int main(int argc, char *argv[])
 		frameidx %= 30;
 		if (!sys_pause||framerender) //only update air if not paused
 		{
-			update_air();
-			if(aheat_enable)
-				update_airh();
+		    //pthread_t airThread;
+		    //pthread_create(&airThread,NULL,update_air,NULL);
+		    if (fix_lag==0)
+            {
+                if (speedtick[0]==1)
+                {
+                    update_air();
+                    if(aheat_enable)
+                        update_airh();
+                    speedtick[0]==0;
+                } else speedtick[0]=1;
+            }
+            else if (fix_lag==1)
+            {
+                update_air();
+                if(aheat_enable)
+                    update_airh();
+            }
+            else if (fix_lag==2)
+            {
+                update_air();
+                if(aheat_enable)
+                    update_airh();
+
+                update_air();
+                if(aheat_enable)
+                    update_airh();
+            }
 		}
 
 #ifdef OGLR
@@ -1885,7 +1911,7 @@ int main(int argc, char *argv[])
 				debug_perf_time = ts.tv_nsec;
 			#endif
 		}
-        draw_back(vid_buf, 0);
+        draw_back(part_vbuf, 0);
 		render_parts(part_vbuf); //draw particles
 		draw_other(part_vbuf);
 
@@ -2671,38 +2697,40 @@ int main(int argc, char *argv[])
 #endif
         if (menu_type)
         {
-            quickoptions_menu(vid_buf, b, bq, x, y);
-            for (i=0; i<SC_TOTAL; i++)//draw all the menu sections
+            if (!quickoptions_shown)
             {
-                draw_menu(vid_buf, i, active_menu);
-            }
-
-            for (i=0; i<SC_TOTAL; i++)//check mouse position to see if it is on a menu section
-            {
-                if (clickmenu_enable)
+                for (i=0; i<SC_TOTAL; i++)//draw all the menu sections
                 {
-                    if (b==1&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                    draw_menu(vid_buf, i, active_menu);
+                }
+
+                for (i=0; i<SC_TOTAL; i++)//check mouse position to see if it is on a menu section
+                {
+                    if (clickmenu_enable)
                     {
-                        active_menu = i;
-                    }
-                    else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
-                    {
-                        if (i==active_menu)
-                            active_menu = -1;
-                    }
-                } else {
-                    if (!b&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
-                    {
-                        active_menu = i;
-                    }
-                    else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
-                    {
-                        if (i==active_menu)
-                            active_menu = -1;
+                        if (b==1&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                        {
+                            active_menu = i;
+                        }
+                        else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                        {
+                            if (i==active_menu)
+                                active_menu = -1;
+                        }
+                    } else {
+                        if (!b&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                        {
+                            active_menu = i;
+                        }
+                        else if (b==4&&x>=sdl_scale*(XRES-2) && x<sdl_scale*(XRES+BARSIZE-1) &&y>= sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)) && y<sdl_scale*((i*16)+YRES+MENUSIZE-16-(SC_TOTAL*16)+15))
+                        {
+                            if (i==active_menu)
+                                active_menu = -1;
+                        }
                     }
                 }
+                menu_ui_v3(vid_buf, active_menu, &sl, &sr, &dae, b, bq, x, y); //draw the elements in the current menu
             }
-            menu_ui_v3(vid_buf, active_menu, &sl, &sr, &dae, b, bq, x, y); //draw the elements in the current menu
         } else if (sdl_mod & (KMOD_LCTRL|KMOD_RCTRL))
                 quickoptions_menu(vid_buf, b, bq, x, y);
         else {
@@ -3027,6 +3055,32 @@ int main(int argc, char *argv[])
 
 		if (sdl_key=='z' && zoom_en==2 && sys_shortcuts==1)
 			zoom_en = 1;
+
+        if (menu_type || !menu_type && (sdl_mod & (KMOD_LCTRL|KMOD_RCTRL)))
+        {
+            drawrect(vid_buf,XRES+1,1,14,14,255,255,255,255);
+            drawtext(vid_buf, XRES+4, 4, "\xCF", 255, 255, 255, 255);
+        }
+        if (!quickoptions_shown && menu_type)
+        {
+            quickoptions_tooltip_fade_invert = 255;
+            quickoptions_tooltip_fade = 0;
+            if (x > XRES+1 && x < XRES+15)
+            {
+                if (y > 1 && y <15)
+                    quickoptions_menu(vid_buf,b,bq,x,y);
+                else quickoptions_shown = 0;
+            }
+            else quickoptions_shown = 0;
+        } else if (menu_type) {
+            if (x > XRES+1 && x < XRES+15)
+            {
+                if (y > 1 && y <(14*9))
+                    quickoptions_menu(vid_buf,b,bq,x,y);
+                else quickoptions_shown = 0;
+            }
+            else quickoptions_shown = 0;
+        }
 
 		if (load_mode)
 		{

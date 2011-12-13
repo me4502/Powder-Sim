@@ -2127,9 +2127,9 @@ void menu_ui(pixel *vid_buf, int i, int *sl, int *sr)
 		}
 		else if(i==SC_LIFE)
         {
-            msections[i].itemcount = NGOLALT;
-            int xoff = 0;
+			int xoff = 0;
             int n2;
+            msections[i].itemcount = NGOLALT;
             for (n2 = 0; n2<NGOLALT; n2++)
             {
                 n = PT_LIFE | (n2<<8);
@@ -2156,9 +2156,9 @@ void menu_ui(pixel *vid_buf, int i, int *sl, int *sr)
         }
         else if(i==SC_NBLE)
         {
-            msections[i].itemcount = NNBLALT;
-            int xoff = 0;
+			int xoff = 0;
             int n2;
+            msections[i].itemcount = NNBLALT;
             for (n2 = 0; n2<NNBLALT; n2++)
             {
                 n = PT_NBLE | (n2<<8);
@@ -2403,10 +2403,14 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
                 break;
             if (!favourites[n])
                 continue;
-            if (n < UI_WALLSTART)
+            if (favourites[n] < UI_WALLSTART)
                 x -= draw_tool_xy(vid_buf, x-xoff, y, favourites[n], ptypes[favourites[n]].pcolors)+5;
+			else if (favourites[n]%256 == PT_LIFE)
+                x -= draw_tool_xy(vid_buf, x-xoff, y, favourites[n], gmenu[favourites[n]/256].colour)+5;
+			else if (favourites[n]%256 == PT_NBLE)
+                x -= draw_tool_xy(vid_buf, x-xoff, y, favourites[n], nmenu[favourites[n]/256].colour)+5;
             else
-                x -= draw_tool_xy(vid_buf, x-xoff, y, favourites[n+UI_WALLSTART], wtypes[favourites[n]].colour)+5;
+                x -= draw_tool_xy(vid_buf, x-xoff, y, favourites[n], wtypes[favourites[n]-UI_WALLSTART].colour)+5;
             if (!bq && mx>=x+32-xoff && mx<x+58-xoff && my>=y && my< y+15)
             {
                 drawrect(vid_buf, x+30-xoff, y-1, 29, 17, 255, 55, 55, 255);
@@ -2672,8 +2676,12 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
     }
     else if (i==SC_FAVOURITES)
     {
-        if (h < UI_WALLSTART)
+		if (h < UI_WALLSTART)
             drawtext(vid_buf, XRES-textwidth((char *)ptypes[h].descs)-BARSIZE, sy-10, (char *)ptypes[h].descs, 255, 255, 255, 255);
+		else if (h%256 == PT_LIFE)
+            drawtext(vid_buf, XRES-textwidth((char *)gmenu[(h>>8)&0xFF].description)-BARSIZE, sy-10, (char *)gmenu[(h>>8)&0xFF].description, 255, 255, 255, 255);
+		else if (h%256 == PT_NBLE)
+            drawtext(vid_buf, XRES-textwidth((char *)nmenu[(h>>8)&0xFF].description)-BARSIZE, sy-10, (char *)nmenu[(h>>8)&0xFF].description, 255, 255, 255, 255);
         else
             drawtext(vid_buf, XRES-textwidth((char *)wtypes[h-UI_WALLSTART].descs)-BARSIZE, sy-10, (char *)wtypes[h-UI_WALLSTART].descs, 255, 255, 255, 255);
     }
@@ -2742,7 +2750,7 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
             }
             favourites[maxint] = 0;
             mecool = 30;
-            menuitems = maxint+1;
+            menuitems--;
             save_presets(0);
         }
         else
@@ -2776,12 +2784,12 @@ void menu_ui_v3(pixel *vid_buf, int i, int *sl, int *sr, int *dae, int b, int bq
 int color_menu_ui(pixel *vid_buf, int i, int *cr, int *cg, int *cb, int b, int bq, int mx, int my, int *tool)
 {
 	int h,x,y,n=0,height,width,sy,rows=0,xoff=0,fwidth,a,c;
+	int ir,ig,ib,tr,tg,tb;
 	fwidth = colorsections[i].itemcount*31;
 	h = -1;
 	x = XRES-BARSIZE-18;
 	y = YRES+5;
 	sy = y;
-	int ir,ig,ib,tr,tg,tb;
 	tr = (int) *cr;
 	tg = (int) *cg;
 	tb = (int) *cb;
@@ -2945,6 +2953,7 @@ int quickoptions_tooltip_y = 0;
 void quickoptions_menu(pixel *vid_buf, int b, int bq, int x, int y)
 {
 	int i = 0;
+    quickoptions_shown = 1;
 	x /= sdl_scale;
 	y /= sdl_scale;
 	if(quickoptions_tooltip_fade && quickoptions_tooltip)
@@ -2954,28 +2963,69 @@ void quickoptions_menu(pixel *vid_buf, int b, int bq, int x, int y)
 	}
 	while(quickmenu[i].icon!=NULL)
 	{
+	    int ii = i+1;
 		if(quickmenu[i].type == QM_TOGGLE)
 		{
-			drawrect(vid_buf, (XRES+BARSIZE)-16, (i*16)+1, 14, 14, 255, 255, 255, 255);
+			drawrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 255, 255, 255, 255);
 			if(*(quickmenu[i].variable))
 			{
-				fillrect(vid_buf, (XRES+BARSIZE)-16, (i*16)+1, 14, 14, 255, 255, 255, 255);
-				drawtext(vid_buf, (XRES+BARSIZE)-11, (i*16)+5, quickmenu[i].icon, 0, 0, 0, 255);
+				fillrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 255, 255, 255, 255);
+				drawtext(vid_buf, (XRES+BARSIZE)-11, (ii*16)+5, quickmenu[i].icon, 0, 0, 0, 255);
 			}
 			else
 			{
-				fillrect(vid_buf, (XRES+BARSIZE)-16, (i*16)+1, 14, 14, 0, 0, 0, 255);
-				drawtext(vid_buf, (XRES+BARSIZE)-11, (i*16)+5, quickmenu[i].icon, 255, 255, 255, 255);
+				fillrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 0, 0, 0, 255);
+				drawtext(vid_buf, (XRES+BARSIZE)-11, (ii*16)+5, quickmenu[i].icon, 255, 255, 255, 255);
 			}
-			if(x >= (XRES+BARSIZE)-16 && x <= (XRES+BARSIZE)-2 && y >= (i*16)+1 && y <= (i*16)+15)
+			if(x >= (XRES+BARSIZE)-16 && x <= (XRES+BARSIZE)-2 && y >= (ii*16)+1 && y <= (ii*16)+15)
 			{
 				quickoptions_tooltip_fade+=2;
 				quickoptions_tooltip = quickmenu[i].name;
-				quickoptions_tooltip_y = (i*16)+5;
+				quickoptions_tooltip_y = (ii*16)+5;
 				if(b && !bq)
 				{
 					*(quickmenu[i].variable) = !(*(quickmenu[i].variable));
 					save_presets(0);
+				}
+			}
+		}
+		if(quickmenu[i].type == QM_THREE)
+		{
+			drawrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 255, 255, 255, 255);
+			if(*(quickmenu[i].variable)==2)
+			{
+				fillrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 255, 255, 255, 255);
+				drawtext(vid_buf, (XRES+BARSIZE)-11, (ii*16)+5, quickmenu[i].icon, 0, 0, 0, 255);
+			}
+			else if (*(quickmenu[i].variable)==1)
+			{
+				fillrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 123, 123, 123, 255);
+				drawtext(vid_buf, (XRES+BARSIZE)-11, (ii*16)+5, quickmenu[i].icon, 0, 0, 0, 255);
+			}
+			else if (*(quickmenu[i].variable)==0)
+			{
+				fillrect(vid_buf, (XRES+BARSIZE)-16, (ii*16)+1, 14, 14, 0, 0, 0, 255);
+				drawtext(vid_buf, (XRES+BARSIZE)-11, (ii*16)+5, quickmenu[i].icon, 255, 255, 255, 255);
+			}
+			if(x >= (XRES+BARSIZE)-16 && x <= (XRES+BARSIZE)-2 && y >= (ii*16)+1 && y <= (ii*16)+15)
+			{
+				quickoptions_tooltip_fade+=2;
+				quickoptions_tooltip = quickmenu[i].name;
+				quickoptions_tooltip_y = (ii*16)+5;
+				if(b && !bq)
+				{
+				    if (b==4)
+                    {
+                        if (*(quickmenu[i].variable)<=0) *(quickmenu[i].variable) = 2;
+                        else *(quickmenu[i].variable) -= 1;
+                        save_presets(0);
+                    }
+                    else
+                    {
+                        if (*(quickmenu[i].variable)>=2) *(quickmenu[i].variable) = 0;
+                        else *(quickmenu[i].variable) += 1;
+                        save_presets(0);
+                    }
 				}
 			}
 		}
@@ -2985,6 +3035,7 @@ void quickoptions_menu(pixel *vid_buf, int b, int bq, int x, int y)
 		quickoptions_tooltip_fade = 12;
 	if(quickoptions_tooltip_fade < 0)
 		quickoptions_tooltip_fade = 0;
+    quickoptions_shown = 1;
 }
 
 int sdl_poll(void)
@@ -5709,7 +5760,6 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 	ui_edit box_R;
 	ui_edit box_G;
 	ui_edit box_B;
-	int col = PIXRGB(currR, currG, currB);
 
 	zoom_en = 0;
 
@@ -5756,8 +5806,9 @@ unsigned int decorations_ui(pixel *vid_buf,int *bsx,int *bsy, unsigned int saved
 		my /= sdl_scale;
 
 		memcpy(vid_buf,old_buf,(XRES+BARSIZE)*(YRES+MENUSIZE)*PIXELSIZE);
-		draw_back(vid_buf, 1);
-		render_parts(vid_buf);
+        draw_back(vid_buf, 1);
+        render_parts(vid_buf);
+
 		ui_edit_process(mx, my, b, &box_R);
 		ui_edit_process(mx, my, b, &box_G);
 		ui_edit_process(mx, my, b, &box_B);

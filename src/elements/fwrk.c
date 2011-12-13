@@ -43,11 +43,15 @@ int update_FWRK(UPDATE_FUNC_ARGS)
                                 parts[np].ctype=e;
                                 parts[np].temp= rand()%20+6000;
                                 parts[np].dcolour = parts[i].dcolour;
+                                part_change_type(i,x,y,PT_DUST);
+                                parts[i].life = 0;
+                                parts[i].dcolour = 0;
+                                parts[i].vy += 2;
                             }
                         }
                     }
                 }
-        kill_part(i);
+        //kill_part(i);
         return 1;
     }
     return 0;

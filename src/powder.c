@@ -29,7 +29,6 @@ particle *cb_parts;
 int gravityMode = 0; // starts enabled in "vertical" mode...
 int airMode = 0;
 
-
 unsigned char bmap[YRES/CELL][XRES/CELL];
 unsigned char emap[YRES/CELL][XRES/CELL];
 
@@ -172,7 +171,7 @@ int eval_move(int pt, int nx, int ny, unsigned *rr)
 	unsigned r;
 	int result;
 
-	if (nx<0 || ny<0 || nx>=XRES || ny>=YRES)
+	if ((nx<0 || ny<0 || nx>=XRES || ny>=YRES) && part_loop==0)
 		return 0;
 
 	r = pmap[ny][nx];
@@ -229,10 +228,10 @@ int try_move(int i, int x, int y, int nx, int ny)
 
 	if (x==nx && y==ny)
 		return 1;
-	if (nx<0 || ny<0 || nx>=XRES || ny>=YRES)
+	if ((nx<0 || ny<0 || nx>=XRES || ny>=YRES)&&part_loop==0)
 		return 1;
 
-		t = parts[i].type;
+	t = parts[i].type;
 
 	e = eval_move(parts[i].type, nx, ny, &r);
 
@@ -435,8 +434,11 @@ int do_move(int i, int x, int y, float nxf, float nyf)
 			else if ((photons[y][x]>>8)==i) photons[y][x] = 0;
 			if (nx<CELL || nx>=XRES-CELL || ny<CELL || ny>=YRES-CELL)//kill_part if particle is out of bounds
 			{
-				kill_part(i);
-				return -1;
+			    if (part_loop==0)
+                {
+                    kill_part(i);
+                    return -1;
+                }
 			}
 			if (t==PT_PHOT||t==PT_NEUT||t==PT_ELEC)
 				photons[ny][nx] = t|(i<<8);
@@ -979,6 +981,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].tmp = grule[v+1][9] - 1;
 		parts[i].ctype = v;
 	}
+	if (t==PT_ACEL||t==PT_DCEL)
+        parts[i].tmp2 = 2;
 	if (t==PT_DEUT)
 		parts[i].life = 10;
 	if (t==PT_MERC)
@@ -1126,7 +1130,7 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		}
 		return -1;
 	}
-	if (t==PT_BIZR||t==PT_BIZRG)
+	if (t==PT_BIZR||t==PT_BIZRG||t==PT_BIZRS)
 		parts[i].ctype = 0x47FFFF;
 	//and finally set the pmap/photon maps to the newly created particle
 	if (t==PT_PHOT||t==PT_NEUT||t==PT_ELEC)
@@ -1465,24 +1469,11 @@ void create_arc(int sx, int sy, int dx, int dy, int midpoints, int variance, int
 	free(ymid);
 }
 
-//the main function for updating particles
-void update_particles_i(pixel *vid, int start, int inc)
+void update_special_i()
 {
-	int i, j, x, y, t, nx, ny, r, surround_space, s, lt, rt, nt, nnx, nny, q, golnum, goldelete, z, neighbors, createdsomething;
-	float mv, dx, dy, ix, iy, lx, ly, nrx, nry, dp, ctemph, ctempl, gravtot;
-	int fin_x, fin_y, clear_x, clear_y, stagnant;
-	float fin_xf, fin_yf, clear_xf, clear_yf;
-	float nn, ct1, ct2, swappage;
-	float pt = R_TEMP;
-	float c_heat = 0.0f;
-	int h_count = 0;
-	int starti = (start*-1);
-	int surround[8];
-	int surround_hconduct[8];
-	int lighting_ok=1;
-	float pGravX, pGravY, pGravD;
+    int i, nx, ny, r, rt, nnx, nny, q, golnum, goldelete, z, neighbors, createdsomething, lighting_ok=1;
 
-	if (sys_pause&&lighting_recreate>0)
+    if (sys_pause&&lighting_recreate>0)
     {
         for (i=0; i<=parts_lastActiveIndex; i++)
         {
@@ -1503,15 +1494,12 @@ void update_particles_i(pixel *vid, int start, int inc)
     if (lighting_recreate>21)
         lighting_recreate=21;
 
-	if (sys_pause&&!framerender)//do nothing if paused
+    if (ISGRAV!=1&&ISLOVE!=1&&ISLOLZ!=1&&wire_placed!=1&&ISWIRE!=1&&ISGOL!=1)
     {
-        #ifdef MT
-        pthread_exit(0);
-        #endif
-		return;
+        return;
     }
 
-	if (ISGRAV==1)//crappy grav color handling, i will change this someday
+    if (ISGRAV==1)//crappy grav color handling, i will change this someday
 	{
 		ISGRAV = 0;
 		GRAV ++;
@@ -1759,6 +1747,57 @@ void update_particles_i(pixel *vid, int start, int inc)
 			else
 				wireless[q][1] = 0;
 	}
+}
+
+void update_loop(pixel *vid)
+{
+    int i,t;
+
+    for (i=0; i<=parts_lastActiveIndex; i++)
+		if (parts[i].type)
+		{
+		    t = parts[i].type;
+            if (t!=PT_LIFE)
+            {
+                if (parts[i].x + parts[i].vx<CELL*2 && parts[i].vx < 0)
+                {
+                    parts[i].x = XRES - CELL + parts[i].vx;
+                }
+                else if (parts[i].x + parts[i].vx>=XRES-CELL*2  && parts[i].vx > 0)
+                {
+                    parts[i].x = CELL + parts[i].vx;
+                }
+                if (parts[i].y + parts[i].vy<=CELL*2 && parts[i].vy < 0)
+                {
+                    parts[i].y = YRES - CELL + parts[i].vy;
+                }
+                else if (parts[i].y + parts[i].vy>=YRES-CELL*2 && parts[i].vy > 0)
+                {
+                    parts[i].y = CELL + parts[i].vy;
+                }
+                if (parts[i].x<0 || parts[i].y<0 || parts[i].x>=XRES || parts[i].y>=YRES)
+                    kill_part(i);
+            }
+		}
+}
+
+//the main function for updating particles
+void update_particles_i(pixel *vid, int start, int inc)
+{
+	int i, j, x, y, t, nx, ny, r, surround_space, s, lt, rt, nt, nnx, nny, q, golnum, goldelete, z, neighbors, createdsomething;
+	float mv, dx, dy, ix, iy, lx, ly, nrx, nry, dp, ctemph, ctempl, gravtot;
+	int fin_x, fin_y, clear_x, clear_y, stagnant;
+	float fin_xf, fin_yf, clear_xf, clear_yf;
+	float nn, ct1, ct2, swappage;
+	float pt = R_TEMP;
+	float c_heat = 0.0f;
+	int h_count = 0;
+	int starti = (start*-1);
+	int surround[8];
+	int surround_hconduct[8];
+	int lighting_ok=1;
+	float pGravX, pGravY, pGravD;
+
 	//the main particle loop function, goes over all particles.
 	for (i=0; i<=parts_lastActiveIndex; i++)
 		if (parts[i].type)
@@ -1790,38 +1829,12 @@ void update_particles_i(pixel *vid, int start, int inc)
 				kill_part(i);
 				continue;
 			}
-			if (part_loop && parts[i].type!=PT_LIFE)
-            {
-                int moved = 0;
-                if (parts[i].x<CELL*2 && parts[i].vx < 0)
-                {
-                    parts[i].x = XRES - CELL;
-                    moved = 1;
-                }
-                else if (parts[i].x>=XRES-CELL*2  && parts[i].vx > 0)
-                {
-                    parts[i].x = CELL;
-                    moved = 1;
-                }
-                if (parts[i].y<=CELL*2 && parts[i].vy < 0)
-                {
-                    parts[i].y = YRES - CELL;
-                    moved = 1;
-                }
-                else if (parts[i].y>=YRES-CELL*2 && parts[i].vy > 0)
-                {
-                    parts[i].y = CELL;
-                    moved = 1;
-                }
-                if(moved==1)
-                    continue;
-            }
 
 			x = (int)(parts[i].x+0.5f);
 			y = (int)(parts[i].y+0.5f);
 
 			//this kills any particle out of the screen, or in a wall where it isn't supposed to go
-            if ((x<CELL || y<CELL || x>=XRES-CELL || y>=YRES-CELL)&&(!part_loop||parts[i].type==PT_LIFE))
+            if ((x<CELL || y<CELL || x>=XRES-CELL || y>=YRES-CELL)&&(part_loop==0||parts[i].type==PT_LIFE))
             {
                 kill_part(i);
 				continue;
@@ -2157,7 +2170,8 @@ void update_particles_i(pixel *vid, int start, int inc)
 
 
 			s = 1;
-			gravtot = fabs(gravyf[(y*XRES)+x])+fabs(gravxf[(y*XRES)+x]);
+			if (x<XRES && y<YRES && x>=0 && y>=0)
+                gravtot = fabs(gravyf[(y*XRES)+x])+fabs(gravxf[(y*XRES)+x]);
 			if (pv[y/CELL][x/CELL]>ptransitions[t].phv&&ptransitions[t].pht>-1) {
 				// particle type change due to high pressure
 				if (ptransitions[t].pht!=PT_NUM)
@@ -2658,21 +2672,17 @@ killed:
 movedone:
 			continue;
 		}
-		#ifdef MT
-        pthread_exit(0);
-        #endif
 }
 
 int parts_lastActiveIndex = NPART-1;
 void update_particles(pixel *vid)//doesn't update the particles themselves, but some other things
 {
 	int i, j, x, y, t, nx, ny, r, cr,cg,cb, l = -1;
-	float lx, ly;
 	int lastPartUsed = 0;
 	int lastPartUnused = -1;
 #ifdef MT
 	int pt = 0, pc = 0;
-	pthread_t *InterThreads;
+	pthread_t InterThreads;
 #endif
 
 	memset(pmap, 0, sizeof(pmap));
@@ -2724,40 +2734,40 @@ void update_particles(pixel *vid)//doesn't update the particles themselves, but 
 			}
 		}
 	}
-    #ifdef MT
-        int amount = numCores;
-        if (ngrav_enable) amount--;
-        if (amount>4) amount = 4;
-        for (int p = 0;p<amount;p++)
-            pthread_create(&InterThreads,NULL,update_particles_i,(vid,0,1));
-    #else
+    if (sys_pause&&!framerender)//do nothing if paused
+    {
+		return;
+    }
+    if (fix_lag==0)
+    {
+        if (speedtick[1]==1)
+        {
+            if (part_loop)
+                update_loop(vid);
+            update_special_i();
+            update_particles_i(vid,0,1);
+            speedtick[1] = 0;
+        } else speedtick[1] = 1;
+    }
+	else if (fix_lag==1)
+    {
+        if (part_loop)
+            update_loop(vid);
+        update_special_i();
         update_particles_i(vid,0,1);
-	#endif
+    }
+    else if (fix_lag==2)
+    {
+        if (part_loop)
+            update_loop(vid);
+        update_special_i();
+        update_particles_i(vid,0,1);
 
-	// this should probably be elsewhere
-	for (y=0; y<YRES/CELL; y++)
-		for (x=0; x<XRES/CELL; x++)
-			if (bmap[y][x]==WL_STREAM)
-			{
-				lx = x*CELL + CELL*0.5f;
-				ly = y*CELL + CELL*0.5f;
-				for (t=0; t<1024; t++)
-				{
-					nx = (int)(lx+0.5f);
-					ny = (int)(ly+0.5f);
-					if (nx<0 || nx>=XRES || ny<0 || ny>=YRES)
-						break;
-					addpixel(vid, nx, ny, 255, 255, 255, 64);
-					i = nx/CELL;
-					j = ny/CELL;
-					lx += vx[j][i]*0.125f;
-					ly += vy[j][i]*0.125f;
-					if (bmap[j][i]==WL_STREAM && i!=x && j!=y)
-						break;
-				}
-				drawtext(vid, x*CELL, y*CELL-2, "\x8D", 255, 255, 255, 128);
-			}
-
+        if (part_loop)
+            update_loop(vid);
+        update_special_i();
+        update_particles_i(vid,0,1);
+    }
 }
 
 void clear_area(int area_x, int area_y, int area_w, int area_h)
@@ -3044,6 +3054,7 @@ int create_part_add_props(int p, int x, int y, int tv, int rx, int ry)
 int create_parts(int x, int y, int rx, int ry, int c, int flags)
 {
 	int i, j, r, f = 0, u, v, oy, ox, b = 0, dw = 0, stemp = 0, p;//n;
+	int wall = c - 100;
 	if (x>XRES||y>YRES)
         return 0;
 #ifdef LUACONSOLE
@@ -3052,7 +3063,6 @@ int create_parts(int x, int y, int rx, int ry, int c, int flags)
 			return 0;
 #endif
 
-	int wall = c - 100;
 	if (c==SPC_WIND || c==PT_FIGH)
 		return 0;
 
@@ -3491,7 +3501,7 @@ inline void orbitalparts_set(int *block1, int *block2, int resblock1[], int resb
 }
 void grav_mask_r(int x, int y, char checkmap[YRES/CELL][XRES/CELL], char shape[YRES/CELL][XRES/CELL], char *shapeout)
 {
-	if(x < 0 || x >= XRES/CELL || y < 0 || y >= YRES/CELL)
+	if(x < 0 || x >= (XRES/CELL) || y < 0 || y >= (YRES/CELL))
 		return;
 	if(x == 0 || y ==0 || y == (YRES/CELL)-1 || x == (XRES/CELL)-1)
 		*shapeout = 1;
@@ -3501,9 +3511,9 @@ void grav_mask_r(int x, int y, char checkmap[YRES/CELL][XRES/CELL], char shape[Y
 		grav_mask_r(x-1, y, checkmap, shape, shapeout);
 	if(y-1 >= 0 && !checkmap[y-1][x] && bmap[y-1][x]!=WL_GRAV)
 		grav_mask_r(x, y-1, checkmap, shape, shapeout);
-	if(x+1 < XRES/CELL && !checkmap[y][x+1] && bmap[y][x+1]!=WL_GRAV)
+	if(x+1 < (XRES/CELL) && !checkmap[y][x+1] && bmap[y][x+1]!=WL_GRAV)
 		grav_mask_r(x+1, y, checkmap, shape, shapeout);
-	if(y+1 < YRES/CELL && !checkmap[y+1][x] && bmap[y+1][x]!=WL_GRAV)
+	if(y+1 < (YRES/CELL) && !checkmap[y+1][x] && bmap[y+1][x]!=WL_GRAV)
 		grav_mask_r(x, y+1, checkmap, shape, shapeout);
 	return;
 }
