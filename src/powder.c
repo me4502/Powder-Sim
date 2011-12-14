@@ -171,7 +171,7 @@ int eval_move(int pt, int nx, int ny, unsigned *rr)
 	unsigned r;
 	int result;
 
-	if ((nx<0 || ny<0 || nx>=XRES || ny>=YRES) && part_loop==0)
+	if ((nx<0 || ny<0 || nx>=XRES || ny>=YRES))
 		return 0;
 
 	r = pmap[ny][nx];
