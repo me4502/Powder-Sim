@@ -196,7 +196,7 @@ int frameidx = 0;
 int mecool = 0;
 int speedtick[2] = {0,0};
 
-unsigned int gradCol = ((255<<24)|(255<<16)|(0<<8)|0);
+int gradCol = ((255<<24)|(255<<16)|(0<<8)|0);
 //int CGOL = 0;
 //int GSPEED = 1;//causes my .exe to crash..
 int sound_enable = 0;
