@@ -576,7 +576,7 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 	if ((b&0xFF) == PT_LIFE)
 	{
 	    if (fancy_graphics)
-            fillrect(vid_buf, x+2, y+2, 27, 15, 90, 90, 90, 130);
+            fillrect(vid_buf, x+2, y+2, 27, 15, PIXR(pc), PIXG(pc), PIXB(pc), 130);
 		for (j=1; j<15; j++)
 		{
 			for (i=1; i<27; i++)
@@ -598,7 +598,7 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 	else if ((b&0xFF) == PT_NBLE)
 	{
 	    if (fancy_graphics)
-            fillrect(vid_buf, x+2, y+2, 27, 15, 90, 90, 90, 130);
+            fillrect(vid_buf, x+2, y+2, 27, 15, PIXR(pc), PIXG(pc), PIXB(pc), 130);
 		for (j=1; j<15; j++)
 		{
 			for (i=1; i<27; i++)
@@ -791,7 +791,7 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 	else
 	{
 	    if (fancy_graphics)
-            fillrect(vid_buf, x+2, y+2, 27, 15, 90, 90, 90, 130);
+            fillrect(vid_buf, x+2, y+2, 27, 15, PIXR(pc), PIXG(pc), PIXB(pc), 130);
 		//x = 2+32*(b/2);
 		//y = YRES+2+20*(b%2);
 		for (j=1; j<15; j++)
@@ -2568,8 +2568,10 @@ void render_parts(pixel *vid)
                         randy = 0;
                         randa = 0;
                     }
-                    if (nx+randx>XRES) nx = XRES-randx;
-                    if (ny+randy>YRES) ny = YRES-randy;
+                    if (nx+randx>XRES) nx = XRES-(randx+1);
+                    if (ny+randy>YRES) ny = YRES-(randy+1);
+                    if (nx+randx<0) randx = nx = 0;
+                    if (ny+randy<0) randy = ny = 0;
                     r = pmap[ry+randy][rx+randx];
                     if (firea)
                     {
