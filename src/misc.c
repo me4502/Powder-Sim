@@ -171,7 +171,9 @@ void save_presets(int do_update)
 	cJSON_AddNumberToObject(root, "scale", sdl_scale);
 	cJSON_AddItemToObject(root,"favourites",cJSON_CreateIntArray(favourites, menuitems));
 
-    
+	cJSON_AddNumberToObject(root,"gradient colour",gradCol);
+
+
 	while(quickmenu[q].icon!=NULL)
 	{
 	    cJSON_AddNumberToObject(root, quickmenu[q].name, *quickmenu[q].variable);
@@ -326,6 +328,7 @@ void load_presets(void)
 				favourites[i] = cJSON_GetArrayItem(tmpobj, i)->valueint;
 			}
 		}
+        if(tmpobj = cJSON_GetObjectItem(root, "gradient colour")) gradCol = tmpobj->valueint;
 
         i = 0;
 
