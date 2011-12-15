@@ -674,3 +674,14 @@ int graphics_CBTY(GRAPHICS_FUNC_ARGS)
 	*firea = frequency*q;
 	return 0;
 }
+int graphics_VBMB(GRAPHICS_FUNC_ARGS)
+{
+	*firea = 8;
+	*firer = 255;
+	*fireg = 0;
+	*fireb = 0;
+	*pixel_mode |= EFFECT_GRAVIN;
+	*pixel_mode &= ~PMODE;
+	*pixel_mode |= PMODE_ADD;
+	return 1;
+}
