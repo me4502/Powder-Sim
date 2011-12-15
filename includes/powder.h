@@ -339,6 +339,7 @@ int graphics_SING(GRAPHICS_FUNC_ARGS);
 int graphics_ALCO(GRAPHICS_FUNC_ARGS);
 int graphics_WATR(GRAPHICS_FUNC_ARGS);
 int graphics_CBTY(GRAPHICS_FUNC_ARGS);
+int graphics_VBMB(GRAPHICS_FUNC_ARGS);
 
 #define UPDATE_FUNC_ARGS int i, int x, int y, int surround_space, int nt
 // to call another update function with same arguments:
@@ -691,7 +692,7 @@ static const part_type ptypes[PT_NUM] =
 	{"MAGN",	PIXPACK(0x2F2E30),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	200,	0,	1,	1,	1,	1,	100,	1.0f,   SC_SOLIDS,	    R_TEMP+0.0f	+273.15f,	251,	"Solid. Conducts electricity. ANGEL FIRE FTW.", ST_SOLID, TYPE_SOLID|PROP_CONDUCTS, NULL, NULL},
 	{"BARI",	PIXPACK(0xCCCCCC),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	1,	1,	1,	1,	100,	1.0f,   SC_SOLIDS,		R_TEMP+0.0f	+273.15f,	251,	"Barium. Reacts with water or alcohol.", ST_SOLID, TYPE_SOLID, &update_BARI, NULL},
 	{"CBTY",	PIXPACK(0xA58505),	0.0f,	0.00f * CFDS,	0.90f,	0.00f,	0.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	1,	1,	1,	1,	100,	1.0f,   SC_ELEC,		R_TEMP+0.0f	+273.15f,	251,	"Solid. Generates Electricity.", ST_SOLID, TYPE_SOLID, &update_CBTY, &graphics_CBTY},
-	{"VBMB",	PIXPACK(0xC05050),	0.0f,	0.00f * CFDS,	0.00f,	0.00f,	10.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	1,	1,	1,	100,    1.0f,	SC_EXPLOSIVE,	R_TEMP+500.0f	+273.15f,	0,		"Void Bomb, Explosive.", ST_SOLID, TYPE_SOLID|PROP_DEADLY, &update_VBMB, NULL},
+	{"VBMB",	PIXPACK(0x790B0B),	0.0f,	0.00f * CFDS,	0.00f,	0.00f,	10.0f,	0.0f,	0.00f,	0.000f	* CFDS,	0,	0,		0,	0,	1,	1,	1,	100,    1.0f,	SC_EXPLOSIVE,	R_TEMP+500.0f	+273.15f,	0,		"Void Bomb, Explosive.", ST_SOLID, TYPE_SOLID|PROP_DEADLY, &update_VBMB, &graphics_VBMB},
 	//Name		Colour			    Advec	Airdrag	        Airloss	Loss	Collid	Grav	Diffus	Hotair			Fal	Burn	Exp	Mel	Hrd M	Use	Weight Valency	Section			H						Ins		Description
 };
 
