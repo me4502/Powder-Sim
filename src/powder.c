@@ -924,6 +924,8 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		parts[i].temp = ptypes[t].heat;
 		parts[i].tmp = 0;
 		parts[i].tmp2 = 0;
+		parts[i].tmp3 = 0;
+		parts[i].disease = 0;
 	}
 	if (t==PT_LIGH && p==-2)
 	{
