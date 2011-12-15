@@ -36,6 +36,7 @@ int graphics_CBNW(GRAPHICS_FUNC_ARGS)
 	*colr += z * 10;
 	*colg += z * 10;
 	*colb += z * 10;
+	*pixel_mode |= PMODE_BLUR;
 	return 0;
 }
 int graphics_ALCO(GRAPHICS_FUNC_ARGS)
@@ -44,6 +45,7 @@ int graphics_ALCO(GRAPHICS_FUNC_ARGS)
 	*colr += z * 9;
 	*colg += z * 4;
 	*colb += z * 3;
+	*pixel_mode |= PMODE_BLUR;
 	return 0;
 }
 int graphics_SPNG(GRAPHICS_FUNC_ARGS)
@@ -224,6 +226,7 @@ int graphics_BIZR(GRAPHICS_FUNC_ARGS) //BIZR, BIZRG, BIZRS
 		*firer = *colr/5 * fabs(cpart->vx)+fabs(cpart->vy);
 		*pixel_mode |= FIRE_ADD;
 	}
+	*pixel_mode |= PMODE_BLUR;
 	return 0;
 }
 int graphics_INVS(GRAPHICS_FUNC_ARGS)
@@ -661,6 +664,7 @@ int graphics_WATR(GRAPHICS_FUNC_ARGS)
         *fireg = *colg;
 	    *pixel_mode |= PMODE_GLOW;
 	}
+	*pixel_mode |= PMODE_BLUR;
     return 0;
 }
 int graphics_CBTY(GRAPHICS_FUNC_ARGS)
@@ -676,7 +680,7 @@ int graphics_CBTY(GRAPHICS_FUNC_ARGS)
 }
 int graphics_VBMB(GRAPHICS_FUNC_ARGS)
 {
-	*firea = 8;
+	*firea = cpart->tmp2;
 	*firer = 255;
 	*fireg = 0;
 	*fireb = 0;
