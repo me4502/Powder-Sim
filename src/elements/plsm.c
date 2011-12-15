@@ -38,6 +38,15 @@ int graphics_PLSM(GRAPHICS_FUNC_ARGS)
         fire = 0;
         pmode = 0;
     }
+    else if (cpart->ctype==PT_VBMB)
+    {
+        *firea = 75;
+        *colr = *colg = *colb = *firer = *fireg = *fireb = 255;
+        *pixel_mode = PMODE_SPARK|FIRE_ADD|FIRE_BLEND|PMODE_FLARE;
+        override = 1;
+        fire = 0;
+        pmode = 0;
+    }
     if (!override)
     {
         *colr = (unsigned char)plasma_data[caddress+fr];
