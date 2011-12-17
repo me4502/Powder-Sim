@@ -44,7 +44,7 @@ int update_VBMB(UPDATE_FUNC_ARGS) {
                 {
                     fe = 1;
                     if (parts[i].tmp==1 && rand()%100==1)
-                        if (np=create_part(-1,x+rx,y+ry,PT_PLSM))
+                        if (np=create_part(-1,x+rx,y+ry,PT_PLSM)>0)
                         {
                             parts[np].life = rand()%150+50;
                             parts[np].ctype = PT_VBMB;
