@@ -9,8 +9,8 @@
 #define CELLW	12
 #define CELLH	10
 
-#define XRES	800
-#define YRES	600
+#define XRES	600
+#define YRES	550
 
 char xsize=CELLW, ysize=CELLH;
 char base=7, top=2;
