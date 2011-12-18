@@ -7062,7 +7062,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 
 void simulation_ui(pixel * vid_buf)
 {
-	int xsize = 300;
+	int xsize = 360;
 	int ysize = 192;
 	int x0=(XRES-xsize)/2,y0=(YRES-MENUSIZE-ysize)/2,b=1,bq,mx,my;
 	int new_scale, new_kiosk;
