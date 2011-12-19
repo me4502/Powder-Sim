@@ -4,14 +4,13 @@
 #include <powder.h>
 #include <air.h>
 #include <misc.h>
+#include "gravity.h"
 #ifdef LUACONSOLE
 #include <luaconsole.h>
 #endif
 #ifdef MT
 #include <pthread.h>
 #endif
-
-int gravwl_timeout = 0;
 
 int wire_placed = 0;
 
@@ -26,7 +25,6 @@ unsigned char fighcount = 0; //Contains the number of fighters
 particle *parts;
 particle *cb_parts;
 
-int gravityMode = 0; // starts enabled in "vertical" mode...
 int airMode = 0;
 
 unsigned char bmap[YRES/CELL][XRES/CELL];
@@ -798,13 +796,13 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 	}
 	if (t==SPC_PGRV)
 	{
-	gravmap[y/CELL][x/CELL] = 5;
-	return -1;
+		gravmap[(y/CELL)*(XRES/CELL)+(x/CELL)] = 5;
+		return -1;
 	}
 	if (t==SPC_NGRV)
 	{
-	gravmap[y/CELL][x/CELL] = -5;
-	return -1;
+		gravmap[(y/CELL)*(XRES/CELL)+(x/CELL)] = -5;
+		return -1;
 	}
 
 
@@ -1008,6 +1006,9 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 	if (t==PT_COAL) {
 		parts[i].life = 110;
 		parts[i].tmp = 50;
+	}
+	if (t==PT_IGNT) {
+		parts[i].life = 3;
 	}
 	if (t==PT_FRZW)
 		parts[i].life = 100;
@@ -1910,13 +1911,13 @@ void update_particles_i(pixel *vid, int start, int inc)
 			if (t==PT_ANAR)
 			{
 				// perhaps we should have a ptypes variable for this
-				pGravX -= gravxf[(y*XRES)+x];
-				pGravY -= gravyf[(y*XRES)+x];
+				pGravX -= gravx[(y/CELL)*(XRES/CELL)+(x/CELL)];
+				pGravY -= gravy[(y/CELL)*(XRES/CELL)+(x/CELL)];
 			}
 			else if(t!=PT_STKM && t!=PT_STKM2 && !PT_SING && t!=PT_FIGH && !(ptypes[t].properties & TYPE_SOLID))
 			{
-				pGravX += gravxf[(y*XRES)+x];
-				pGravY += gravyf[(y*XRES)+x];
+				pGravX += gravx[(y/CELL)*(XRES/CELL)+(x/CELL)];
+				pGravY += gravy[(y/CELL)*(XRES/CELL)+(x/CELL)];
 			}
 			//velocity updates for the particle
 			parts[i].vx *= ptypes[t].loss;
@@ -2172,8 +2173,7 @@ void update_particles_i(pixel *vid, int start, int inc)
 
 
 			s = 1;
-			if (x<XRES && y<YRES && x>=0 && y>=0)
-                gravtot = fabs(gravyf[(y*XRES)+x])+fabs(gravxf[(y*XRES)+x]);
+			gravtot = fabs(gravy[(y/CELL)*(XRES/CELL)+(x/CELL)])+fabs(gravx[(y/CELL)*(XRES/CELL)+(x/CELL)]);
 			if (pv[y/CELL][x/CELL]>ptransitions[t].phv&&ptransitions[t].pht>-1) {
 				// particle type change due to high pressure
 				if (ptransitions[t].pht!=PT_NUM)
@@ -2572,8 +2572,8 @@ killed:
 										pGravX = ptGrav * ((float)(nx - XCNTR) / pGravD);
 										pGravY = ptGrav * ((float)(ny - YCNTR) / pGravD);
 								}
-								pGravX += gravxf[(ny*XRES)+nx];
-								pGravY += gravyf[(ny*XRES)+nx];
+								pGravX += gravx[(ny/CELL)*(XRES/CELL)+(nx/CELL)];
+								pGravY += gravy[(ny/CELL)*(XRES/CELL)+(nx/CELL)];
 								if (fabsf(pGravY)>fabsf(pGravX))
 									mv = fabsf(pGravY);
 								else
@@ -2631,8 +2631,8 @@ killed:
 											pGravX = ptGrav * ((float)(nx - XCNTR) / pGravD);
 											pGravY = ptGrav * ((float)(ny - YCNTR) / pGravD);
 									}
-									pGravX += gravxf[(ny*XRES)+nx];
-									pGravY += gravyf[(ny*XRES)+nx];
+									pGravX += gravx[(ny/CELL)*(XRES/CELL)+(nx/CELL)];
+									pGravY += gravy[(ny/CELL)*(XRES/CELL)+(nx/CELL)];
 									if (fabsf(pGravY)>fabsf(pGravX))
 										mv = fabsf(pGravY);
 									else
@@ -3500,91 +3500,4 @@ inline void orbitalparts_set(int *block1, int *block2, int resblock1[], int resb
 
 	*block1 = block1tmp;
 	*block2 = block2tmp;
-}
-void grav_mask_r(int x, int y, char checkmap[YRES/CELL][XRES/CELL], char shape[YRES/CELL][XRES/CELL], char *shapeout)
-{
-	if(x < 0 || x >= (XRES/CELL) || y < 0 || y >= (YRES/CELL))
-		return;
-	if(x == 0 || y ==0 || y == (YRES/CELL)-1 || x == (XRES/CELL)-1)
-		*shapeout = 1;
-	checkmap[y][x] = 1;
-	shape[y][x] = 1;
-	if(x-1 >= 0 && !checkmap[y][x-1] && bmap[y][x-1]!=WL_GRAV)
-		grav_mask_r(x-1, y, checkmap, shape, shapeout);
-	if(y-1 >= 0 && !checkmap[y-1][x] && bmap[y-1][x]!=WL_GRAV)
-		grav_mask_r(x, y-1, checkmap, shape, shapeout);
-	if(x+1 < (XRES/CELL) && !checkmap[y][x+1] && bmap[y][x+1]!=WL_GRAV)
-		grav_mask_r(x+1, y, checkmap, shape, shapeout);
-	if(y+1 < (YRES/CELL) && !checkmap[y+1][x] && bmap[y+1][x]!=WL_GRAV)
-		grav_mask_r(x, y+1, checkmap, shape, shapeout);
-	return;
-}
-struct mask_el {
-	char *shape;
-	char shapeout;
-	void *next;
-};
-typedef struct mask_el mask_el;
-void mask_free(mask_el *c_mask_el){
-	if(c_mask_el==NULL)
-		return;
-	if(c_mask_el->next!=NULL)
-		mask_free(c_mask_el->next);
-	free(c_mask_el->shape);
-	free(c_mask_el);
-}
-void gravity_mask()
-{
-	char checkmap[YRES/CELL][XRES/CELL];
-	int x = 0, y = 0;
-	mask_el *t_mask_el = NULL;
-	mask_el *c_mask_el = NULL;
-	memset(checkmap, 0, sizeof(checkmap));
-	for(x = 0; x < XRES/CELL; x++)
-	{
-		for(y = 0; y < YRES/CELL; y++)
-		{
-			if(bmap[y][x]!=WL_GRAV && checkmap[y][x] == 0)
-			{
-				//Create a new shape
-				if(t_mask_el==NULL){
-					t_mask_el = malloc(sizeof(mask_el));
-					t_mask_el->shape = malloc((XRES/CELL)*(YRES/CELL));
-					memset(t_mask_el->shape, 0, (XRES/CELL)*(YRES/CELL));
-					t_mask_el->shapeout = 0;
-					t_mask_el->next = NULL;
-					c_mask_el = t_mask_el;
-				} else {
-					c_mask_el->next = malloc(sizeof(mask_el));
-					c_mask_el = c_mask_el->next;
-					c_mask_el->shape = malloc((XRES/CELL)*(YRES/CELL));
-					memset(c_mask_el->shape, 0, (XRES/CELL)*(YRES/CELL));
-					c_mask_el->shapeout = 0;
-					c_mask_el->next = NULL;
-				}
-				//Fill the shape
-				grav_mask_r(x, y, checkmap, c_mask_el->shape, &c_mask_el->shapeout);
-			}
-		}
-	}
-	c_mask_el = t_mask_el;
-	memset(gravmask, 0, sizeof(gravmask));
-	while(c_mask_el!=NULL)
-	{
-		char *cshape = c_mask_el->shape;
-		for(x = 0; x < XRES/CELL; x++)
-		{
-			for(y = 0; y < YRES/CELL; y++)
-			{
-				if(cshape[y*(XRES/CELL)+x]){
-					if(c_mask_el->shapeout)
-						gravmask[y][x] = 0xFFFFFFFF;
-					else
-						gravmask[y][x] = 0x00000000;
-				}
-			}
-		}
-		c_mask_el = c_mask_el->next;
-	}
-	mask_free(t_mask_el);
 }
