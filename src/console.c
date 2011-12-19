@@ -13,28 +13,27 @@ int file_script = 0;
 //takes a a string and compares it to element names, and puts it value into element.
 int console_parse_type(char *txt, int *element, char *err)
 {
-    int i = -1;
-    // alternative names for some elements
-    if (strcasecmp(txt,"C4")==0) i = PT_PLEX;
-    else if (strcasecmp(txt,"C5")==0) i = PT_C5;
-    else if (strcasecmp(txt,"NONE")==0) i = PT_NONE;
-    if (i>=0 && i<PT_NUM && ptypes[i].enabled)
-    {
-        *element = i;
-        if (err) strcpy(err,"");
-        return 1;
-    }
-    for (i=1; i<PT_NUM; i++)
-    {
-        if (strcasecmp(txt,ptypes[i].name)==0 && ptypes[i].enabled)
-        {
-            *element = i;
-            if (err) strcpy(err,"");
-            return 1;
-        }
-    }
-    if (err) strcpy(err, "Particle type not recognised");
-    return 0;
+	int i = -1;
+	// alternative names for some elements
+	if (strcasecmp(txt,"C4")==0) i = PT_PLEX;
+	else if (strcasecmp(txt,"C5")==0) i = PT_C5;
+	else if (strcasecmp(txt,"NONE")==0) i = PT_NONE;
+	if (i>=0 && i<PT_NUM && ptypes[i].enabled)
+	{
+		if (element) *element = i;
+		if (err) strcpy(err,"");
+		return 1;
+	}
+	for (i=1; i<PT_NUM; i++) {
+		if (strcasecmp(txt,ptypes[i].name)==0 && ptypes[i].enabled)
+		{
+			if (element) *element = i;
+			if (err) strcpy(err,"");
+			return 1;
+		}
+	}
+	if (err) strcpy(err, "Particle type not recognised");
+	return 0;
 }
 //takes a string of coords "x,y" and puts the values into x and y.
 int console_parse_coords(char *txt, int *x, int *y, char *err)

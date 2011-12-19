@@ -28,3 +28,4 @@ obj/*
 *.srv
 *.bat
 *.o
+*.me
