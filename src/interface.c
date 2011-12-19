@@ -207,9 +207,9 @@ void add_sign_ui(pixel *vid_buf, int mx, int my)
 		drawrect(vid_buf, x0+8, y0+20, 176, 16, 192, 192, 192, 255);
 		ui_edit_draw(vid_buf, &ed);
 		drawtext(vid_buf, x0+8, y0+46, "Justify:", 255, 255, 255, 255);
-		draw_icon(vid_buf, x0+50, y0+42, 0x9D, ju == 0);
-		draw_icon(vid_buf, x0+68, y0+42, 0x9E, ju == 1);
-		draw_icon(vid_buf, x0+86, y0+42, 0x9F, ju == 2);
+		draw_icon(vid_buf, x0+56, y0+42, 0x9D, ju == 0);
+		draw_icon(vid_buf, x0+74, y0+42, 0x9E, ju == 1);
+		draw_icon(vid_buf, x0+92, y0+42, 0x9F, ju == 2);
 
 
 
@@ -220,8 +220,8 @@ void add_sign_ui(pixel *vid_buf, int mx, int my)
 			drawtext(vid_buf, x0+138, y0+45, "\x86", 160, 48, 32, 255);
 			drawtext(vid_buf, x0+138, y0+45, "\x85", 255, 255, 255, 255);
 			drawtext(vid_buf, x0+152, y0+46, "Delete", 255, 255, 255, 255);
-			drawrect(vid_buf, x0+134, y0+42, 50, 15, 255, 255, 255, 255);
-			drawrect(vid_buf,x0+104,y0+42,26,15,255,255,255,255);
+			drawrect(vid_buf, x0+134, y0+42, 57, 15, 255, 255, 255, 255);
+			drawrect(vid_buf,x0+104,  y0+42,26,15,255,255,255,255);
 			drawtext(vid_buf, x0+110, y0+48, "Mv.", 255, 255, 255, 255);
 		}
 
@@ -232,11 +232,11 @@ void add_sign_ui(pixel *vid_buf, int mx, int my)
 
 		ui_edit_process(mx, my, b, &ed);
 
-		if (b && !bq && mx>=x0+50 && mx<=x0+67 && my>=y0+42 && my<=y0+59)
+		if (b && !bq && mx>=x0+56 && mx<=x0+67 && my>=y0+42 && my<=y0+59)
 			ju = 0;
-		if (b && !bq && mx>=x0+68 && mx<=x0+85 && my>=y0+42 && my<=y0+59)
+		if (b && !bq && mx>=x0+74 && mx<=x0+85 && my>=y0+42 && my<=y0+59)
 			ju = 1;
-		if (b && !bq && mx>=x0+86 && mx<=x0+103 && my>=y0+42 && my<=y0+59)
+		if (b && !bq && mx>=x0+92 && mx<=x0+103 && my>=y0+42 && my<=y0+59)
 			ju = 2;
 
 		if (!nm && b && !bq && mx>=x0+104 && mx<=x0+130 && my>=y0+42 && my<=y0+59)
