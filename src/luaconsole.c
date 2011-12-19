@@ -113,7 +113,7 @@ void luacon_open(){
 	lua_pushinteger(l, 0);
 	lua_setfield(l, tptProperties, "elements");
 
-	/*lua_newtable(l);
+	lua_newtable(l);
 	tptPropertiesVersion = lua_gettop(l);
 	lua_pushinteger(l, SAVE_VERSION);
 	lua_setfield(l, tptPropertiesVersion, "major");
@@ -122,12 +122,12 @@ void luacon_open(){
 	lua_pushinteger(l, BUILD_NUM);
 	lua_setfield(l, tptPropertiesVersion, "build");
 	lua_setfield(l, tptProperties, "version");
-	
+
 #ifdef FFI
 	//LuaJIT's ffi gives us direct access to parts data, no need for nested metatables. HOWEVER, this is in no way safe, it's entirely possible for someone to try to read parts[-10]
 	lua_pushlightuserdata(l, parts);
 	lua_setfield(l, tptProperties, "partsdata");
-	
+
 	luaL_dostring (l, "ffi = require(\"ffi\")\n\
 ffi.cdef[[\n\
 typedef struct { int type; int life, ctype; float x, y, vx, vy; float temp; float pavg[2]; int flags; int tmp; int tmp2; unsigned int dcolour; } particle;\n\
@@ -149,7 +149,7 @@ tpt.partsdata = nil");
 	lua_setfield(l, tptPartsMeta, "__index");
 	lua_setmetatable(l, tptParts);
 	lua_setfield(l, tptProperties, "parts");
-	
+
 	lua_newtable(l);
 	tptPart = lua_gettop(l);
 	lua_newtable(l);
@@ -159,7 +159,7 @@ tpt.partsdata = nil");
 	lua_pushcfunction(l, luacon_partread);
 	lua_setfield(l, tptPartMeta, "__index");
 	lua_setmetatable(l, tptPart);
-	
+
 	tptPart = luaL_ref(l, LUA_REGISTRYINDEX);
 #endif
 
@@ -170,12 +170,12 @@ tpt.partsdata = nil");
 		for(j = 0; j < strlen(ptypes[i].name); j++)
 			tmpname[j] = tolower(ptypes[i].name[j]);
 		tmpname[strlen(ptypes[i].name)] = 0;
-		
+
 		lua_newtable(l);
 		currentElement = lua_gettop(l);
 		lua_pushinteger(l, i);
 		lua_setfield(l, currentElement, "id");
-		
+
 		lua_newtable(l);
 		currentElementMeta = lua_gettop(l);
 		lua_pushcfunction(l, luacon_elementwrite);
@@ -183,11 +183,11 @@ tpt.partsdata = nil");
 		lua_pushcfunction(l, luacon_elementread);
 		lua_setfield(l, currentElementMeta, "__index");
 		lua_setmetatable(l, currentElement);
-		
+
 		lua_setfield(l, tptElements, tmpname);
 	}
 	lua_setfield(l, tptProperties, "el");
-	
+
 	lua_newtable(l);
 	tptElementTransitions = lua_gettop(l);
 	for(i = 1; i < PT_NUM; i++)
@@ -195,9 +195,9 @@ tpt.partsdata = nil");
 		for(j = 0; j < strlen(ptypes[i].name); j++)
 			tmpname[j] = tolower(ptypes[i].name[j]);
 		tmpname[strlen(ptypes[i].name)] = 0;
-		
+
 		lua_newtable(l);
-		currentElement = lua_gettop(l);		
+		currentElement = lua_gettop(l);
 		lua_newtable(l);
 		currentElementMeta = lua_gettop(l);
 		lua_pushinteger(l, i);
@@ -207,7 +207,7 @@ tpt.partsdata = nil");
 		lua_pushcfunction(l, luacon_transitionread);
 		lua_setfield(l, currentElementMeta, "__index");
 		lua_setmetatable(l, currentElement);
-		
+
 		lua_setfield(l, tptElementTransitions, tmpname);
 	}
 	lua_setfield(l, tptProperties, "eltransition");
@@ -228,7 +228,7 @@ int luacon_partread(lua_State* l){
 	offset = luacon_particle_getproperty(key, &format);
 
 	i = cIndex;
-	
+
 	if(i < 0 || i >= NPART || offset==-1)
 	{
 		if(i < 0 || i >= NPART) {
@@ -262,9 +262,9 @@ int luacon_partwrite(lua_State* l){
 	int i;
 	char * key = mystrdup(luaL_optstring(l, 2, ""));
 	offset = luacon_particle_getproperty(key, &format);
-	
+
 	i = cIndex;
-	
+
 	if(i < 0 || i >= NPART || offset==-1)
 	{
 		if(i < 0 || i >= NPART) {
@@ -293,14 +293,14 @@ int luacon_partsread(lua_State* l){
 	int tempinteger;
 	float tempfloat;
 	int i, currentPart, currentPartMeta;
-	
+
 	i = luaL_optinteger(l, 2, 0);
-	
+
 	if(i<0 || i>=NPART)
 	{
 		return luaL_error(l, "array index out of bounds");
 	}
-	
+
 	lua_rawgeti(l, LUA_REGISTRYINDEX, tptPart);
 	cIndex = i;
 	return 1;
@@ -393,15 +393,15 @@ int luacon_transitionread(lua_State* l){
 	char * key = mystrdup(luaL_optstring(l, 2, ""));
 	offset = luacon_transition_getproperty(key, &format);
 	free(key);
-	
+
 	//Get Raw Index value for element
 	lua_pushstring(l, "value");
 	lua_rawget(l, 1);
-	
+
 	i = lua_tointeger(l, lua_gettop(l));
-	
+
 	lua_pop(l, 1);
-	
+
 	if(i < 0 || i >= PT_NUM || offset==-1)
 	{
 		return luaL_error(l, "Invalid property");
@@ -427,15 +427,15 @@ int luacon_transitionwrite(lua_State* l){
 	char * key = mystrdup(luaL_optstring(l, 2, ""));
 	offset = luacon_transition_getproperty(key, &format);
 	free(key);
-	
+
 	//Get Raw Index value for element
 	lua_pushstring(l, "value");
 	lua_rawget(l, 1);
-	
+
 	i = lua_tointeger (l, lua_gettop(l));
-	
+
 	lua_pop(l, 1);
-	
+
 	if(i < 0 || i >= PT_NUM || offset==-1)
 	{
 		return luaL_error(l, "Invalid property");
@@ -568,15 +568,15 @@ int luacon_elementread(lua_State* l){
 	char * key = mystrdup(luaL_optstring(l, 2, ""));
 	offset = luacon_element_getproperty(key, &format);
 	free(key);
-	
+
 	//Get Raw Index value for element
 	lua_pushstring(l, "id");
 	lua_rawget(l, 1);
-	
+
 	i = lua_tointeger (l, lua_gettop(l));
-	
+
 	lua_pop(l, 1);
-	
+
 	if(i < 0 || i >= PT_NUM || offset==-1)
 	{
 		return luaL_error(l, "Invalid property");
@@ -610,15 +610,15 @@ int luacon_elementwrite(lua_State* l){
 	int i;
 	char * key = mystrdup(luaL_optstring(l, 2, ""));
 	offset = luacon_element_getproperty(key, &format);
-	
+
 	//Get Raw Index value for element
 	lua_pushstring(l, "id");
 	lua_rawget(l, 1);
-	
+
 	i = lua_tointeger (l, lua_gettop(l));
-	
+
 	lua_pop(l, 1);
-	
+
 	if(i < 0 || i >= PT_NUM || offset==-1)
 	{
 		free(key);
