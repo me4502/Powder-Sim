@@ -50,7 +50,7 @@ build/powder-sse2 build/powder-64-sse2 build/powder-sse2.exe: CFLAGS += -march=n
 build/powder-sse build/powder-sse.exe: CFLAGS += -march=native -DX86 -DX86_SSE
 
 # libs:
-build/powder build/powder-debug build/powder-sse3 build/powder-sse2 build/powder-sse build/powder-sse3-opengl build/powder-debug-64 build/powder-64-sse3 build/powder-64-sse2 build/powder-64-sse3-opengl: LIBS += $(LFLAGS)
+build/powder build/powder-debug build/powder-sse3 build/powder-sse2 build/powder-sse build/powder-sse3-opengl build/powder-debug-64 build/powder-64-sse3 build/powder-64-sse2 build/powder-64-sse3-opengl: LIBS += $(LFLAGS_5)
 build/powder-sse3.exe build/powder-sse2.exe build/powder-sse.exe: LIBS += $(LFLAGS_WIN)
 build/powder-64-sse3-opengl build/powder-sse3-opengl: LIBS += -lGL
 
