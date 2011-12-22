@@ -184,6 +184,11 @@ int sdl_poll(void)
 
 char *tag = "(c) 2008 Stanislaw Skowronek";
 
+int WinMain(int argc, char *argv[])
+{
+    return main(argc, argv);
+}
+
 int main(int argc, char *argv[])
 {
     unsigned *vid_buf = calloc(XRES*YRES, sizeof(unsigned));
