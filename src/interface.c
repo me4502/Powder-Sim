@@ -6882,7 +6882,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 
 	int render_optioncount = 6;
 	int render_options[] = {RENDER_EFFE, RENDER_GLOW, RENDER_FIRE, RENDER_BLUR, RENDER_BLOB, RENDER_BASC};
-	int render_optionicons[] = {0xE1, 0xDF, 0x9B, 0xC4, 0xBF, 0xDB};
+	int render_optionicons[] = {0xE1, 0xDF, 0x9B, 0xC4, 0xBF, 0xDE};
 	char * render_desc[] = {"Effects", "Glow", "Fire", "Blur", "Blob", "Basic"};
 
 	int display_optioncount = 7;
