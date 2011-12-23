@@ -45,12 +45,14 @@ build/powder-sse3.exe build/powder-sse2.exe build/powder-sse.exe: CFLAGS += -mwi
 build/powder-64-sse3-opengl build/powder-sse3-opengl: CFLAGS += -DOGLR -DPIX32OGL -DPIXALPHA
 
 # SSE flags:
-build/powder build/powder-sse3 build/powder-sse3-opengl build/powder-64-sse3 build/powder-64-sse3-opengl build/powder-debug build/powder-debug-64 build/powder-sse3.exe: CFLAGS += -march=native -DX86 -DX86_SSE3 -msse3
+build/powder build/powder-sse3 build/powder-sse3-opengl build/powder-64-sse3 build/powder-64-sse3-opengl build/powder-debug build/powder-debug-64 build/powder-sse3.exe build/powder-lua: CFLAGS += -march=native -DX86 -DX86_SSE3 -msse3
 build/powder-sse2 build/powder-64-sse2 build/powder-sse2.exe: CFLAGS += -march=native -DX86 -DX86_SSE2 -msse2
 build/powder-sse build/powder-sse.exe: CFLAGS += -march=native -DX86 -DX86_SSE
 
 # libs:
-build/powder build/powder-debug build/powder-sse3 build/powder-sse2 build/powder-sse build/powder-sse3-opengl build/powder-debug-64 build/powder-64-sse3 build/powder-64-sse2 build/powder-64-sse3-opengl: LIBS += $(LFLAGS_5)
+build/powder-lua : LIBS += $(LFLAGS)
+build/powder build/powder-debug build/powder-sse3 build/powder-sse2 build/powder-sse build/powder-64-sse3 build/powder-64-sse2 build/powder-64-sse3-opengl: LIBS += $(LFLAGS_5)
+build/powder-64-sse3-opengl: LIBS += -lGL -lGLU -DOpenGL
 build/powder-sse3.exe build/powder-sse2.exe build/powder-sse.exe: LIBS += $(LFLAGS_WIN)
 build/powder-64-sse3-opengl build/powder-sse3-opengl: LIBS += -lGL
 
@@ -111,6 +113,7 @@ build/obj/%.powder-64-sse2.o: src/%.c $(HEADERS)
 
 build/powder-debug-64: $(patsubst build/obj/%.o,build/obj/%.powder-debug-64.o,$(OBJS))
 	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_OBJS) $(patsubst build/obj/%.o,build/obj/%.powder-debug-64.o,$(OBJS)) $(LIBS) -o $@
+	strip $@
 build/obj/%.powder-debug-64.o: src/%.c $(HEADERS)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
@@ -166,3 +169,4 @@ powder-x-ogl: $(SOURCES)
 	gcc -o $@ $(CFLAGS) $(OFLAGS) $(LFLAGS_X) $(MFLAGS) $(SOURCES) -DOpenGL -DMACOSX -DPIX32BGRA -arch x86_64 -framework Cocoa -framework SDL -framework OpenGL
 	strip $@ 
 	mv $@ build
+	
