@@ -184,6 +184,7 @@ int fancy_graphics = 0;
 int tpt_comp = 0;
 int part_loop = 0;
 int menu_type = 1;
+int menu_show = 1;
 int fix_lag = 1;
 int amd = 1;
 int FPSB = 0;
@@ -191,6 +192,7 @@ int MSIGN =-1;
 int frameidx = 0;
 int mecool = 0;
 int speedtick[2] = {0,0};
+int viewMode = 1;
 
 int gradCol = ((255<<24)|(255<<16)|(0<<8)|0);
 //int CGOL = 0;
@@ -1553,7 +1555,7 @@ int main(int argc, char *argv[])
 	cb_parts = calloc(sizeof(particle), NPART);
 	init_can_move();
 	clear_sim();
-	
+
 #ifdef LUACONSOLE
 	luacon_open();
 #endif
@@ -1848,7 +1850,7 @@ int main(int argc, char *argv[])
 
 		if(sl == WL_GRAV+100 || sr == WL_GRAV+100)
 			draw_grav_zones(part_vbuf);
-		
+
 		gravity_update_async(); //Check for updated velocity maps from gravity thread
 		if (!sys_pause||framerender) //Only update if not paused
 			memset(gravmap, 0, sizeof(gravmap)); //Clear the old gravmap
@@ -2580,7 +2582,7 @@ int main(int argc, char *argv[])
 		}
 		luacon_step(x/sdl_scale, y/sdl_scale,sl,sr);
 #endif
-        if (menu_type)
+        if (menu_type && menu_show)
         {
             if (!quickoptions_shown)
             {
@@ -2618,7 +2620,7 @@ int main(int argc, char *argv[])
             }
         } else if (sdl_mod & (KMOD_LCTRL|KMOD_RCTRL))
                 quickoptions_menu(vid_buf, b, bq, x, y);
-        else {
+        else if (menu_show) {
             b = SDL_GetMouseState(&x, &y);
             for(i=0; i<SC_TOTAL; i++){
                 draw_menu_old(vid_buf, i, 0);
