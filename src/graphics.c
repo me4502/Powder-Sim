@@ -4562,34 +4562,41 @@ int sdl_open(void)
 	}
 #else
 #ifdef PIX16
+int pix = 16;
+#else
+int pix = 32;
+#endif
 #ifdef GPUR
-	if (kiosk_enable)
-		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,16,SDL_FULLSCREEN|SDL_HWSURFACE|);
-	else
-		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,16,SDL_HWSURFACE);
+    if (viewMode)
+    {
+    	if (kiosk_enable)
+            sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,pix,SDL_FULLSCREEN|SDL_HWSURFACE);
+        else
+            sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,pix,SDL_HWSURFACE);
+    }
+    else
+    {
+        if (kiosk_enable)
+            sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale,YRES*sdl_scale,pix,SDL_FULLSCREEN|SDL_HWSURFACE);
+        else
+            sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale,YRES*sdl_scale,pix,SDL_HWSURFACE);
+    }
 #else
-	if (kiosk_enable)
-		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,16,SDL_FULLSCREEN|SDL_SWSURFACE|);
-	else
-		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,16,SDL_SWSURFACE);
+    if (viewMode)
+    {
+        if (kiosk_enable)
+            sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,pix,SDL_FULLSCREEN|SDL_SWSURFACE);
+        else
+            sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,pix,SDL_SWSURFACE);
+    }
+    else
+    {
+        if (kiosk_enable)
+            sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale,YRES*sdl_scale,pix,SDL_FULLSCREEN|SDL_SWSURFACE);
+        else
+            sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale,YRES*sdl_scale,pix,SDL_SWSURFACE);
+    }
 #endif
-#else
-#ifdef GPUR
-    if (kiosk_enable)
-		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,32,SDL_FULLSCREEN|SDL_HWSURFACE);
-	else
-		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,32,SDL_HWSURFACE);
-#else
-	if (kiosk_enable)
-		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,32,SDL_FULLSCREEN|SDL_SWSURFACE);
-	else
-		sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,32,SDL_SWSURFACE);
-#endif
-#endif
-#endif
-#ifdef SDL1.3
-	winid = SDL_CreateWindow("Powder Sim Config", 32, 32, 200, 200, SDL_WINDOW_OPENGL);
-	SDL_ShowWindow(winid);
 #endif
 	if (!sdl_scrn)
 	{
