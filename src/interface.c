@@ -6882,17 +6882,17 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 
 	int render_optioncount = 6;
 	int render_options[] = {RENDER_EFFE, RENDER_GLOW, RENDER_FIRE, RENDER_BLUR, RENDER_BLOB, RENDER_BASC};
-	int render_optionicons[] = {0xE1, 0xDF, 0x9B, 0xC4, 0xBF, 0xDE};
+	int render_optionicons[] = {0xE4, 0xE2, 0x9B, 0xC4, 0xBF, 0xDE};
 	char * render_desc[] = {"Effects", "Glow", "Fire", "Blur", "Blob", "Basic"};
 
 	int display_optioncount = 7;
 	int display_options[] = {DISPLAY_AIRC, DISPLAY_AIRP, DISPLAY_AIRV, DISPLAY_AIRH, DISPLAY_WARP, DISPLAY_PERS, DISPLAY_EFFE};
-	int display_optionicons[] = {0xD4, 0x99, 0x98, 0xBE, 0xDE, 0x9A, -1};
+	int display_optionicons[] = {0xD4, 0x99, 0x98, 0xBE, 0xE1, 0x9A, -1};
 	char * display_desc[] = {"Air: Cracker", "Air: Pressure", "Air: Velocity", "Air: Heat", "Warp effect", "Persistent", "Effects"};
 
 	int colour_optioncount = 3;
 	int colour_options[] = {COLOUR_LIFE, COLOUR_HEAT, COLOUR_GRAD};
-	int colour_optionicons[] = {0xE0, 0xBE, 0xD3};
+	int colour_optionicons[] = {0xE3, 0xBE, 0xD3};
 	char * colour_desc[] = {"Life", "Heat", "Heat Gradient"};
 
 	yoffset = 16;
