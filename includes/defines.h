@@ -12,7 +12,7 @@
 
 //VersionInfoStart
 #define SAVE_VERSION 70
-#define MINOR_VERSION 0
+#define MINOR_VERSION 1
 #define PS_VERSION 1
 #define PS_MINOR_VERSION 3
 //#define BETA
