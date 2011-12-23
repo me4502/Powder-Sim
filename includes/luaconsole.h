@@ -113,4 +113,7 @@ int luatpt_screenshot(lua_State* l);
 int luatpt_overgraph(lua_State* l);
 int luatpt_setgraph(lua_State* l);
 int luatpt_setgraphmode(lua_State* l);
+int luatpt_menutype(lua_State* l);
+int luatpt_showmenu(lua_State* l);
+int luatpt_windowview(lua_State* l);
 #endif

@@ -89,6 +89,9 @@ void luacon_open(){
 		{"override_graphic",&luatpt_overgraph},
 		{"set_graphic",&luatpt_setgraph},
 		{"graphic_mode",&luatpt_setgraphmode},
+		{"menu_type",&luatpt_menutype},
+		{"show_menu",&luatpt_showmenu},
+		{"view_mode",&luatpt_windowview},
 		{NULL,NULL}
 	};
 
@@ -2099,6 +2102,8 @@ int luatpt_overgraph(lua_State* l)
 			return luaL_error(l, "Unrecognised element '%s'", name);
 	}
 	graphicscache[t].isready = graph;
+
+    return 0;
 }
 int luatpt_setgraph(lua_State* l)
 {
@@ -2128,6 +2133,8 @@ int luatpt_setgraph(lua_State* l)
 	graphicscache[t].fireg = fg;
 	graphicscache[t].firer = fr;
 	graphicscache[t].firea = fa;
+
+	return 0;
 }
 int luatpt_setgraphmode(lua_State* l)
 {
@@ -2200,5 +2207,33 @@ int luatpt_setgraphmode(lua_State* l)
         graphicscache[t].pixel_mode |= FIRE_ADD;
     if (fblen)//17
         graphicscache[t].pixel_mode |= FIRE_BLEND;
+
+	return 0;
+}
+int luatpt_menutype(lua_State* l)
+{
+	int type = luaL_optint(l,1,0);
+	menu_type = type;
+    return 0;
+}
+int luatpt_showmenu(lua_State* l)
+{
+	int show = luaL_optint(l,1,0);
+	menu_show = show;
+    return 0;
+}
+int luatpt_windowview(lua_State* l)
+{
+	int view = luaL_optint(l,1,1);
+	viewMode = view;
+	if (!sdl_open())
+	{
+		sdl_open();
+		return 0;
+	}
+	else
+    {
+        return luaL_error(l, "SDL has already started");
+    }
 }
 #endif
