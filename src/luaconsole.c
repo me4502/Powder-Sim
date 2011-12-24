@@ -92,6 +92,9 @@ void luacon_open(){
 		{"menu_type",&luatpt_menutype},
 		{"show_menu",&luatpt_showmenu},
 		{"view_mode",&luatpt_windowview},
+		{"show_bar",&luatpt_showbar},
+		{"exit",&luatpt_exit},
+		{"about",&luatpt_startmsg},
 		{NULL,NULL}
 	};
 
@@ -2220,6 +2223,24 @@ int luatpt_showmenu(lua_State* l)
 {
 	int show = luaL_optint(l,1,0);
 	menu_show = show;
+    return 0;
+}
+int luatpt_showbar(lua_State* l)
+{
+	int show = luaL_optint(l,1,0);
+	svf_show = show;
+    return 0;
+}
+int luatpt_exit(lua_State* l)
+{
+    int quit = luaL_optint(l,1,0);
+    luacon_quit = quit;
+    return 0;
+}
+int luatpt_startmsg(lua_State* l)
+{
+    int smsg = luaL_optint(l,1,0);
+    it = smsg;
     return 0;
 }
 int luatpt_windowview(lua_State* l)
