@@ -21,7 +21,7 @@
 
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter
 
-#define SERVER "google froze while googling google"//"powdertoy.co.uk"
+#define SERVER "localhost:8080"//"powdertoy.co.uk"
 
 #define MTOS_EXPAND(str) #str
 #define MTOS(str) MTOS_EXPAND(str)
@@ -148,6 +148,8 @@ extern int amd;
 
 extern int FPSB;
 
+extern int it;
+
 int NUM_PARTS;
 int GRAV;
 int GRAV_R;
@@ -173,6 +175,7 @@ extern int menu_type;
 extern int menu_show;
 extern int fix_lag;
 extern int viewMode;
+extern int svf_show;
 extern int speedtick[2];
 int limitFPS;
 int water_equal_test;
