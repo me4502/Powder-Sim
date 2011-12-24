@@ -146,7 +146,7 @@ static const char *it_msg =
     "Use 'S' to save parts of the window as 'stamps'.\n"
     "'L' will load the most recent stamp, 'K' shows a library of stamps you saved.\n"
     "\n"
-    "\boPowder Sim Contributors:\bg Madeline Miller(me4502), Vanquish349, Randalserrano And Antonvrg\n"
+    "\boPowder Sim Contributors:\bg Matthew \"me4502\", Vanquish349, Randalserrano And Antonvrg\n"
     "Font 'installer' orignaly by Milan Zrnic\n\n"
 
     "\boPowder Toy Contributors: \bgStanislaw K Skowronek (\brhttp://powder.unaligned.org\bg,\n \bbirc.unaligned.org #wtf\bg),"
@@ -185,6 +185,7 @@ int tpt_comp = 0;
 int part_loop = 0;
 int menu_type = 1;
 int menu_show = 1;
+int svf_show = 1;
 int fix_lag = 1;
 int amd = 1;
 int FPSB = 0;
@@ -1364,6 +1365,7 @@ unsigned char last_major=0, last_minor=0, last_build=0, update_flag=0;
 
 char *tag = "(c) 2008-9 Stanislaw Skowronek";
 int itc = 0;
+int it = 2047;
 char itc_msg[64] = "[?]";
 
 char my_uri[] = "http://" SERVER "/Update.api?Action=Download&Architecture="
@@ -1516,7 +1518,7 @@ int main(int argc, char *argv[])
 #endif
 	int wavelength_gfx = 0;
 	int x, y, line_x, line_y, b = 0, sl=1, sr=0, su=0, c, lb = 0, lx = 0, ly = 0, lm = 0;//, tx, ty;
-	int dae = 0, db = 0, it = 2047, mx, my, bsx = 2, bsy = 2, quickoptions_tooltip_fade_invert, it_invert = 0;
+	int dae = 0, db = 0, mx, my, bsx = 2, bsy = 2, quickoptions_tooltip_fade_invert, it_invert = 0;
 	float nfvx, nfvy;
 	int load_mode=0, load_w=0, load_h=0, load_x=0, load_y=0, load_size=0;
 	void *load_data=NULL;
@@ -1888,7 +1890,7 @@ int main(int argc, char *argv[])
 		memset(vid_buf+((XRES+BARSIZE)*YRES), 0, (PIXELSIZE*(XRES+BARSIZE))*MENUSIZE);//clear menu areas
 		clearrect(vid_buf, XRES-1, 0, BARSIZE+1, YRES);
 
-		draw_svf_ui(vid_buf, sdl_mod & (KMOD_LCTRL|KMOD_RCTRL));
+		if (svf_show) draw_svf_ui(vid_buf, sdl_mod & (KMOD_LCTRL|KMOD_RCTRL));
 
 		if(debug_flags)
 		{
@@ -2027,6 +2029,7 @@ int main(int argc, char *argv[])
 			do_s_check = (do_s_check+1) & 15;
 		}
 #ifdef LUACONSOLE
+    if (luacon_quit) break;
 	if(sdl_key){
 		if(!luacon_keyevent(sdl_key, sdl_mod, LUACON_KDOWN))
 			sdl_key = 0;
@@ -2618,7 +2621,7 @@ int main(int argc, char *argv[])
                 }
                 menu_ui_v3(vid_buf, active_menu, &sl, &sr, &dae, b, bq, x, y); //draw the elements in the current menu
             }
-        } else if (sdl_mod & (KMOD_LCTRL|KMOD_RCTRL))
+        } else if (sdl_mod & (KMOD_LCTRL|KMOD_RCTRL) && menu_show)
                 quickoptions_menu(vid_buf, b, bq, x, y);
         else if (menu_show) {
             b = SDL_GetMouseState(&x, &y);
@@ -2944,7 +2947,7 @@ int main(int argc, char *argv[])
             drawrect(vid_buf,XRES+1,1,14,14,255,255,255,255);
             drawtext(vid_buf, XRES+4, 4, "\xCF", 255, 255, 255, 255);
         }
-        if (!quickoptions_shown && menu_type)
+        if (!quickoptions_shown && menu_type && menu_show)
         {
             quickoptions_tooltip_fade_invert = 255;
             quickoptions_tooltip_fade = 0;
@@ -2955,7 +2958,7 @@ int main(int argc, char *argv[])
                 else quickoptions_shown = 0;
             }
             else quickoptions_shown = 0;
-        } else if (menu_type) {
+        } else if (menu_type && menu_show) {
             if (x > XRES+1 && x < XRES+15)
             {
                 if (y > 1 && y <(14*9))

@@ -52,6 +52,8 @@ int process_command_lua(pixel *vid_buf, char *console, char *console_error);
 
 int getPartIndex_curIdx;
 
+int luacon_quit;
+
 //TPT Interface
 int luatpt_test(lua_State* l);
 int luatpt_getelement(lua_State *l);
@@ -116,4 +118,7 @@ int luatpt_setgraphmode(lua_State* l);
 int luatpt_menutype(lua_State* l);
 int luatpt_showmenu(lua_State* l);
 int luatpt_windowview(lua_State* l);
+int luatpt_showbar(lua_State* l);
+int luatpt_exit(lua_State* l);
+int luatpt_startmsg(lua_State* l);
 #endif
