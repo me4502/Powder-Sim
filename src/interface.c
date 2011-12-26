@@ -6863,6 +6863,15 @@ void drawIcon(pixel * vid_buf, int x, int y, int cmode)
 		drawtext(vid_buf, x, y, "\xD4", 255, 55, 55, 255);
 		drawtext(vid_buf, x, y, "\xD5", 55, 255, 55, 255);
 		break;
+	case 0xE2:
+		drawtext(vid_buf, x, y, "\xE2", 255, 255, 200, 255);
+		break;
+	case 0xE3:
+		drawtext(vid_buf, x, y, "\xE3", 255, 255, 200, 255);
+		break;
+	case 0xE4:
+		drawtext(vid_buf, x, y, "\xE4", 255, 255, 200, 255);
+		break;
 	}
 }
 
