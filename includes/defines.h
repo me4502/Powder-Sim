@@ -11,17 +11,17 @@
 #define MT
 
 //VersionInfoStart
-#define SAVE_VERSION 70
-#define MINOR_VERSION 1
-#define PS_VERSION 1
-#define PS_MINOR_VERSION 3
-//#define BETA
+#define SAVE_VERSION 1
+#define MINOR_VERSION 3
+//#define PS_VERSION 1
+//#define PS_MINOR_VERSION 3
+#define BETA
 #define BUILD_NUM 3
 //VersionInfoEnd
 
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter
 
-#define SERVER "localhost:8080"//"powdertoy.co.uk"
+#define SERVER "localhost:80"//"powdertoy.co.uk"
 
 #define MTOS_EXPAND(str) #str
 #define MTOS(str) MTOS_EXPAND(str)
