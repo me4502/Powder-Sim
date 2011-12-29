@@ -6989,7 +6989,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 
 		clearrect(vid_buf, xcoord-2, ycoord-2, xsize+4, ysize+4);
 		drawrect(vid_buf, xcoord, ycoord, xsize, ysize, 192, 192, 192, 255);
-		
+
 		changed = 0;
 		for(i = 0; i < render_optioncount; i++)
 		{
@@ -7025,7 +7025,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 				}
 			}
 		}
-		
+
 		changed = 0;
 		for(i = 0; i < display_optioncount; i++)
 		{
@@ -7080,7 +7080,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 				}
 			}
 		}
-		
+
 		changed = 0;
 		for(i = 0; i < colour_optioncount; i++)
 		{
@@ -7128,9 +7128,9 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 		if (b && !bq && (mx < xcoord || mx > xcoord+xsize || my < ycoord || my > ycoord+ysize))
 			break;
 	}
-	
+
 	free(colour_cb);
-	
+
 	free(render_cb);
 
 	free(display_cb);
@@ -7405,7 +7405,7 @@ void cfancy_ui(pixel *vid_buf)
     if (gc>255) gc=255;
     if (bc<0) bc=0;
     if (bc>255) bc=255;
-    gradCol = ((255<<24)|(rc<<16)|(gc<<8)|bc);
+    gradCol = PIXRGB(rc,gc,bc);
     free(rt);
     free(gt);
     free(bt);
