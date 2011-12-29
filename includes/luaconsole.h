@@ -24,6 +24,11 @@
 #define LUACON_BERASE 2
 
 
+//Bitmasks for things that might need recalculating after changes to tpt.el
+#define LUACON_EL_MODIFIED_CANMOVE 0x1
+#define LUACON_EL_MODIFIED_GRAPHICS 0x2
+#define LUACON_EL_MODIFIED_MENUS 0x4
+
 int *lua_el_func, *lua_el_mode;
 
 void luacon_open();
@@ -47,7 +52,7 @@ int luacon_transitionread(lua_State* l);
 int luacon_transitionwrite(lua_State* l);
 int luacon_particle_getproperty(char * key, int * format);
 int luacon_transition_getproperty(char * key, int * format);
-int luacon_element_getproperty(char * key, int * format);
+int luacon_element_getproperty(char * key, int * format, unsigned int * modified_stuff);
 int process_command_lua(pixel *vid_buf, char *console, char *console_error);
 
 int getPartIndex_curIdx;
