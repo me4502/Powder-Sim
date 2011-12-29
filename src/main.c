@@ -195,7 +195,7 @@ int mecool = 0;
 int speedtick[2] = {0,0};
 int viewMode = 1;
 
-int gradCol = ((255<<24)|(255<<16)|(0<<8)|0);
+int gradCol = PIXRGB(255,0,0);
 //int CGOL = 0;
 //int GSPEED = 1;//causes my .exe to crash..
 int sound_enable = 0;
@@ -1431,7 +1431,7 @@ int main(int argc, char *argv[])
 	pfree = 0;
 
 	pers_bg = calloc((XRES+BARSIZE)*YRES, PIXELSIZE);
-	
+
 	prepare_alpha(CELL, 1.0f);
 	prepare_graphicscache();
 	flm_data = generate_gradient(flm_data_colours, flm_data_pos, flm_data_points, 200);
