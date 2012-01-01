@@ -1874,7 +1874,11 @@ int main(int argc, char *argv[])
 				{
 					sprintf(nametext, "%s (%s)", ptypes[cr&0xFF].name, gmenu[parts[cr>>8].ctype].name);
 				}
-				if ((cr&0xFF)==PT_H2)
+				else if (((cr&0xFF)==PT_DSTW && parts[cr>>8].tmp2>0)||((cr&0xFF)==PT_WATR && parts[cr>>8].tmp2>0))
+                {
+                    sprintf(nametext, "Tritiated %s", ptypes[cr&0xFF].name);
+                }
+				else if ((cr&0xFF)==PT_H2)
                 {
                     switch(parts[cr>>8].ctype)
                     {
