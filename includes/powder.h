@@ -340,6 +340,7 @@ int graphics_ALCO(GRAPHICS_FUNC_ARGS);
 int graphics_WATR(GRAPHICS_FUNC_ARGS);
 int graphics_CBTY(GRAPHICS_FUNC_ARGS);
 int graphics_VBMB(GRAPHICS_FUNC_ARGS);
+int graphics_H2(GRAPHICS_FUNC_ARGS);
 
 #define UPDATE_FUNC_ARGS int i, int x, int y, int surround_space, int nt
 // to call another update function with same arguments:
