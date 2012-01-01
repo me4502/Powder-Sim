@@ -9,6 +9,7 @@
 
 #define GPUR
 #define MT
+#define SAVE_OPS
 
 //VersionInfoStart
 #define SAVE_VERSION 1
