@@ -85,8 +85,16 @@ int update_NEUT(UPDATE_FUNC_ARGS)
 #ifdef SDEUT
                 else if ((r&0xFF)==PT_DEUT && (pressureFactor+1+(parts[r>>8].life/100))>(rand()%1000))
                 {
-                    create_n_parts(parts[r>>8].life, x+rx, y+ry, parts[i].vx, parts[i].vy, restrict_flt(parts[r>>8].temp + parts[r>>8].life*500, MIN_TEMP, MAX_TEMP), PT_NEUT);
-                    kill_part(r>>8);
+                    if (rand()%100<1)
+                    {
+                        part_change_type(r>>8,x+rx, y+ry,PT_H2);
+                        parts[r>>8].ctype=2;
+                    }
+                    else
+                    {
+                        create_n_parts(parts[r>>8].life, x+rx, y+ry, parts[i].vx, parts[i].vy, restrict_flt(parts[r>>8].temp + parts[r>>8].life*500, MIN_TEMP, MAX_TEMP), PT_NEUT);
+                        kill_part(r>>8);
+                    }
                 }
 #else
                 else if ((r&0xFF)==PT_DEUT && (pressureFactor+1)>(rand()%1000))
@@ -99,6 +107,11 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                         parts[r>>8].life --;
                         parts[r>>8].temp = restrict_flt(parts[r>>8].temp + parts[r>>8].life*17, MIN_TEMP, MAX_TEMP);
                         pv[y/CELL][x/CELL] += 6.0f * CFDS;
+                    }
+                    else if (rand()%100<1)
+                    {
+                        part_change_type(r>>8,x+rx, y+ry,PT_H2);
+                        parts[r>>8].ctype=2;
                     }
                     else
                         kill_part(r>>8);
