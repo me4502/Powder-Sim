@@ -123,8 +123,6 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     part_change_type(r>>8,x+rx,y+ry,PT_YEST);
                 else if ((r&0xFF)==PT_YEST)
                     part_change_type(r>>8,x+rx,y+ry,PT_DYST);
-                else if ((r&0xFF)==PT_WATR && 15>(rand()%100))
-                    part_change_type(r>>8,x+rx,y+ry,PT_DSTW);
                 else if ((r&0xFF)==PT_PLEX && 15>(rand()%1000))
                     part_change_type(r>>8,x+rx,y+ry,PT_GOO);
                 else if ((r&0xFF)==PT_NITR && 15>(rand()%1000))

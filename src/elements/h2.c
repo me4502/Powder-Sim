@@ -33,6 +33,15 @@ int update_H2(UPDATE_FUNC_ARGS)
                         parts[i].temp+=(rand()/(RAND_MAX/100));
                         parts[i].tmp |= 1;
                     }
+                    if ((r&0xFF)==PT_WATR && parts[r>>8].tmp2*2>100)
+                    {
+                        parts[i].ctype=2;
+                    }
+                }
+                else if (parts[i].ctype==2)
+                {
+                    if ((r&0xFF)==PT_WATR||(r&0xFF)==PT_DSTW)
+                        parts[r>>8].tmp2++;
                 }
             }
     return 0;
