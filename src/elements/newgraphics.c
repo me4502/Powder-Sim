@@ -656,15 +656,17 @@ int graphics_WATR(GRAPHICS_FUNC_ARGS)
 	*colb = PIXB(pc);
 	*colg += cpart->tmp2*2;
 	*colb -= cpart->tmp2*2;
-	if (cpart->tmp2*2>100)
+	if (cpart->tmp2>0)
 	{
         *firea = cpart->tmp2*2;
+        if (*firea > 255) *firea = 255;
         *firer = *colr;
         *fireb = *colb;
         *fireg = *colg;
 	    *pixel_mode |= PMODE_GLOW;
 	}
-	*pixel_mode |= PMODE_BLUR;
+	else
+        *pixel_mode |= PMODE_BLUR;
     return 0;
 }
 int graphics_CBTY(GRAPHICS_FUNC_ARGS)
