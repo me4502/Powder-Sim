@@ -1874,8 +1874,24 @@ int main(int argc, char *argv[])
 				{
 					sprintf(nametext, "%s (%s)", ptypes[cr&0xFF].name, gmenu[parts[cr>>8].ctype].name);
 				}
-				if ((cr&0xFF)==PT_H2 && parts[cr>>8].ctype==1)
-					sprintf(nametext, "MH2");
+				if ((cr&0xFF)==PT_H2)
+                {
+                    switch(parts[cr>>8].ctype)
+                    {
+                        case 0:
+                            sprintf(nametext, "PRTM");
+                            break;
+                        case 1:
+                            sprintf(nametext, "MH2");
+                            break;
+                        case 2:
+                            sprintf(nametext, "TRTM");
+                            break;
+                        default:
+                            sprintf(nametext, "HYGN");
+                            break;
+                    }
+                }
 				else if ((cr&0xFF)==PT_NBLE && parts[cr>>8].ctype>=0 && parts[cr>>8].ctype<NNBLALT)
                 {
                     sprintf(nametext, "%s (%s)", ptypes[cr&0xFF].name, nmenu[parts[cr>>8].ctype].name);
