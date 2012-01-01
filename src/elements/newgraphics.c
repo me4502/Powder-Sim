@@ -689,3 +689,32 @@ int graphics_VBMB(GRAPHICS_FUNC_ARGS)
 	*pixel_mode |= PMODE_ADD;
 	return 1;
 }
+int graphics_H2(GRAPHICS_FUNC_ARGS)
+{
+    if (cpart->ctype==0) //Protium
+    {
+        *pixel_mode &= ~PMODE;
+		*pixel_mode |= FIRE_BLEND;
+		*firer = *colr/2;
+		*fireg = *colg/2;
+		*fireb = *colb/2;
+		*firea = 125;
+		*pixel_mode |= DECO_FIRE;
+    }
+    else if (cpart->ctype==1) //Metallic Hydrogen
+    {
+        *pixel_mode = PMODE_FLAT;
+    }
+    else if (cpart->ctype==2) //Tritium
+    {
+        *colr = 0x20;
+        *colg = 0xAA;
+        *colb = 0x20;
+        *firer = *colr/2;
+		*fireg = *colg/2;
+		*fireb = *colb/2;
+		*firea = 125;
+        *pixel_mode = PMODE_GLOW;
+    }
+    return 0;
+}
