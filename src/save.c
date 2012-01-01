@@ -48,23 +48,23 @@ pixel *prerender_save_OPS(void *save, int size, int *width, int *height)
 	//Block sizes
 	blockW = inputData[6];
 	blockH = inputData[7];
-	
+
 	//Full size, normalised
 	fullW = blockW*CELL;
 	fullH = blockH*CELL;
-	
+
 	//From newer version
 	if(inputData[4] > SAVE_VERSION)
 	{
 		return NULL;
 	}
-		
+
 	//Incompatible cell size
 	if(inputData[5] > CELL)
 	{
 		return NULL;
 	}
-		
+
 	//Too large/off screen
 	if(blockW > XRES/CELL || blockH > YRES/CELL)
 	{
@@ -72,9 +72,9 @@ pixel *prerender_save_OPS(void *save, int size, int *width, int *height)
 	}
 	*height = fullH;
 	*width = fullW;
-	
+
 	//Todo: Read and draw particles
-	
+
 	return malloc((fullH * fullW) * sizeof(pixel));
 }
 
@@ -85,19 +85,19 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 	int partsDataLen, fanDataLen, wallDataLen, finalDataLen, outputDataLen;
 	int blockX, blockY, blockW, blockH, fullX, fullY, fullW, fullH;
 	int x, y, i, wallDataFound = 0;
-	
+
 	//Get coords in blocks
 	blockX = orig_x0/CELL;
 	blockY = orig_y0/CELL;
 	blockW = orig_w/CELL;
 	blockH = orig_h/CELL;
-	
+
 	//Snap full coords to block size
 	fullX = blockX*CELL;
 	fullY = blockY*CELL;
 	fullW = blockW*CELL;
 	fullH = blockH*CELL;
-	
+
 	//Copy fan and wall data
 	wallData = malloc(blockW*blockH);
 	wallDataLen = blockW*blockH;
@@ -133,7 +133,7 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 		free(wallData);
 		wallData = NULL;
 	}
-	
+
 	//Copy parts data
 	/* Field descriptor format:
 	|		0		|		0		|		0		|		0		|		0		|		0		|		0		|		0		|
@@ -152,24 +152,24 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 			{
 				unsigned char fieldDesc = 0;
 				int fieldDescLoc = 0, tempTemp, vTemp;
-				
+
 				//Type (required)
 				partsData[partsDataLen++] = partsptr[i].type;
-				
+
 				//X and Y coord (required), 2 bytes each
 				partsData[partsDataLen++] = x;
 				partsData[partsDataLen++] = x >> 8;
 				partsData[partsDataLen++] = y;
 				partsData[partsDataLen++] = y >> 8;
-				
+
 				//Temperature (required), 2 bytes
 				tempTemp = partsptr[i].temp;
 				partsData[partsDataLen++] = tempTemp;
 				partsData[partsDataLen++] = tempTemp >> 8;
-				
+
 				//Location of the field descriptor
 				fieldDescLoc = partsDataLen++;
-				
+
 				//Life (optional), 1 to 2 bytes
 				if(partsptr[i].life)
 				{
@@ -181,7 +181,7 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 						partsData[partsDataLen++] = partsptr[i].life >> 8;
 					}
 				}
-				
+
 				//Tmp (optional), 1 to 2 bytes
 				if(partsptr[i].tmp)
 				{
@@ -193,14 +193,14 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 						partsData[partsDataLen++] = partsptr[i].tmp >> 8;
 					}
 				}
-				
+
 				//Ctype (optional), 1 byte
 				if(partsptr[i].ctype)
 				{
 					fieldDesc |= 1 << 4;
 					partsData[partsDataLen++] = partsptr[i].ctype;
 				}
-				
+
 				//Dcolour (optional), 4 bytes
 				if(partsptr[i].dcolour && (partsptr[i].dcolour & 0xFF000000))
 				{
@@ -210,7 +210,7 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 					partsData[partsDataLen++] = (partsptr[i].dcolour&0x0000FF00)>>8;
 					partsData[partsDataLen++] = (partsptr[i].dcolour&0x000000FF);
 				}
-				
+
 				//VX (optional), 1 byte
 				if(fabs(partsptr[i].vx) > 0.001f)
 				{
@@ -220,7 +220,7 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 					if (vTemp>255) vTemp=255;
 					partsData[partsDataLen++] = vTemp;
 				}
-				
+
 				//VY (optional), 1 byte
 				if(fabs(partsptr[i].vy) > 0.001f)
 				{
@@ -230,7 +230,7 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 					if (vTemp>255) vTemp=255;
 					partsData[partsDataLen++] = vTemp;
 				}
-				
+
 				//Write the field descriptor;
 				partsData[fieldDescLoc] = fieldDesc;
 			}
@@ -241,7 +241,7 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 		free(partsData);
 		partsData = NULL;
 	}
-	
+
 	bson b;
 	bson_init(&b);
 	bson_append_bool(&b, "legacyEnable", legacy_enable);
@@ -257,7 +257,7 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 		bson_append_binary(&b, "fanMap", BSON_BIN_USER, fanData, fanDataLen);
 	bson_finish(&b);
 	bson_print(&b);
-	
+
 	finalData = bson_data(&b);
 	finalDataLen = bson_size(&b);
 	outputDataLen = finalDataLen*2+12;
@@ -275,7 +275,7 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 	outputData[9] = finalDataLen >> 8;
 	outputData[10] = finalDataLen >> 16;
 	outputData[11] = finalDataLen >> 24;
-	
+
 	if (BZ2_bzBuffToBuffCompress(outputData+12, &outputDataLen, finalData, bson_size(&b), 9, 0, 0) != BZ_OK)
 	{
 		puts("Save Error\n");
@@ -284,9 +284,9 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 		outputData = NULL;
 		goto fin;
 	}
-	
+
 	*size = outputDataLen + 12;
-	
+
 fin:
 	bson_destroy(&b);
 	if(partsData)
@@ -295,7 +295,7 @@ fin:
 		free(wallData);
 	if(fanData)
 		free(fanData);
-	
+
 	return outputData;
 }
 
@@ -307,58 +307,58 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 	int i, freeIndicesCount, x, y, returnCode = 0, j;
 	int *freeIndices = NULL;
 	int blockX, blockY, blockW, blockH, fullX, fullY, fullW, fullH;
-	
+
 	//Block sizes
 	blockX = x0/CELL;
 	blockY = y0/CELL;
 	blockW = inputData[6];
 	blockH = inputData[7];
-	
+
 	//Full size, normalised
 	fullX = blockX*CELL;
 	fullY = blockY*CELL;
 	fullW = blockW*CELL;
 	fullH = blockH*CELL;
-	
+
 	//From newer version
 	if(inputData[4] > SAVE_VERSION)
 	{
 		fprintf(stderr, "Save from newer version");
 		return 2;
 	}
-		
+
 	//Incompatible cell size
 	if(inputData[5] > CELL)
 	{
 		fprintf(stderr, "Cell size mismatch");
 		return 1;
 	}
-		
+
 	//Too large/off screen
 	if(blockX+blockW > XRES/CELL || blockY+blockH > YRES/CELL)
 	{
 		fprintf(stderr, "Save too large");
 		return 1;
 	}
-	
+
 	bsonDataLen = ((unsigned)inputData[8]);
 	bsonDataLen |= ((unsigned)inputData[9]) << 8;
 	bsonDataLen |= ((unsigned)inputData[10]) << 16;
 	bsonDataLen |= ((unsigned)inputData[11]) << 24;
-	
+
 	bsonData = malloc(bsonDataLen);
 	if(!bsonData)
 	{
 		fprintf(stderr, "Internal error while parsing save: could not allocate buffer\n");
 		return 3;
 	}
-	
+
 	if (BZ2_bzBuffToBuffDecompress(bsonData, &bsonDataLen, inputData+12, inputDataLen-12, 0, 0))
 	{
 		fprintf(stderr, "Unable to decompress");
 		return 1;
 	}
-	
+
 	bson b;
 	bson_iterator iter;
 	bson_init_data(&b, bsonData);
@@ -466,13 +466,13 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 			}
 		}
 	}
-	
+
 	if(replace)
 	{
 		//Remove everything
 		clear_sim();
 	}
-	
+
 	//Read wall and fan data
 	if(wallData)
 	{
@@ -499,7 +499,7 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 			}
 		}
 	}
-	
+
 	//Read particle data
 	if(partsData)
 	{
@@ -553,17 +553,17 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 			}
 			if(newIndex < 0 || newIndex >= NPART)
 				goto fail;
-				
+
 			//Clear the particle, ready for our new properties
 			memset(&(partsptr[newIndex]), 0, sizeof(particle));
-			
+
 			//Required fields
 			partsptr[newIndex].type = partsData[i];
 			partsptr[newIndex].x = x;
 			partsptr[newIndex].y = y;
 			partsptr[newIndex].temp = (partsData[i+5] | (partsData[i+6]<<8));
 			i+=8;
-			
+
 			//Read life
 			if(fieldDescriptor & 0x01)
 			{
@@ -576,7 +576,7 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 					partsptr[newIndex].life |= partsData[i++];
 				}
 			}
-			
+
 			//Read tmp
 			if(fieldDescriptor & 0x04)
 			{
@@ -589,14 +589,14 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 					partsptr[newIndex].tmp |= partsData[i++];
 				}
 			}
-			
+
 			//Read ctype
 			if(fieldDescriptor & 0x10)
 			{
 				if(i >= partsDataLen) goto fail;
 				partsptr[newIndex].ctype = partsData[i++];
 			}
-			
+
 			//Read dcolour
 			if(fieldDescriptor & 0x20)
 			{
@@ -606,14 +606,14 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 				partsptr[newIndex].dcolour = partsData[i++];
 				partsptr[newIndex].dcolour = partsData[i++];
 			}
-			
+
 			//Read vx
 			if(fieldDescriptor & 0x40)
 			{
 				if(i >= partsDataLen) goto fail;
 				partsptr[newIndex].vx = (partsData[i++]-127.0f)/16.0f;
 			}
-			
+
 			//Read vy
 			if(fieldDescriptor & 0x80)
 			{
@@ -1079,7 +1079,7 @@ int parse_save_PSv(void *save, int size, int replace, int x0, int y0, unsigned c
 				airMode = ((c[3]>>4)&0x07);// | ((c[3]>>4)&0x02) | ((c[3]>>4)&0x01);
 			}
 			if (ver>=49 && replace) {
-				tempGrav = ((c[3]>>7)&0x01);		
+				tempGrav = ((c[3]>>7)&0x01);
 			}
 		} else {
 			if (c[3]==1||c[3]==0) {
@@ -1454,13 +1454,13 @@ int parse_save_PSv(void *save, int size, int replace, int x0, int y0, unsigned c
 				parts[i-1].temp = ptypes[parts[i-1].type].heat;
 			}
 		}
-	} 
+	}
 	for (j=0; j<w*h; j++)
 	{
 		int gnum = 0;
 		i = m[j];
 		ty = d[pty+j];
-		if (i && (ty==PT_CLNE || (ty==PT_PCLN && ver>=43) || (ty==PT_BCLN && ver>=44) || (ty==PT_SPRK && ver>=21) || (ty==PT_LAVA && ver>=34) || (ty==PT_PIPE && ver>=43) || (ty==PT_LIFE && ver>=51) || (ty==PT_PBCN && ver>=52) || (ty==PT_WIRE && ver>=55) || (ty==PT_STOR && ver>=59) || (ty==PT_CONV && ver>=60)))
+		if (i && (ty==PT_CLNE || (ty==PT_PCLN && ver>=43) || (ty==PT_BCLN && ver>=44) || (ty==PT_SPRK && ver>=21) || (ty==PT_LAVA && ver>=34) || (ty==PT_PIPE && ver>=43) || (ty==PT_LIFE && ver>=51) || (ty==PT_PBCN && ver>=52) || (ty==PT_WIRE && ver>=55) || (ty==PT_STOR && ver>=59) || (ty==PT_CONV && ver>=60) || (ty==PT_H2) || (ty==PT_NBLE)))
 		{
 			if (p >= size)
 				goto corrupt;
@@ -1570,7 +1570,7 @@ int parse_save_PSv(void *save, int size, int replace, int x0, int y0, unsigned c
 			stop_grav_async();
 	}
 	#endif
-	
+
 	gravity_mask();
 
 	if (p >= size)
