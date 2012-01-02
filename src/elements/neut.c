@@ -145,7 +145,7 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     parts[r>>8].tmp2 += rand()%50;
                 else if ((r&0xFF)==PT_DSTW && 5>(rand()%100))
                     parts[r>>8].tmp2 += rand()%50;
-                else if ((r&0xFF)==PT_H2 && 5>(rand()%200) && (parts[r>>8].ctype==0||parts[r>>8].ctype==1))
+                else if ((r&0xFF)==PT_H2 && 5>(rand()%200) && parts[r>>8].ctype<3)
                     parts[r>>8].ctype++;
                 else if (((r&0xFF)==PT_BIZR||(r&0xFF)==PT_BIZRG||(r&0xFF)==PT_BIZRS) && 5>(rand()%100))
                 {

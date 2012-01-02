@@ -718,5 +718,16 @@ int graphics_H2(GRAPHICS_FUNC_ARGS)
 		*firea = 125;
         *pixel_mode = PMODE_GLOW;
     }
+    else if (cpart->ctype==3) //Quadrium
+    {
+        *colr = 0x10;
+        *colg = 0xDD;
+        *colb = 0x10;
+        *firer = *colr/2;
+		*fireg = *colg/2;
+		*fireb = *colb/2;
+		*firea = 255;
+        *pixel_mode = PMODE_BLEND|PMODE_ADD|FIRE_BLEND;
+    }
     return 0;
 }
