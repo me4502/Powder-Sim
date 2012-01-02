@@ -35,6 +35,7 @@ int create_n_parts(int n, int x, int y, float vx, float vy, float temp, int t)//
         parts[i].ctype = 0;
         parts[i].temp = temp;
         parts[i].tmp = 0;
+        parts[i].tmp3=PT_DEUT;
         if (t!=PT_STKM&&t!=PT_STKM2 && t!=PT_PHOT && t!=PT_NEUT && !pmap[y][x])
             pmap[y][x] = t|(i<<8);
         else if ((t==PT_PHOT||t==PT_NEUT) && !photons[y][x])
@@ -102,6 +103,7 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     create_part(r>>8, x+rx, y+ry, PT_NEUT);
                     parts[r>>8].vx = 0.25f*parts[r>>8].vx + parts[i].vx;
                     parts[r>>8].vy = 0.25f*parts[r>>8].vy + parts[i].vy;
+                    parts[r>>8].tmp3=PT_DEUT;
                     if (parts[r>>8].life>0)
                     {
                         parts[r>>8].life --;
