@@ -43,6 +43,10 @@ int update_H2(UPDATE_FUNC_ARGS)
                     if ((r&0xFF)==PT_WATR||(r&0xFF)==PT_DSTW)
                         parts[r>>8].tmp2++;
                 }
+                else if (parts[i].ctype==3)
+                {
+                    parts[r>>8].temp+=10;
+                }
             }
     return 0;
 }

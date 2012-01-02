@@ -1891,6 +1891,9 @@ int main(int argc, char *argv[])
                         case 2:
                             sprintf(nametext, "TRTM");
                             break;
+                        case 3:
+                            sprintf(nametext, "QDRM");
+                            break;
                         default:
                             sprintf(nametext, "HYGN");
                             break;
