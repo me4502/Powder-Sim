@@ -1889,9 +1889,12 @@ int main(int argc, char *argv[])
                             sprintf(nametext, "MH2");
                             break;
                         case 2:
-                            sprintf(nametext, "TRTM");
+                            sprintf(nametext, "DTRM");
                             break;
                         case 3:
+                            sprintf(nametext, "TRTM");
+                            break;
+                        case 4:
                             sprintf(nametext, "QDRM");
                             break;
                         default:
