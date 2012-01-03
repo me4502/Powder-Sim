@@ -89,7 +89,7 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     if (rand()%100<1)
                     {
                         part_change_type(r>>8,x+rx, y+ry,PT_H2);
-                        parts[r>>8].ctype=2;
+                        parts[r>>8].ctype=3;
                     }
                     else
                     {
@@ -113,7 +113,7 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     else if (rand()%100<1)
                     {
                         part_change_type(r>>8,x+rx, y+ry,PT_H2);
-                        parts[r>>8].ctype=2;
+                        parts[r>>8].ctype=3;
                     }
                     else
                         kill_part(r>>8);
@@ -147,7 +147,7 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     parts[r>>8].tmp2 += rand()%50;
                 else if ((r&0xFF)==PT_DSTW && 5>(rand()%100))
                     parts[r>>8].tmp2 += rand()%50;
-                else if ((r&0xFF)==PT_H2 && 5>(rand()%200) && parts[r>>8].ctype<3)
+                else if ((r&0xFF)==PT_H2 && 5>(rand()%200) && parts[r>>8].ctype<4)
                     parts[r>>8].ctype++;
                 else if (((r&0xFF)==PT_BIZR||(r&0xFF)==PT_BIZRG||(r&0xFF)==PT_BIZRS) && 5>(rand()%100))
                 {
