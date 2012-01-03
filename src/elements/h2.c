@@ -40,7 +40,7 @@ int update_H2(UPDATE_FUNC_ARGS)
                 }
                 else if (parts[i].ctype==2)
                 {
-                    if ((r&0xFF)==PT_WATR)
+                    if ((r&0xFF)==PT_O2)
                     {
                        part_change_type(r>>8,x+rx,y+ry,PT_DEUT);
                        part_change_type(i,x,y,PT_DEUT);
