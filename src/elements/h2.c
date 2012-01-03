@@ -40,12 +40,20 @@ int update_H2(UPDATE_FUNC_ARGS)
                 }
                 else if (parts[i].ctype==2)
                 {
+                    if ((r&0xFF)==PT_WATR)
+                    {
+                       part_change_type(r>>8,x+rx,y+ry,PT_DEUT);
+                       part_change_type(i,x,y,PT_DEUT);
+                    }
+                }
+                else if (parts[i].ctype==3)
+                {
                     if ((r&0xFF)==PT_NEUT && parts[r>>8].tmp3==PT_DEUT)
                         parts[i].ctype=3;
                     if ((r&0xFF)==PT_WATR||(r&0xFF)==PT_DSTW)
                         parts[r>>8].tmp2++;
                 }
-                else if (parts[i].ctype==3)
+                else if (parts[i].ctype==4)
                 {
                     parts[r>>8].temp+=10;
                 }
