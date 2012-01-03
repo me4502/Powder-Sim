@@ -707,7 +707,19 @@ int graphics_H2(GRAPHICS_FUNC_ARGS)
     {
         *pixel_mode = PMODE_FLAT;
     }
-    else if (cpart->ctype==2) //Tritium
+    else if (cpart->ctype==2) //Deuterium
+    {
+        pixel pc = ptypes[PT_DEUT].pcolors;
+        *colr = PIXR(pc);
+        *colg = PIXG(pc);
+        *colb = PIXB(pc);
+        *firer = *colr/2;
+		*fireg = *colg/2;
+		*fireb = *colb/2;
+		*firea = 125;
+        *pixel_mode = PMODE_GLOW;
+    }
+    else if (cpart->ctype==3) //Tritium
     {
         *colr = 0x20;
         *colg = 0xAA;
@@ -718,7 +730,7 @@ int graphics_H2(GRAPHICS_FUNC_ARGS)
 		*firea = 125;
         *pixel_mode = PMODE_GLOW;
     }
-    else if (cpart->ctype==3) //Quadrium
+    else if (cpart->ctype==4) //Quadrium
     {
         *colr = 0x10;
         *colg = 0xDD;
