@@ -49,7 +49,7 @@ int update_H2(UPDATE_FUNC_ARGS)
                 else if (parts[i].ctype==3)
                 {
                     if ((r&0xFF)==PT_NEUT && parts[r>>8].tmp3==PT_DEUT)
-                        parts[i].ctype=3;
+                        parts[i].ctype=4;
                     if ((r&0xFF)==PT_WATR||(r&0xFF)==PT_DSTW)
                         parts[r>>8].tmp2++;
                 }
