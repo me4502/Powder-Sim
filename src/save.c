@@ -9,6 +9,10 @@
 pixel *prerender_save(void *save, int size, int *width, int *height)
 {
 	unsigned char * saveData = save;
+	if (size<16)
+	{
+		return NULL;
+	}
 	if(saveData[0] == 'O' && saveData[1] == 'P' && saveData[2] == 'S')
 	{
 		return prerender_save_OPS(save, size, width, height);
@@ -31,6 +35,10 @@ void *build_save(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h, un
 int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char bmap[YRES/CELL][XRES/CELL], float vx[YRES/CELL][XRES/CELL], float vy[YRES/CELL][XRES/CELL], float pv[YRES/CELL][XRES/CELL], float fvx[YRES/CELL][XRES/CELL], float fvy[YRES/CELL][XRES/CELL], sign signs[MAXSIGNS], void* partsptr, unsigned pmap[YRES][XRES])
 {
 	unsigned char * saveData = save;
+	if (size<16)
+	{
+		return 1;
+	}
 	if(saveData[0] == 'O' && saveData[1] == 'P' && saveData[2] == 'S')
 	{
 		return parse_save_OPS(save, size, replace, x0, y0, bmap, vx, vy, pv, fvx, fvy, signs, partsptr, pmap);
@@ -253,6 +261,11 @@ pixel *prerender_save_OPS(void *save, int size, int *width, int *height)
 					if(fieldDescriptor & 0x20)
 					{
 						if(i++ >= partsDataLen) goto fail;
+						if(fieldDescriptor & 0x200)
+						{
+							if(i+2 >= partsDataLen) goto fail;
+							i+=3;
+						}
 					}
 					
 					//Skip dcolour
@@ -469,12 +482,19 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 						partsData[partsDataLen++] = partsptr[i].tmp >> 8;
 					}
 				}
-
-				//Ctype (optional), 1 byte
+				
+				//Ctype (optional), 1 or 4 bytes
 				if(partsptr[i].ctype)
 				{
 					fieldDesc |= 1 << 5;
 					partsData[partsDataLen++] = partsptr[i].ctype;
+					if(partsptr[i].ctype > 255)
+					{
+						fieldDesc |= 1 << 9;
+						partsData[partsDataLen++] = (partsptr[i].ctype&0xFF000000)>>24;
+						partsData[partsDataLen++] = (partsptr[i].ctype&0x00FF0000)>>16;
+						partsData[partsDataLen++] = (partsptr[i].ctype&0x0000FF00)>>8;
+					}
 				}
 
 				//Dcolour (optional), 4 bytes
@@ -530,6 +550,10 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 	bson_append_bool(&b, "paused", sys_pause);
 	bson_append_int(&b, "gravityMode", gravityMode);
 	bson_append_int(&b, "airMode", airMode);
+	
+	//bson_append_int(&b, "leftSelectedElement", sl);
+	//bson_append_int(&b, "rightSelectedElement", sr);
+	bson_append_int(&b, "activeMenu", active_menu);
 	if(partsData)
 		bson_append_binary(&b, "parts", BSON_BIN_USER, partsData, partsDataLen);
 	if(partsPosData)
@@ -862,6 +886,35 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 				fprintf(stderr, "Wrong type for %s\n", bson_iterator_key(&iter));
 			}
 		}
+		/*else if((strcmp(bson_iterator_key(&iter), "leftSelectedElement")==0 || strcmp(bson_iterator_key(&iter), "rightSelectedElement")) && replace)
+		{
+			if(bson_iterator_type(&iter)==BSON_INT && bson_iterator_int(&iter) > 0 && bson_iterator_int(&iter) < PT_NUM)
+			{
+				if(bson_iterator_key(&iter)[0] == 'l')
+				{
+					sl = bson_iterator_int(&iter);
+				}
+				else
+				{
+					sr = bson_iterator_int(&iter);
+				}
+			}
+			else
+			{
+				fprintf(stderr, "Wrong type for %s\n", bson_iterator_key(&iter));
+			}
+		}*/
+		else if(strcmp(bson_iterator_key(&iter), "activeMenu")==0 && replace)
+		{
+			if(bson_iterator_type(&iter)==BSON_INT && bson_iterator_int(&iter) > 0 && bson_iterator_int(&iter) < SC_TOTAL && msections[bson_iterator_int(&iter)].doshow)
+			{
+				active_menu = bson_iterator_int(&iter);
+			}
+			else
+			{
+				fprintf(stderr, "Wrong value for %s\n", bson_iterator_key(&iter));
+			}
+		}
 	}
 
 	//Read wall and fan data
@@ -897,6 +950,7 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 		int newIndex = 0, fieldDescriptor, tempTemp;
 		int posCount, posTotal, partsPosDataIndex = 0;
 		int saved_x, saved_y;
+		int freeIndicesIndex = 0;
 		if(fullW * fullH * 3 > partsPosDataLen)
 		{
 			fprintf(stderr, "Not enough particle position data\n");
@@ -949,10 +1003,10 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 						//Replace existing particle or allocated block
 						newIndex = pmap[y][x]>>8;
 					}
-					else if(freeIndicesCount)
+					else if(freeIndicesIndex<freeIndicesCount)
 					{
 						//Create new particle
-						newIndex = freeIndices[--freeIndicesCount];
+						newIndex = freeIndices[freeIndicesIndex++];
 					}
 					else
 					{
@@ -995,7 +1049,7 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 						if(fieldDescriptor & 0x04)
 						{
 							if(i >= partsDataLen) goto fail;
-							partsptr[newIndex].life |= partsData[i++];
+							partsptr[newIndex].life |= (((unsigned)partsData[i++]) << 8);
 						}
 					}
 					
@@ -1008,7 +1062,7 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 						if(fieldDescriptor & 0x10)
 						{
 							if(i >= partsDataLen) goto fail;
-							partsptr[newIndex].tmp |= partsData[i++];
+							partsptr[newIndex].tmp |= (((unsigned)partsData[i++]) << 8);
 						}
 					}
 					
@@ -1017,16 +1071,24 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 					{
 						if(i >= partsDataLen) goto fail;
 						partsptr[newIndex].ctype = partsData[i++];
+						//Read additional bytes
+						if(fieldDescriptor & 0x200)
+						{
+							if(i+2 >= partsDataLen) goto fail;
+							partsptr[newIndex].ctype |= (((unsigned)partsData[i++]) << 24);
+							partsptr[newIndex].ctype |= (((unsigned)partsData[i++]) << 16);
+							partsptr[newIndex].ctype |= (((unsigned)partsData[i++]) << 8);
+						}
 					}
 					
 					//Read dcolour
 					if(fieldDescriptor & 0x40)
 					{
 						if(i+3 >= partsDataLen) goto fail;
-						partsptr[newIndex].dcolour = partsData[i++];
-						partsptr[newIndex].dcolour |= partsData[i++]<<8;
-						partsptr[newIndex].dcolour |= partsData[i++]<<16;
-						partsptr[newIndex].dcolour |= partsData[i++]<<24;
+						partsptr[newIndex].dcolour = (((unsigned)partsData[i++]) << 24);
+						partsptr[newIndex].dcolour |= (((unsigned)partsData[i++]) << 16);
+						partsptr[newIndex].dcolour |= (((unsigned)partsData[i++]) << 8);
+						partsptr[newIndex].dcolour |= ((unsigned)partsData[i++]);
 					}
 					
 					//Read vx
@@ -1578,6 +1640,14 @@ int parse_save_PSv(void *save, int size, int replace, int x0, int y0, unsigned c
 		{
 			if (d[p])
 			{
+				//In old saves, ignore walls created by sign tool bug
+				//Not ignoring other invalid walls or invalid walls in new saves, so that any other bugs causing them are easier to notice, find and fix
+				if (ver<71 && d[p]==WL_SIGN)
+				{
+					p++;
+					continue;
+				}
+
 				bmap[y][x] = d[p];
 				if (bmap[y][x]==1)
 					bmap[y][x]=WL_WALL;
