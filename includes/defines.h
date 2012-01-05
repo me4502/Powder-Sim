@@ -9,7 +9,6 @@
 
 #define GPUR
 #define MT
-#define SAVE_OPS
 
 //VersionInfoStart
 #define SAVE_VERSION 1
@@ -97,6 +96,7 @@ extern unsigned char ZSIZE;
 
 #define NNBL 8
 #define NNBLALT 7
+#define SAVE_OPS
 
 #define NGOL 25
 #define NGOLALT 24 //NGOL should be 24, but use this var until I find out why
@@ -171,6 +171,7 @@ extern int sound_enable;
 extern int kiosk_enable;
 extern int aheat_enable;
 extern int decorations_enable;
+extern int active_menu;
 extern int hud_enable;
 extern int pretty_powder;
 extern int drawgrav_enable;
