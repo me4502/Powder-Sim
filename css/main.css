@@ -42,3 +42,24 @@ header h2 {
 	font-family: 'Ruluko';
 	text-align: center;
 }
+
+nav {
+	background-color: #242424;
+	color: #EFEFEF;
+	text-align: center;
+	padding: 4px;
+}
+
+nav a, nav a:hover, nav a:active, nav a:visited {
+	color: #EFEFEF;
+}
+
+nav a:hover {
+	text-decoration: underline;
+}
+
+footer {
+	text-align: center;
+	margin-top: 20px;
+	color: #000000;
+}
