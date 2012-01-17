@@ -66,3 +66,9 @@ footer {
 	margin-top: 20px;
 	color: #000000;
 }
+
+::selection, ::-moz-selection {
+	background: #000;
+	color: #EFEFEF;
+	text-shadow: none;
+}
