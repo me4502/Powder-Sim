@@ -25,3 +25,11 @@
   src: local('Magra Bold'), local('Magra-Bold'), url('https://themes.googleusercontent.com/static/fonts/magra/v1/YlhLowBXAVg7FJcSC0CClfesZW2xOQ-xsNqO47m55DA.woff') format('woff');
 }
 
+@font-face {
+  font-family: 'Fredericka the Great';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Fredericka the Great'), local('FrederickatheGreat'), url('https://themes.googleusercontent.com/static/fonts/frederickathegreat/v2/7Es8Lxoku-e5eOZWpxw18vc3vBAn7YvtW9hNjxWZBR0.woff') format('woff');
+}
+
+
