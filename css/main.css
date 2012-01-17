@@ -1,0 +1,25 @@
+body {
+	background-color: #EFEFEF;
+}
+
+#wrapper {
+	width: 1000px;
+	margin: auto;
+}
+header {
+	width: 342px;
+}
+
+header h1 {
+	color: #1B87E0;
+	font-family: 'Titan One';
+	font-size: 50px;
+}
+
+header h2 {
+	color: #353535;
+	font-family: 'Ruluko';
+	font-size: 18px;
+	text-decoration: underline;
+	text-align: center;
+}
