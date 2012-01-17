@@ -68,7 +68,7 @@ footer {
 }
 
 ::selection, ::-moz-selection {
-	background: #000;
+	background: #1B87E0;
 	color: #EFEFEF;
 	text-shadow: none;
 }
