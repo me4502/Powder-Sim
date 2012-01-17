@@ -12,3 +12,16 @@
   src: local('Ruluko'), url('https://themes.googleusercontent.com/static/fonts/ruluko/v1/0bmp5mgwxDelR9L9Fd3OIw.woff') format('woff');
 }
 
+@font-face {
+  font-family: 'Magra';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Magra'), url('https://themes.googleusercontent.com/static/fonts/magra/v1/1uj9cdpjAK0H5tD02KSgRw.woff') format('woff');
+}
+@font-face {
+  font-family: 'Magra';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Magra Bold'), local('Magra-Bold'), url('https://themes.googleusercontent.com/static/fonts/magra/v1/YlhLowBXAVg7FJcSC0CClfesZW2xOQ-xsNqO47m55DA.woff') format('woff');
+}
+
