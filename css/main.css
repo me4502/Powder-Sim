@@ -17,12 +17,12 @@ body:before {
 #wrapper {
 	width: 1000px;
 	margin: auto;
+	border: solid 1px #000000;
 }
 
 header {
 	background-color: #202020;
 	padding: 10px;
-	border: solid 1px #000000;
 	border-top: none;
 }
 
@@ -45,6 +45,7 @@ header h2 {
 
 nav {
 	background-color: #242424;
+	border: solid 1px #000000;
 	color: #EFEFEF;
 	text-align: center;
 	padding: 4px;
@@ -59,6 +60,35 @@ nav a, nav a:hover, nav a:active, nav a:visited {
 
 nav a:hover {
 	text-decoration: underline;
+}
+
+.wrapper2 {
+	width: 800px;
+	margin: auto;
+}
+
+#content {
+	background-color: #202020;
+	padding: 15px;
+	color: #EFEFEF;
+}
+
+h3 {
+	font-size: 28px;
+	color: #DDDDDD;
+	margin: 0;
+	margin-bottom: 25px;
+	padding: 0;
+}
+
+#content p {
+	
+}
+
+#content p:first-letter {
+	font-size: 30px;
+	font-family: 'Fredericka the Great';
+	color: #1B87E0;
 }
 
 footer {
