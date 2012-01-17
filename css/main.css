@@ -6,20 +6,27 @@ body {
 	width: 1000px;
 	margin: auto;
 }
+
 header {
+	background-color: #202020;
+	padding: 10px;
+	border: solid 1px #000000;
+	border-top: none;
+}
+
+#header {
 	width: 342px;
 }
 
 header h1 {
 	color: #1B87E0;
-	font-family: 'Titan One';
 	font-size: 50px;
+	font-family: 'Titan One';
 }
 
 header h2 {
-	color: #353535;
-	font-family: 'Ruluko';
+	color: #EFEFEF;
 	font-size: 18px;
-	text-decoration: underline;
+	font-family: 'Ruluko';
 	text-align: center;
 }
