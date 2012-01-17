@@ -48,10 +48,13 @@ nav {
 	color: #EFEFEF;
 	text-align: center;
 	padding: 4px;
+	font-family: 'Magra';
+	letter-spacing: 5px;
 }
 
 nav a, nav a:hover, nav a:active, nav a:visited {
 	color: #EFEFEF;
+	letter-spacing: 0px;
 }
 
 nav a:hover {
