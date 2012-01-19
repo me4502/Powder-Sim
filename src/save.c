@@ -1,4 +1,5 @@
 #include <bzlib.h>
+#include <math.h>
 #include "defines.h"
 #include "powder.h"
 #include "save.h"
@@ -56,7 +57,9 @@ pixel *prerender_save_OPS(void *save, int size, int *width, int *height)
 	int i, x, y, j;
 	int blockX, blockY, blockW, blockH, fullX, fullY, fullW, fullH;
 	pixel * vidBuf = NULL;
-	
+	bson b;
+	bson_iterator iter;
+
 	//Block sizes
 	blockX = 0;
 	blockY = 0;
@@ -115,8 +118,6 @@ pixel *prerender_save_OPS(void *save, int size, int *width, int *height)
 		goto fail;
 	}
 	
-	bson b;
-	bson_iterator iter;
 	bson_init_data(&b, bsonData);
 	bson_iterator_init(&iter, &b);
 	while(bson_iterator_next(&iter))
@@ -311,7 +312,8 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 	int blockX, blockY, blockW, blockH, fullX, fullY, fullW, fullH;
 	int x, y, i, wallDataFound = 0;
 	int posCount, signsCount;
-	
+	bson b;
+
 	//Get coords in blocks
 	blockX = orig_x0/CELL;
 	blockY = orig_y0/CELL;
