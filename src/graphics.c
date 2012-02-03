@@ -821,7 +821,10 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 		{
 			c = 0;
 		}
-		drawtext(vid_buf, x+14-textwidth((char *)ptypes[b].name)/2, y+4, (char *)ptypes[b].name, c, c, c, 255);
+		if (chem) 		
+			drawtext(vid_buf, x+14-textwidth((char *)ptypes[b].sname)/2, y+4, (char *)ptypes[b].sname, c, c, c, 255);
+		else 
+			drawtext(vid_buf, x+14-textwidth((char *)ptypes[b].name)/2, y+4, (char *)ptypes[b].name, c, c, c, 255);
 	}
 	return 26;
 }

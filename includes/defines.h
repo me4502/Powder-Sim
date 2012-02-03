@@ -166,6 +166,7 @@ int GRAV_R2;
 int GRAV_G2;
 int GRAV_B2;
 
+extern int chem;
 extern int legacy_enable;
 extern int sound_enable;
 extern int kiosk_enable;
