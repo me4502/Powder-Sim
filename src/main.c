@@ -174,6 +174,7 @@ int do_open = 0;
 int sys_pause = 0;
 int sys_shortcuts = 1;
 int legacy_enable = 0; //Used to disable new features such as heat, will be set by save.
+int chem; 
 int aheat_enable; //Ambient heat
 int decorations_enable = 1;
 int hud_enable = 1;
