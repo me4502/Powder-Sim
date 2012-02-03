@@ -22,6 +22,7 @@ pixel *prerender_save(void *save, int size, int *width, int *height)
 	{
 		return prerender_save_PSv(save, size, width, height);
 	}
+	return NULL;
 }
 
 void *build_save(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h, unsigned char bmap[YRES/CELL][XRES/CELL], float vx[YRES/CELL][XRES/CELL], float vy[YRES/CELL][XRES/CELL], float pv[YRES/CELL][XRES/CELL], float fvx[YRES/CELL][XRES/CELL], float fvy[YRES/CELL][XRES/CELL], sign signs[MAXSIGNS], void* partsptr)
@@ -48,6 +49,7 @@ int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char 
 	{
 		return parse_save_PSv(save, size, replace, x0, y0, bmap, fvx, fvy, signs, partsptr, pmap);
 	}
+	return 1;
 }
 
 pixel *prerender_save_OPS(void *save, int size, int *width, int *height)
@@ -56,6 +58,7 @@ pixel *prerender_save_OPS(void *save, int size, int *width, int *height)
 	int inputDataLen = size, bsonDataLen = 0, partsDataLen, partsPosDataLen, wallDataLen;
 	int i, x, y, j;
 	int blockX, blockY, blockW, blockH, fullX, fullY, fullW, fullH;
+	int bsonInitialised = 0;
 	pixel * vidBuf = NULL;
 	bson b;
 	bson_iterator iter;
@@ -119,6 +122,7 @@ pixel *prerender_save_OPS(void *save, int size, int *width, int *height)
 	}
 	
 	bson_init_data(&b, bsonData);
+	bsonInitialised = 1;
 	bson_iterator_init(&iter, &b);
 	while(bson_iterator_next(&iter))
 	{
@@ -222,12 +226,47 @@ pixel *prerender_save_OPS(void *save, int size, int *width, int *height)
 						goto fail;
 					}
 					if(partsData[i] >= PT_NUM)
-						partsData[i] = PT_DMND;	//Replace all invalid powders with diamond
+						partsData[i] = PT_DMND;	//Replace all invalid elements with diamond
 					
 					//Draw type
-					vidBuf[(fullY+y)*fullW+(fullX+x)] = ptypes[partsData[i]].pcolors;
-					i+=3; //Skip Type an Descriptor
-					
+					if (partsData[i]==PT_STKM || partsData[i]==PT_STKM2 || partsData[i]==PT_FIGH)
+					{
+						pixel lc, hc=PIXRGB(255, 224, 178);
+						if (partsData[i]==PT_STKM || partsData[i]==PT_FIGH) lc = PIXRGB(255, 255, 255);
+						else lc = PIXRGB(100, 100, 255);
+						//only need to check upper bound of y coord - lower bounds and x<w are checked in draw_line
+						if (partsData[i]==PT_STKM || partsData[i]==PT_STKM2)
+						{
+							draw_line(vidBuf, x-2, y-2, x+2, y-2, PIXR(hc), PIXG(hc), PIXB(hc), *width);
+							if (y+2<*height)
+							{
+								draw_line(vidBuf, x-2, y+2, x+2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), *width);
+								draw_line(vidBuf, x-2, y-2, x-2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), *width);
+								draw_line(vidBuf, x+2, y-2, x+2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), *width);
+							}
+						}
+						else if (y+2<*height)
+						{
+							draw_line(vidBuf, x-2, y, x, y-2, PIXR(hc), PIXG(hc), PIXB(hc), *width);
+							draw_line(vidBuf, x-2, y, x, y+2, PIXR(hc), PIXG(hc), PIXB(hc), *width);
+							draw_line(vidBuf, x, y-2, x+2, y, PIXR(hc), PIXG(hc), PIXB(hc), *width);
+							draw_line(vidBuf, x, y+2, x+2, y, PIXR(hc), PIXG(hc), PIXB(hc), *width);
+						}
+						if (y+6<*height)
+						{
+							draw_line(vidBuf, x, y+3, x-1, y+6, PIXR(lc), PIXG(lc), PIXB(lc), *width);
+							draw_line(vidBuf, x, y+3, x+1, y+6, PIXR(lc), PIXG(lc), PIXB(lc), *width);
+						}
+						if (y+12<*height)
+						{
+							draw_line(vidBuf, x-1, y+6, x-3, y+12, PIXR(lc), PIXG(lc), PIXB(lc), *width);
+							draw_line(vidBuf, x+1, y+6, x+3, y+12, PIXR(lc), PIXG(lc), PIXB(lc), *width);
+						}
+					}
+					else
+						vidBuf[(fullY+y)*fullW+(fullX+x)] = ptypes[partsData[i]].pcolors;
+					i+=3; //Skip Type and Descriptor
+
 					//Skip temp
 					if(fieldDescriptor & 0x01)
 					{
@@ -269,21 +308,32 @@ pixel *prerender_save_OPS(void *save, int size, int *width, int *height)
 						}
 					}
 					
-					//Skip dcolour
+					//Read dcolour
 					if(fieldDescriptor & 0x40)
 					{
+						unsigned char r, g, b;
 						if(i+3 >= partsDataLen) goto fail;
-						i+=4;
+						i++;//Skip alpha
+						r = partsData[i++];
+						g = partsData[i++];
+						b = partsData[i++];
+						vidBuf[(fullY+y)*fullW+(fullX+x)] = PIXRGB(r, g, b);
 					}
 					
-					//Read vx
+					//Skip vx
 					if(fieldDescriptor & 0x80)
 					{
 						if(i++ >= partsDataLen) goto fail;
 					}
 					
-					//Read vy
+					//Skip vy
 					if(fieldDescriptor & 0x100)
+					{
+						if(i++ >= partsDataLen) goto fail;
+					}
+
+					//Skip tmp2
+					if(fieldDescriptor & 0x400)
 					{
 						if(i++ >= partsDataLen) goto fail;
 					}
@@ -299,7 +349,9 @@ fail:
 		vidBuf = NULL;
 	}
 fin:
-	bson_destroy(&b);
+	//Don't call bson_destroy if bson_init wasn't called, or an uninitialised pointer (b.data) will be freed and the game will crash
+	if (bsonInitialised)
+		bson_destroy(&b);
 	return vidBuf;
 }
 
@@ -418,7 +470,7 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 	//Copy parts data
 	/* Field descriptor format:
 	|		0		|		0		|		0		|		0		|		0		|		0		|		0		|		0		|		0		|		0		|		0		|		0		|		0		|		0		|		0		|		0		|
-																													|		vy		|		vx		|	dcololour	|	ctype		|		tmp[2]	|		tmp[1]	|		life[2]	|		life[1]	|	temp dbl len|
+																					|		tmp2	|	ctype[2]	|		vy		|		vx		|	dcololour	|	ctype[1]	|		tmp[2]	|		tmp[1]	|		life[2]	|		life[1]	|	temp dbl len|
 	life[2] means a second byte (for a 16 bit field) if life[1] is present
 	*/
 	partsData = malloc(NPART * (sizeof(particle)+1));
@@ -527,6 +579,13 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 					if (vTemp<0) vTemp=0;
 					if (vTemp>255) vTemp=255;
 					partsData[partsDataLen++] = vTemp;
+				}
+
+				//Tmp2 (optional), 1 byte
+				if(partsptr[i].tmp2)
+				{
+					fieldDesc |= 1 << 10;
+					partsData[partsDataLen++] = partsptr[i].tmp2;
 				}
 
 				//Write the field descriptor;
@@ -757,7 +816,7 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 						}
 						else
 						{
-							fprintf(stderr, "Wrong type for \n", bson_iterator_key(&subiter));
+							fprintf(stderr, "Wrong type for %s\n", bson_iterator_key(&subiter));
 						}
 					}
 				}
@@ -999,7 +1058,7 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 						goto fail;
 					}
 					if(partsData[i] >= PT_NUM)
-						partsData[i] = PT_DMND;	//Replace all invalid powders with diamond
+						partsData[i] = PT_DMND;	//Replace all invalid elements with diamond
 					if(pmap[y][x])
 					{
 						//Replace existing particle or allocated block
@@ -1106,6 +1165,45 @@ int parse_save_OPS(void *save, int size, int replace, int x0, int y0, unsigned c
 						if(i >= partsDataLen) goto fail;
 						partsptr[newIndex].vy = (partsData[i++]-127.0f)/16.0f;
 					}
+
+					//Read tmp2
+					if(fieldDescriptor & 0x400)
+					{
+						if(i >= partsDataLen) goto fail;
+						partsptr[newIndex].tmp2 = partsData[i++];
+					}
+
+					if ((player.spwn == 1 && partsptr[newIndex].type==PT_STKM) || (player2.spwn == 1 && partsptr[newIndex].type==PT_STKM2))
+					{
+						partsptr[newIndex].type = PT_NONE;
+					}
+					else if (partsptr[newIndex].type == PT_STKM)
+					{
+						STKM_init_legs(&player, newIndex);
+						player.spwn = 1;
+						player.elem = PT_DUST;
+					}
+					else if (partsptr[newIndex].type == PT_STKM2)
+					{
+						STKM_init_legs(&player2, newIndex);
+						player2.spwn = 1;
+						player2.elem = PT_DUST;
+					}
+					else if (partsptr[newIndex].type == PT_FIGH)
+					{
+						unsigned char fcount = 0;
+						while (fcount < 100 && fcount < (fighcount+1) && fighters[fcount].spwn==1) fcount++;
+						if (fcount < 100 && fighters[fcount].spwn==0)
+						{
+							partsptr[newIndex].tmp = fcount;
+							fighters[fcount].spwn = 1;
+							fighters[fcount].elem = PT_DUST;
+							fighcount++;
+							STKM_init_legs(&(fighters[fcount]), newIndex);
+						}
+					}
+					if (!ptypes[partsptr[newIndex].type].enabled)
+						partsptr[newIndex].type = PT_NONE;
 				}
 			}
 		}
@@ -1279,12 +1377,22 @@ pixel *prerender_save_PSv(void *save, int size, int *width, int *height)
 					if (j==PT_STKM || j==PT_FIGH) lc = PIXRGB(255, 255, 255);
 					else lc = PIXRGB(100, 100, 255);
 					//only need to check upper bound of y coord - lower bounds and x<w are checked in draw_line
-					draw_line(fb , x-2, y-2, x+2, y-2, PIXR(hc), PIXG(hc), PIXB(hc), w);
-					if (y+2<h)
+					if (j==PT_STKM || j==PT_STKM2)
 					{
-						draw_line(fb , x-2, y+2, x+2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), w);
-						draw_line(fb , x-2, y-2, x-2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), w);
-						draw_line(fb , x+2, y-2, x+2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), w);
+						draw_line(fb , x-2, y-2, x+2, y-2, PIXR(hc), PIXG(hc), PIXB(hc), w);
+						if (y+2<h)
+						{
+							draw_line(fb , x-2, y+2, x+2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), w);
+							draw_line(fb , x-2, y-2, x-2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), w);
+							draw_line(fb , x+2, y-2, x+2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), w);
+						}
+					}
+					else if (y+2<h)
+					{
+						draw_line(fb, x-2, y, x, y-2, PIXR(hc), PIXG(hc), PIXB(hc), w);
+						draw_line(fb, x-2, y, x, y+2, PIXR(hc), PIXG(hc), PIXB(hc), w);
+						draw_line(fb, x, y-2, x+2, y, PIXR(hc), PIXG(hc), PIXB(hc), w);
+						draw_line(fb, x, y+2, x+2, y, PIXR(hc), PIXG(hc), PIXB(hc), w);
 					}
 					if (y+6<h)
 					{
@@ -2170,4 +2278,140 @@ void *build_thumb(int *size, int bzip2)
 
 	*size = j;
 	return d;
+}
+
+void *transform_save(void *odata, int *size, matrix2d transform, vector2d translate)
+{
+	void *ndata;
+	unsigned char (*bmapo)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(unsigned char));
+	unsigned char (*bmapn)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(unsigned char));
+	particle *partst = calloc(sizeof(particle), NPART);
+	sign *signst = calloc(MAXSIGNS, sizeof(sign));
+	unsigned (*pmapt)[XRES] = calloc(YRES*XRES, sizeof(unsigned));
+	float (*fvxo)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
+	float (*fvyo)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
+	float (*fvxn)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
+	float (*fvyn)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
+	float (*vxo)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
+	float (*vyo)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
+	float (*vxn)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
+	float (*vyn)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
+	float (*pvo)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
+	float (*pvn)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
+	int i, x, y, nx, ny, w, h, nw, nh;
+	vector2d pos, tmp, ctl, cbr;
+	vector2d cornerso[4];
+	unsigned char *odatac = odata;
+	if (parse_save(odata, *size, 0, 0, 0, bmapo, vxo, vyo, pvo, fvxo, fvyo, signst, partst, pmapt))
+	{
+		free(bmapo);
+		free(bmapn);
+		free(partst);
+		free(signst);
+		free(pmapt);
+		free(fvxo);
+		free(fvyo);
+		free(fvxn);
+		free(fvyn);
+		free(vxo);
+		free(vyo);
+		free(vxn);
+		free(vyn);
+		free(pvo);
+		free(pvn);
+		return odata;
+	}
+	w = odatac[6]*CELL;
+	h = odatac[7]*CELL;
+	// undo any translation caused by rotation
+	cornerso[0] = v2d_new(0,0);
+	cornerso[1] = v2d_new(w-1,0);
+	cornerso[2] = v2d_new(0,h-1);
+	cornerso[3] = v2d_new(w-1,h-1);
+	for (i=0; i<4; i++)
+	{
+		tmp = m2d_multiply_v2d(transform,cornerso[i]);
+		if (i==0) ctl = cbr = tmp; // top left, bottom right corner
+		if (tmp.x<ctl.x) ctl.x = tmp.x;
+		if (tmp.y<ctl.y) ctl.y = tmp.y;
+		if (tmp.x>cbr.x) cbr.x = tmp.x;
+		if (tmp.y>cbr.y) cbr.y = tmp.y;
+	}
+	// casting as int doesn't quite do what we want with negative numbers, so use floor()
+	tmp = v2d_new(floor(ctl.x+0.5f),floor(ctl.y+0.5f));
+	translate = v2d_sub(translate,tmp);
+	nw = floor(cbr.x+0.5f)-floor(ctl.x+0.5f)+1;
+	nh = floor(cbr.y+0.5f)-floor(ctl.y+0.5f)+1;
+	if (nw>XRES) nw = XRES;
+	if (nh>YRES) nh = YRES;
+	// rotate and translate signs, parts, walls
+	for (i=0; i<MAXSIGNS; i++)
+	{
+		if (!signst[i].text[0]) continue;
+		pos = v2d_new(signst[i].x, signst[i].y);
+		pos = v2d_add(m2d_multiply_v2d(transform,pos),translate);
+		nx = floor(pos.x+0.5f);
+		ny = floor(pos.y+0.5f);
+		if (nx<0 || nx>=nw || ny<0 || ny>=nh)
+		{
+			signst[i].text[0] = 0;
+			continue;
+		}
+		signst[i].x = nx;
+		signst[i].y = ny;
+	}
+	for (i=0; i<NPART; i++)
+	{
+		if (!partst[i].type) continue;
+		pos = v2d_new(partst[i].x, partst[i].y);
+		pos = v2d_add(m2d_multiply_v2d(transform,pos),translate);
+		nx = floor(pos.x+0.5f);
+		ny = floor(pos.y+0.5f);
+		if (nx<0 || nx>=nw || ny<0 || ny>=nh)
+		{
+			partst[i].type = PT_NONE;
+			continue;
+		}
+		partst[i].x = nx;
+		partst[i].y = ny;
+	}
+	for (y=0; y<YRES/CELL; y++)
+		for (x=0; x<XRES/CELL; x++)
+		{
+			pos = v2d_new(x*CELL+CELL*0.4f, y*CELL+CELL*0.4f);
+			pos = v2d_add(m2d_multiply_v2d(transform,pos),translate);
+			nx = pos.x/CELL;
+			ny = pos.y/CELL;
+			if (nx<0 || nx>=nw/CELL || ny<0 || ny>=nh/CELL)
+				continue;
+			if (bmapo[y][x])
+			{
+				bmapn[ny][nx] = bmapo[y][x];
+				if (bmapo[y][x]==WL_FAN)
+				{
+					fvxn[ny][nx] = fvxo[y][x];
+					fvyn[ny][nx] = fvyo[y][x];
+				}
+			}
+			vxn[ny][nx] = vxo[y][x];
+			vyn[ny][nx] = vyo[y][x];
+			pvn[ny][nx] = pvo[y][x];
+		}
+	ndata = build_save(size,0,0,nw,nh,bmapn,vxn,vyn,pvn,fvxn,fvyn,signst,partst);
+	free(bmapo);
+	free(bmapn);
+	free(partst);
+	free(signst);
+	free(pmapt);
+	free(fvxo);
+	free(fvyo);
+	free(fvxn);
+	free(fvyn);
+	free(vxo);
+	free(vyo);
+	free(vxn);
+	free(vyn);
+	free(pvo);
+	free(pvn);
+	return ndata;
 }

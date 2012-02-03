@@ -1618,7 +1618,7 @@ int stamp_ui(pixel *vid_buf)
 		for (j=0; j<GRID_Y; j++)
 			for (i=0; i<GRID_X; i++)
 			{
-				if (stamps[k].name[0] && stamps[k].thumb)
+				if (stamps[k].name[0])
 				{
 					gx = ((XRES/GRID_X)*i) + (XRES/GRID_X-XRES/GRID_S)/2;
 					gy = ((((YRES-MENUSIZE+20)+15)/GRID_Y)*j) + ((YRES-MENUSIZE+20)/GRID_Y-(YRES-MENUSIZE+20)/GRID_S+10)/2 + 18;
@@ -1629,8 +1629,15 @@ int stamp_ui(pixel *vid_buf)
 					h = stamps[k].thumb_h;
 					x -= w/2;
 					y -= h/2;
-					draw_image(vid_buf, stamps[k].thumb, gx+(((XRES/GRID_S)/2)-(w/2)), gy+(((YRES/GRID_S)/2)-(h/2)), w, h, 255);
-					xor_rect(vid_buf, gx+(((XRES/GRID_S)/2)-(w/2)), gy+(((YRES/GRID_S)/2)-(h/2)), w, h);
+					if (stamps[k].thumb)
+					{
+						draw_image(vid_buf, stamps[k].thumb, gx+(((XRES/GRID_S)/2)-(w/2)), gy+(((YRES/GRID_S)/2)-(h/2)), w, h, 255);
+						xor_rect(vid_buf, gx+(((XRES/GRID_S)/2)-(w/2)), gy+(((YRES/GRID_S)/2)-(h/2)), w, h);
+					}
+					else
+					{
+						drawtext(vid_buf, gx+8, gy+((YRES/GRID_S)/2)-4, "Error loading stamp", 255, 255, 255, 255);
+					}
 					if (mx>=gx+XRES/GRID_S-4 && mx<(gx+XRES/GRID_S)+6 && my>=gy-6 && my<gy+4)
 					{
 						d = k;
@@ -1639,7 +1646,7 @@ int stamp_ui(pixel *vid_buf)
 					}
 					else
 					{
-						if (mx>=gx && mx<gx+(XRES/GRID_S) && my>=gy && my<gy+(YRES/GRID_S))
+						if (mx>=gx && mx<gx+(XRES/GRID_S) && my>=gy && my<gy+(YRES/GRID_S) && stamps[k].thumb)
 						{
 							r = k;
 							drawrect(vid_buf, gx-2, gy-2, XRES/GRID_S+3, YRES/GRID_S+3, 128, 128, 210, 255);
@@ -4197,11 +4204,12 @@ int search_ui(pixel *vid_buf)
 				{
 					if (search_dates[pos]) {
 						char *id_d_temp = malloc(strlen(search_ids[pos])+strlen(search_dates[pos])+2);
-						uri = malloc(strlen(search_ids[pos])*3+strlen(search_dates[pos])*3+strlen(SERVER)+71);
-						strcpy(uri, "http://" SERVER "/Get.api?Op=thumbsmall&ID=");
+						uri = malloc(strlen(search_ids[pos])*3+strlen(search_dates[pos])*3+strlen(STATICSERVER)+71);
+						strcpy(uri, "http://" STATICSERVER "/");
 						strcaturl(uri, search_ids[pos]);
-						strappend(uri, "&Date=");
+						strappend(uri, "_");
 						strcaturl(uri, search_dates[pos]);
+						strappend(uri, "_small.pti");
 
 						strcpy(id_d_temp, search_ids[pos]);
 						strappend(id_d_temp, "_");
@@ -4210,8 +4218,9 @@ int search_ui(pixel *vid_buf)
 						free(id_d_temp);
 					} else {
 						uri = malloc(strlen(search_ids[pos])*3+strlen(SERVER)+64);
-						strcpy(uri, "http://" SERVER "/Get.api?Op=thumbsmall&ID=");
+						strcpy(uri, "http://" STATICSERVER "/");
 						strcaturl(uri, search_ids[pos]);
+						strappend(uri, "_small.pti");
 						img_id[i] = mystrdup(search_ids[pos]);
 					}
 					printf("Not found: %s, downloading\n", img_id[i]);
@@ -4407,36 +4416,42 @@ int open_ui(pixel *vid_buf, char *save_id, char *save_date)
 	//Begin Async loading of data
 	if (save_date) {
 		// We're loading an historical save
-		uri = malloc(strlen(save_id)*3+strlen(save_date)*3+strlen(SERVER)+71);
-		strcpy(uri, "http://" SERVER "/Get.api?Op=save&ID=");
+		uri = malloc(strlen(save_id)*3+strlen(save_date)*3+strlen(STATICSERVER)+71);
+		strcpy(uri, "http://" STATICSERVER "/");
 		strcaturl(uri, save_id);
-		strappend(uri, "&Date=");
+		strappend(uri, "_");
 		strcaturl(uri, save_date);
+		strappend(uri, ".cps");
 
-		uri_2 = malloc(strlen(save_id)*3+strlen(save_date)*3+strlen(SERVER)+71);
-		strcpy(uri_2, "http://" SERVER "/Info.api?ID=");
+		uri_2 = malloc(strlen(save_id)*3+strlen(save_date)*3+strlen(STATICSERVER)+71);
+		strcpy(uri_2, "http://" STATICSERVER "/");
 		strcaturl(uri_2, save_id);
-		strappend(uri_2, "&Date=");
+		strappend(uri_2, "_");
 		strcaturl(uri_2, save_date);
+		strappend(uri_2, ".info");
 
-		uri_3 = malloc(strlen(save_id)*3+strlen(save_date)*3+strlen(SERVER)+71);
-		strcpy(uri_3, "http://" SERVER "/Get.api?Op=thumblarge&ID=");
+		uri_3 = malloc(strlen(save_id)*3+strlen(save_date)*3+strlen(STATICSERVER)+71);
+		strcpy(uri_3, "http://" STATICSERVER "/");
 		strcaturl(uri_3, save_id);
-		strappend(uri_3, "&Date=");
+		strappend(uri_3, "_");
 		strcaturl(uri_3, save_date);
+		strappend(uri_3, "_large.pti");
 	} else {
 		//We're loading a normal save
-		uri = malloc(strlen(save_id)*3+strlen(SERVER)+64);
-		strcpy(uri, "http://" SERVER "/Get.api?Op=save&ID=");
+		uri = malloc(strlen(save_id)*3+strlen(STATICSERVER)+64);
+		strcpy(uri, "http://" STATICSERVER "/");
 		strcaturl(uri, save_id);
+		strappend(uri, ".cps");
 
-		uri_2 = malloc(strlen(save_id)*3+strlen(SERVER)+64);
-		strcpy(uri_2, "http://" SERVER "/Info.api?ID=");
+		uri_2 = malloc(strlen(save_id)*3+strlen(STATICSERVER)+64);
+		strcpy(uri_2, "http://" STATICSERVER "/");
 		strcaturl(uri_2, save_id);
+		strappend(uri_2, ".info");
 
-		uri_3 = malloc(strlen(save_id)*3+strlen(SERVER)+64);
-		strcpy(uri_3, "http://" SERVER "/Get.api?Op=thumblarge&ID=");
+		uri_3 = malloc(strlen(save_id)*3+strlen(STATICSERVER)+64);
+		strcpy(uri_3, "http://" STATICSERVER "/");
 		strcaturl(uri_3, save_id);
+		strappend(uri_3, "_large.pti");
 	}
 	http = http_async_req_start(http, uri, NULL, 0, 1);
 	http_2 = http_async_req_start(http_2, uri_2, NULL, 0, 1);
@@ -6779,13 +6794,13 @@ void catalogue_ui(pixel * vid_buf)
 							csave->image = resample_img(tmpimage, imgwidth, imgheight, XRES/CATALOGUE_S, YRES/CATALOGUE_S);
 							free(tmpimage);
 						} else {
-							//Blank image, this should default to something else
-							csave->image = malloc((XRES/CATALOGUE_S)*(YRES/CATALOGUE_S)*PIXELSIZE);
+							//Blank image, TODO: this should default to something else
+							csave->image = calloc((XRES/CATALOGUE_S)*(YRES/CATALOGUE_S), PIXELSIZE);
 						}
 						free(data);
 					} else {
-						//Blank image, this should default to something else
-						csave->image = malloc((XRES/CATALOGUE_S)*(YRES/CATALOGUE_S)*PIXELSIZE);
+						//Blank image, TODO: this should default to something else
+						csave->image = calloc((XRES/CATALOGUE_S)*(YRES/CATALOGUE_S), PIXELSIZE);
 					}
 					imageoncycle = 1;
 				}
