@@ -475,6 +475,7 @@ void STKM_interact(playerst* playerp, int i, int x, int y);
 struct part_type
 {
 	char *name;
+	char *sname;
 	pixel pcolors;
 	float advection;
 	float airdrag;
@@ -501,6 +502,7 @@ struct part_type
 	unsigned int properties;
 	int (*update_func) (UPDATE_FUNC_ARGS);
 	int (*graphics_func) (GRAPHICS_FUNC_ARGS);
+
 };
 typedef struct part_type part_type;
 

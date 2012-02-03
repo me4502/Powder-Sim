@@ -544,7 +544,7 @@ void *build_save_OPS(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h
 		partsData = NULL;
 	}
 
-	bson b;
+	
 	bson_init(&b);
 	bson_append_bool(&b, "waterEEnabled", water_equal_test);
 	bson_append_bool(&b, "legacyEnable", legacy_enable);
