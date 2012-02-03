@@ -96,6 +96,8 @@ void init_can_move()
 			if (ptypes[t].weight <= ptypes[rt].weight) can_move[t][rt] = 0;
 			if (t==PT_NEUT && ptypes[rt].properties&PROP_NEUTPASS)
 				can_move[t][rt] = 2;
+			if (t==PT_NEUT && ptypes[rt].properties&PROP_NEUTABSORB)
+				can_move[t][rt] = 1;
 			if (t==PT_NEUT && ptypes[rt].properties&PROP_NEUTPENETRATE)
 				can_move[t][rt] = 1;
 			if (ptypes[t].properties&PROP_NEUTPENETRATE && rt==PT_NEUT)
@@ -325,6 +327,11 @@ int try_move(int i, int x, int y, int nx, int ny)
 	}
 	//else e=1 , we are trying to swap the particles, return 0 no swap/move, 1 is still overlap/move, because the swap takes place later
 
+	if (parts[i].type==PT_NEUT && (ptypes[r&0xFF].properties&PROP_NEUTABSORB))
+	{
+		parts[i].type=PT_NONE;
+		return 0;
+	}
 	if ((r&0xFF)==PT_VOID || (r&0xFF)==PT_PVOD) //this is where void eats particles
 	{
 		if (parts[i].type == PT_STKM)
@@ -830,7 +837,11 @@ inline int create_part(int p, int x, int y, int tv)//the function for creating a
 		return -1;
 	if (p==-1)//creating from anything but brush
 	{
-		if ((pmap[y][x] || bmap[y/CELL][x/CELL]) && !eval_move(t, x, y, NULL))
+		// If there is a particle, only allow creation if the new particle can occupy the same space as the existing particle
+		// If there isn't a particle but there is a wall, check whether the new particle is allowed to be in it
+		//   (not "!=2" for wall check because eval_move returns 1 for moving into empty space)
+		// If there's no particle and no wall, assume creation is allowed
+		if (pmap[y][x] ? (eval_move(t, x, y, NULL)!=2) : (bmap[y/CELL][x/CELL] && eval_move(t, x, y, NULL)==0))
 		{
 			if ((pmap[y][x]&0xFF)!=PT_SPAWN&&(pmap[y][x]&0xFF)!=PT_SPAWN2)
 			{
@@ -1805,8 +1816,6 @@ void update_particles_i(pixel *vid, int start, int inc)
 	for (i=0; i<=parts_lastActiveIndex; i++)
 		if (parts[i].type)
 		{
-			lx = parts[i].x;
-			ly = parts[i].y;
 			t = parts[i].type;
 			if (t<0 || t>=PT_NUM)
 			{
@@ -2235,14 +2244,23 @@ void update_particles_i(pixel *vid, int start, int inc)
 			if (ptypes[t].update_func)
 #endif
 			{
-                if ((*(ptypes[t].update_func))(i,x,y,surround_space,nt))
-                    continue;
+				if ((*(ptypes[t].update_func))(i,x,y,surround_space,nt))
+					continue;
+				else if (t==PT_WARP)
+				{
+					// Warp does some movement in its update func, update variables to avoid incorrect data in pmap
+					x = (int)(parts[i].x+0.5f);
+					y = (int)(parts[i].y+0.5f);
+				}
 			}
 #ifdef LUACONSOLE
 			if(lua_el_mode[t])
 			{
 				if(luacon_part_update(t,i,x,y,surround_space,nt))
 					continue;
+				// Need to update variables, in case they've been changed by Lua
+				x = (int)(parts[i].x+0.5f);
+				y = (int)(parts[i].y+0.5f);
 			}
 #endif
 			if (legacy_enable)//if heat sim is off
@@ -2414,7 +2432,7 @@ killed:
 							kill_part(i);
 						continue;
 					}
-					if (!parts[i].ctype&&t!=PT_NEUT&&t!=PT_ELEC) {
+					if (!(parts[i].ctype&0x3FFFFFFF)&&t!=PT_NEUT&&t!=PT_ELEC) {
 						kill_part(i);
 						continue;
 					}
@@ -3345,121 +3363,6 @@ void create_line(int x1, int y1, int x2, int y2, int rx, int ry, int c, int flag
 			e -= 1.0f;
 		}
 	}
-}
-
-void *transform_save(void *odata, int *size, matrix2d transform, vector2d translate)
-{
-	void *ndata;
-	unsigned char (*bmapo)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(unsigned char));
-	unsigned char (*bmapn)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(unsigned char));
-	particle *partst = calloc(sizeof(particle), NPART);
-	sign *signst = calloc(MAXSIGNS, sizeof(sign));
-	unsigned (*pmapt)[XRES] = calloc(YRES*XRES, sizeof(unsigned));
-	float (*fvxo)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
-	float (*fvyo)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
-	float (*fvxn)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
-	float (*fvyn)[XRES/CELL] = calloc((YRES/CELL)*(XRES/CELL), sizeof(float));
-	int i, x, y, nx, ny, w, h, nw, nh;
-	vector2d pos, tmp, ctl, cbr;
-	vector2d cornerso[4];
-	unsigned char *odatac = odata;
-	if (parse_save(odata, *size, 0, 0, 0, bmapo, fvxo, fvyo, signst, partst, pmapt))
-	{
-		free(bmapo);
-		free(bmapn);
-		free(partst);
-		free(signst);
-		free(pmapt);
-		free(fvxo);
-		free(fvyo);
-		free(fvxn);
-		free(fvyn);
-		return odata;
-	}
-	w = odatac[6]*CELL;
-	h = odatac[7]*CELL;
-	// undo any translation caused by rotation
-	cornerso[0] = v2d_new(0,0);
-	cornerso[1] = v2d_new(w-1,0);
-	cornerso[2] = v2d_new(0,h-1);
-	cornerso[3] = v2d_new(w-1,h-1);
-	for (i=0; i<4; i++)
-	{
-		tmp = m2d_multiply_v2d(transform,cornerso[i]);
-		if (i==0) ctl = cbr = tmp; // top left, bottom right corner
-		if (tmp.x<ctl.x) ctl.x = tmp.x;
-		if (tmp.y<ctl.y) ctl.y = tmp.y;
-		if (tmp.x>cbr.x) cbr.x = tmp.x;
-		if (tmp.y>cbr.y) cbr.y = tmp.y;
-	}
-	// casting as int doesn't quite do what we want with negative numbers, so use floor()
-	tmp = v2d_new(floor(ctl.x+0.5f),floor(ctl.y+0.5f));
-	translate = v2d_sub(translate,tmp);
-	nw = floor(cbr.x+0.5f)-floor(ctl.x+0.5f)+1;
-	nh = floor(cbr.y+0.5f)-floor(ctl.y+0.5f)+1;
-	if (nw>XRES) nw = XRES;
-	if (nh>YRES) nh = YRES;
-	// rotate and translate signs, parts, walls
-	for (i=0; i<MAXSIGNS; i++)
-	{
-		if (!signst[i].text[0]) continue;
-		pos = v2d_new(signst[i].x, signst[i].y);
-		pos = v2d_add(m2d_multiply_v2d(transform,pos),translate);
-		nx = floor(pos.x+0.5f);
-		ny = floor(pos.y+0.5f);
-		if (nx<0 || nx>=nw || ny<0 || ny>=nh)
-		{
-			signst[i].text[0] = 0;
-			continue;
-		}
-		signst[i].x = nx;
-		signst[i].y = ny;
-	}
-	for (i=0; i<NPART; i++)
-	{
-		if (!partst[i].type) continue;
-		pos = v2d_new(partst[i].x, partst[i].y);
-		pos = v2d_add(m2d_multiply_v2d(transform,pos),translate);
-		nx = floor(pos.x+0.5f);
-		ny = floor(pos.y+0.5f);
-		if (nx<0 || nx>=nw || ny<0 || ny>=nh)
-		{
-			partst[i].type = PT_NONE;
-			continue;
-		}
-		partst[i].x = nx;
-		partst[i].y = ny;
-	}
-	for (y=0; y<YRES/CELL; y++)
-		for (x=0; x<XRES/CELL; x++)
-		{
-			pos = v2d_new(x*CELL+CELL*0.4f, y*CELL+CELL*0.4f);
-			pos = v2d_add(m2d_multiply_v2d(transform,pos),translate);
-			nx = pos.x/CELL;
-			ny = pos.y/CELL;
-			if (nx<0 || nx>=nw || ny<0 || ny>=nh)
-				continue;
-			if (bmapo[y][x])
-			{
-				bmapn[ny][nx] = bmapo[y][x];
-				if (bmapo[y][x]==WL_FAN)
-				{
-					fvxn[ny][nx] = fvxo[y][x];
-					fvyn[ny][nx] = fvyo[y][x];
-				}
-			}
-		}
-	ndata = build_save(size,0,0,nw,nh,bmapn,fvxn,fvyn,signst,partst);
-	free(bmapo);
-	free(bmapn);
-	free(partst);
-	free(signst);
-	free(pmapt);
-	free(fvxo);
-	free(fvyo);
-	free(fvxn);
-	free(fvyn);
-	return ndata;
 }
 
 #if defined(WIN32) && !defined(__GNUC__)
