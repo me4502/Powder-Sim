@@ -420,6 +420,8 @@ void stamp_save(int x, int y, int w, int h)
 	int n;
 	char fn[64], sn[16];
 	void *s=build_save(&n, x, y, w, h, bmap, vx, vy, pv, fvx, fvy, signs, parts);
+	if (!s)
+		return;
 
 #ifdef WIN32
 	_mkdir("stamps");
@@ -2074,7 +2076,10 @@ int main(int argc, char *argv[])
 				}
 			}
 			else
+			{
 				free(tmp);
+				old_version = 0;
+			}
 		}
 		if (y>=sdl_scale*(YRES+(MENUSIZE-20))) //mouse checks for buttons at the bottom, to draw mouseover texts
 		{
