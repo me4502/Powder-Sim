@@ -684,19 +684,20 @@ struct nbl_menu
 	const char *name;
 	pixel colour;
 	int nbltype;
+	const char *sname;	
 	const char *description;
 };
 typedef struct nbl_menu nbl_menu;
 
 static nbl_menu nmenu[NNBL] =
 {
-	{"HELI",   PIXPACK(0xF55B5B), 0, "Helium Noble Gas, Floats up, Ionizes under Electricity"},
-	{"NEON",   PIXPACK(0xFF7700), 1, "Neon Noble Gas, Ionizes under Electricity"},
-	{"ARGN",   PIXPACK(0x7DF9FF), 2, "Argon Noble Gas, Ionizes under Electricity"},
-	{"KPTN",   PIXPACK(0xBF00B3), 3, "Krypton Noble Gas, Ionizes under Electricity"},
-	{"XNON",   PIXPACK(0xFFFFFF), 4, "Xenon Noble Gas, Ionizes under Electricity"},
-	{"RDON",   PIXPACK(0xB6E300), 5, "Radon Noble Gas, Ionizes under Electricity"},
-	{"UNCM",   PIXPACK(0x590000), 6, "Ununoctium Noble Gas, Ionizes under Electricity"},
+	{"HELI",   PIXPACK(0xF55B5B), 0,	"He",	"Helium Noble Gas, Floats up, Ionizes under Electricity"},
+	{"NEON",   PIXPACK(0xFF7700), 1,	"Ne",	"Neon Noble Gas, Ionizes under Electricity"},
+	{"ARGN",   PIXPACK(0x7DF9FF), 2, 	"Ar",	"Argon Noble Gas, Ionizes under Electricity"},
+	{"KPTN",   PIXPACK(0xBF00B3), 3, 	"Kr",	"Krypton Noble Gas, Ionizes under Electricity"},
+	{"XNON",   PIXPACK(0xFFFFFF), 4, 	"Xe",	"Xenon Noble Gas, Ionizes under Electricity"},
+	{"RDON",   PIXPACK(0xB6E300), 5, 	"Rn",	"Radon Noble Gas, Ionizes under Electricity"},
+	{"UNCM",   PIXPACK(0x590000), 6, 	"Uuo",	"Ununoctium Noble Gas, Ionizes under Electricity"},
 };
 
 static int loverule[9][9] =
