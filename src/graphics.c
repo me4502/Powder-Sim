@@ -616,7 +616,11 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 		{
 			c = 0;
 		}
-		drawtext(vid_buf, x+14-textwidth((char *)nmenu[(b>>8)&0xFF].name)/2, y+4, (char *)nmenu[(b>>8)&0xFF].name, c, c, c, 255);
+		if (chem)
+			drawtext(vid_buf, x+14-textwidth((char *)nmenu[(b>>8)&0xFF].sname)/2, y+4, (char *)nmenu[(b>>8)&0xFF].sname, c, c, c, 255);
+		else 
+			drawtext(vid_buf, x+14-textwidth((char *)nmenu[(b>>8)&0xFF].name)/2, y+4, (char *)nmenu[(b>>8)&0xFF].name, c, c, c, 255);
+
 	}
 	else if (b>=UI_WALLSTART)
 	{
