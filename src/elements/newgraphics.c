@@ -660,15 +660,17 @@ int graphics_WATR(GRAPHICS_FUNC_ARGS)
 	*colb = PIXB(pc);
 	*colg += cpart->tmp2*2;
 	*colb -= cpart->tmp2*2;
-	if (cpart->tmp2*2>100)
+	if (cpart->tmp2>0)
 	{
         *firea = cpart->tmp2*2;
+        if (*firea > 255) *firea = 255;
         *firer = *colr;
         *fireb = *colb;
         *fireg = *colg;
 	    *pixel_mode |= PMODE_GLOW;
 	}
-	*pixel_mode |= PMODE_BLUR;
+	else
+        *pixel_mode |= PMODE_BLUR;
     return 0;
 }
 int graphics_CBTY(GRAPHICS_FUNC_ARGS)
@@ -692,4 +694,56 @@ int graphics_VBMB(GRAPHICS_FUNC_ARGS)
 	*pixel_mode &= ~PMODE;
 	*pixel_mode |= PMODE_ADD;
 	return 1;
+}
+int graphics_H2(GRAPHICS_FUNC_ARGS)
+{
+    if (cpart->ctype==0) //Protium
+    {
+        *pixel_mode &= ~PMODE;
+		*pixel_mode |= FIRE_BLEND;
+		*firer = *colr/2;
+		*fireg = *colg/2;
+		*fireb = *colb/2;
+		*firea = 125;
+		*pixel_mode |= DECO_FIRE;
+    }
+    else if (cpart->ctype==1) //Metallic Hydrogen
+    {
+        *pixel_mode = PMODE_FLAT;
+    }
+    else if (cpart->ctype==2) //Deuterium
+    {
+        pixel pc = ptypes[PT_DEUT].pcolors;
+        *colr = PIXR(pc);
+        *colg = PIXG(pc);
+        *colb = PIXB(pc);
+        *firer = *colr/2;
+		*fireg = *colg/2;
+		*fireb = *colb/2;
+		*firea = 125;
+        *pixel_mode = PMODE_GLOW;
+    }
+    else if (cpart->ctype==3) //Tritium
+    {
+        *colr = 0x20;
+        *colg = 0xAA;
+        *colb = 0x20;
+        *firer = *colr/2;
+		*fireg = *colg/2;
+		*fireb = *colb/2;
+		*firea = 125;
+        *pixel_mode = PMODE_GLOW;
+    }
+    else if (cpart->ctype==4) //Quadrium
+    {
+        *colr = 0x10;
+        *colg = 0xDD;
+        *colb = 0x10;
+        *firer = *colr/2;
+		*fireg = *colg/2;
+		*fireb = *colb/2;
+		*firea = 255;
+        *pixel_mode = PMODE_BLEND|PMODE_ADD|FIRE_BLEND;
+    }
+    return 0;
 }
