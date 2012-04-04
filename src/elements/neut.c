@@ -35,6 +35,7 @@ int create_n_parts(int n, int x, int y, float vx, float vy, float temp, int t)//
         parts[i].ctype = 0;
         parts[i].temp = temp;
         parts[i].tmp = 0;
+        parts[i].tmp3=PT_DEUT;
         if (t!=PT_STKM&&t!=PT_STKM2 && t!=PT_PHOT && t!=PT_NEUT && !pmap[y][x])
             pmap[y][x] = t|(i<<8);
         else if ((t==PT_PHOT||t==PT_NEUT) && !photons[y][x])
@@ -85,8 +86,16 @@ int update_NEUT(UPDATE_FUNC_ARGS)
 #ifdef SDEUT
                 else if ((r&0xFF)==PT_DEUT && (pressureFactor+1+(parts[r>>8].life/100))>(rand()%1000))
                 {
-                    create_n_parts(parts[r>>8].life, x+rx, y+ry, parts[i].vx, parts[i].vy, restrict_flt(parts[r>>8].temp + parts[r>>8].life*500, MIN_TEMP, MAX_TEMP), PT_NEUT);
-                    kill_part(r>>8);
+                    if (rand()%100<1)
+                    {
+                        part_change_type(r>>8,x+rx, y+ry,PT_H2);
+                        parts[r>>8].ctype=3;
+                    }
+                    else
+                    {
+                        create_n_parts(parts[r>>8].life, x+rx, y+ry, parts[i].vx, parts[i].vy, restrict_flt(parts[r>>8].temp + parts[r>>8].life*500, MIN_TEMP, MAX_TEMP), PT_NEUT);
+                        kill_part(r>>8);
+                    }
                 }
 #else
                 else if ((r&0xFF)==PT_DEUT && (pressureFactor+1)>(rand()%1000))
@@ -94,11 +103,17 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     create_part(r>>8, x+rx, y+ry, PT_NEUT);
                     parts[r>>8].vx = 0.25f*parts[r>>8].vx + parts[i].vx;
                     parts[r>>8].vy = 0.25f*parts[r>>8].vy + parts[i].vy;
+                    parts[r>>8].tmp3=PT_DEUT;
                     if (parts[r>>8].life>0)
                     {
                         parts[r>>8].life --;
                         parts[r>>8].temp = restrict_flt(parts[r>>8].temp + parts[r>>8].life*17, MIN_TEMP, MAX_TEMP);
                         pv[y/CELL][x/CELL] += 6.0f * CFDS;
+                    }
+                    else if (rand()%100<1)
+                    {
+                        part_change_type(r>>8,x+rx, y+ry,PT_H2);
+                        parts[r>>8].ctype=3;
                     }
                     else
                         kill_part(r>>8);
@@ -110,8 +125,6 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     part_change_type(r>>8,x+rx,y+ry,PT_YEST);
                 else if ((r&0xFF)==PT_YEST)
                     part_change_type(r>>8,x+rx,y+ry,PT_DYST);
-                else if ((r&0xFF)==PT_WATR && 15>(rand()%100))
-                    part_change_type(r>>8,x+rx,y+ry,PT_DSTW);
                 else if ((r&0xFF)==PT_PLEX && 15>(rand()%1000))
                     part_change_type(r>>8,x+rx,y+ry,PT_GOO);
                 else if ((r&0xFF)==PT_NITR && 15>(rand()%1000))
@@ -134,6 +147,8 @@ int update_NEUT(UPDATE_FUNC_ARGS)
                     parts[r>>8].tmp2 += rand()%50;
                 else if ((r&0xFF)==PT_DSTW && 5>(rand()%100))
                     parts[r>>8].tmp2 += rand()%50;
+                else if ((r&0xFF)==PT_H2 && 5>(rand()%200) && parts[r>>8].ctype<4)
+                    parts[r>>8].ctype++;
                 else if (((r&0xFF)==PT_BIZR||(r&0xFF)==PT_BIZRG||(r&0xFF)==PT_BIZRS) && 5>(rand()%100))
                 {
                     ge = rand()%PT_NUM;
