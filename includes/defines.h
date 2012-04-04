@@ -11,7 +11,7 @@
 #define MT
 
 //VersionInfoStart
-#define SAVE_VERSION 70
+#define SAVE_VERSION 74
 #define MINOR_VERSION 1
 #define PS_VERSION 1
 #define PS_MINOR_VERSION 3
@@ -27,6 +27,7 @@
 #define MTOS(str) MTOS_EXPAND(str)
 
 #define SCRIPTSERVER "powdertoy.co.uk"
+#define STATICSERVER "static.powdertoy.co.uk"
 
 #define LOCAL_SAVE_DIR "Saves"
 
@@ -97,6 +98,8 @@ extern unsigned char ZSIZE;
 #define NNBL 8
 #define NNBLALT 7
 
+#define REALISTIC
+
 #define NGOL 25
 #define NGOLALT 24 //NGOL should be 24, but use this var until I find out why
 
@@ -133,6 +136,12 @@ typedef unsigned int pixel;
 #define fmaxf max
 #endif
 
+#if defined(WIN32) && !defined(__GNUC__)
+#define TPT_INLINE _inline
+#else
+#define TPT_INLINE inline
+#endif
+
 #define SDEUT
 //#define REALHEAT
 
@@ -164,6 +173,7 @@ extern int sound_enable;
 extern int kiosk_enable;
 extern int aheat_enable;
 extern int decorations_enable;
+extern int active_menu;
 extern int hud_enable;
 extern int pretty_powder;
 extern int drawgrav_enable;
@@ -177,6 +187,7 @@ extern int fix_lag;
 extern int viewMode;
 extern int svf_show;
 extern int speedtick[2];
+extern int ngrav_enable;
 int limitFPS;
 int water_equal_test;
 extern int quickoptions_tooltip_fade;
@@ -275,9 +286,6 @@ extern char http_proxy_string[256];
 void thumb_cache_inval(char *id);
 void thumb_cache_add(char *id, void *thumb, int size);
 int thumb_cache_find(char *id, void **thumb, int *size);
-void *build_thumb(int *size, int bzip2);
-void *build_save(int *size, int x0, int y0, int w, int h, unsigned char bmap[YRES/CELL][XRES/CELL], float fvx[YRES/CELL][XRES/CELL], float fvy[YRES/CELL][XRES/CELL], sign signs[MAXSIGNS], void* partsptr);
-int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char bmap[YRES/CELL][XRES/CELL], float fvx[YRES/CELL][XRES/CELL], float fvy[YRES/CELL][XRES/CELL], sign signs[MAXSIGNS], void* partsptr, unsigned pmap[YRES][XRES]);
 void clear_sim(void);
 void del_stamp(int d);
 void sdl_seticon(void);
