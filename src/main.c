@@ -131,7 +131,7 @@ void play_sound(char *file)
 }
 
 static const char *it_msg =
-    "\br Powder Sim - Version " MTOS(PS_VERSION) "." MTOS(PS_MINOR_VERSION) " - http://powdersim.co.cc, irc.freenode.net #powdersim\n"
+    "\br Powder Sim - Version " MTOS(SAVE_VERSION) "." MTOS(MINOR_VERSION) " - http://powdersim.co.cc, irc.freenode.net #powdersim\n"
     "\r\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\x7F\n"
     "\n"
     "\bgControl+C/V/X are Copy, Paste and cut respectively.\n"
@@ -209,6 +209,7 @@ int do_open = 0;
 int sys_pause = 0;
 int sys_shortcuts = 1;
 int legacy_enable = 0; //Used to disable new features such as heat, will be set by save.
+int chem; 
 int aheat_enable; //Ambient heat
 int decorations_enable = 1;
 int hud_enable = 1;
@@ -231,7 +232,7 @@ int mecool = 0;
 int speedtick[2] = {0,0};
 int viewMode = 1;
 
-int gradCol = ((255<<24)|(255<<16)|(0<<8)|0);
+int gradCol = PIXRGB(255,0,0);
 //int CGOL = 0;
 //int GSPEED = 1;//causes my .exe to crash..
 int sound_enable = 0;
@@ -1917,8 +1918,34 @@ int main(int argc, char *argv[])
 				{
 					sprintf(nametext, "%s (%s)", ptypes[cr&0xFF].name, gmenu[parts[cr>>8].ctype].name);
 				}
-				if ((cr&0xFF)==PT_H2 && parts[cr>>8].ctype==1)
-					sprintf(nametext, "MH2");
+				else if (((cr&0xFF)==PT_DSTW && parts[cr>>8].tmp2>0)||((cr&0xFF)==PT_WATR && parts[cr>>8].tmp2>0))
+                {
+                    sprintf(nametext, "Tritiated %s", ptypes[cr&0xFF].name);
+                }
+				else if ((cr&0xFF)==PT_H2)
+                {
+                    switch(parts[cr>>8].ctype)
+                    {
+                        case 0:
+                            sprintf(nametext, "PRTM");
+                            break;
+                        case 1:
+                            sprintf(nametext, "MH2");
+                            break;
+                        case 2:
+                            sprintf(nametext, "DTRM");
+                            break;
+                        case 3:
+                            sprintf(nametext, "TRTM");
+                            break;
+                        case 4:
+                            sprintf(nametext, "QDRM");
+                            break;
+                        default:
+                            sprintf(nametext, "HYGN");
+                            break;
+                    }
+                }
 				else if ((cr&0xFF)==PT_NBLE && parts[cr>>8].ctype>=0 && parts[cr>>8].ctype<NNBLALT)
                 {
                     sprintf(nametext, "%s (%s)", ptypes[cr&0xFF].name, nmenu[parts[cr>>8].ctype].name);
@@ -2059,20 +2086,20 @@ int main(int argc, char *argv[])
 #ifdef BETA
 			if (is_beta)
 			{
-				sprintf(tmp, "Your version: %d.%d Beta (%d)\nNew version: %d.%d Beta (%d)", PS_VERSION, PS_MINOR_VERSION, BUILD_NUM, major, minor, buildnum);
+				sprintf(tmp, "Your version: %d.%d Beta (%d)\nNew version: %d.%d Beta (%d)", SAVE_VERSION, MINOR_VERSION, BUILD_NUM, major, minor, buildnum);
 			}
 			else
 			{
-				sprintf(tmp, "Your version: %d.%d Beta (%d)\nNew version: %d.%d (%d)", PS_VERSION, PS_MINOR_VERSION, BUILD_NUM, major, minor, buildnum);
+				sprintf(tmp, "Your version: %d.%d Beta (%d)\nNew version: %d.%d (%d)", SAVE_VERSION, MINOR_VERSION, BUILD_NUM, major, minor, buildnum);
 			}
 #else
 			if (is_beta)
 			{
-				sprintf(tmp, "Your version: %d.%d (%d)\nNew version: %d.%d Beta (%d)", PS_VERSION, PS_MINOR_VERSION, BUILD_NUM, major, minor, buildnum);
+				sprintf(tmp, "Your version: %d.%d (%d)\nNew version: %d.%d Beta (%d)", SAVE_VERSION, MINOR_VERSION, BUILD_NUM, major, minor, buildnum);
 			}
 			else
 			{
-				sprintf(tmp, "Your version: %d.%d (%d)\nNew version: %d.%d (%d)", PS_VERSION, PS_MINOR_VERSION, BUILD_NUM, major, minor, buildnum);
+				sprintf(tmp, "Your version: %d.%d (%d)\nNew version: %d.%d (%d)", SAVE_VERSION, MINOR_VERSION, BUILD_NUM, major, minor, buildnum);
 			}
 #endif
 			if (confirm_ui(vid_buf, "Do you want to update Powder Sim?", tmp, "Update"))
