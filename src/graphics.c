@@ -1,6 +1,9 @@
 #include <math.h>
 #include <SDL/SDL.h>
 #include <bzlib.h>
+#ifdef WIN32
+#include <SDL/SDL_syswm.h>
+#endif
 
 #if defined(OGLR)
 #ifdef MACOSX
@@ -28,6 +31,15 @@
 #include <font.h>
 #include <misc.h>
 #include "hmap.h"
+
+#if defined(LIN32) || defined(LIN64)
+#include "icon.h"
+#endif
+
+
+#ifdef WIN32
+IMAGE_DOS_HEADER __ImageBase;
+#endif
 
 //unsigned cmode = CM_FIRE;
 unsigned int *render_modes;
@@ -79,7 +91,14 @@ void init_display_modes()
 	display_modes[0] = 0;
 	render_modes[0] = RENDER_FIRE;
 	render_modes[1] = 0;
+	
+	update_display_modes();
+}
 
+// Combine all elements of the display_modes and render_modes arrays into single variables using bitwise or
+void update_display_modes()
+{
+	int i;
 	display_mode = 0;
 	i = 0;
 	while(display_modes[i])
@@ -1581,14 +1600,19 @@ void draw_air(pixel *vid)
 					clamp_flt(pv[y][x], 0.0f, 8.0f),//pressure adds green
 					clamp_flt(fabsf(vy[y][x]), 0.0f, 8.0f));//vy adds blue
 			}
-			else if (display_mode & DISPLAY_AIRH)
+			else if ((display_mode & DISPLAY_AIRH))
 			{
-				float ttemp = hv[y][x]+(-MIN_TEMP);
-				int caddress = restrict_flt((int)( restrict_flt(ttemp, 0.0f, MAX_TEMP+(-MIN_TEMP)) / ((MAX_TEMP+(-MIN_TEMP))/1024) ) *3, 0.0f, (1024.0f*3)-3);
-				c = PIXRGB((int)((unsigned char)color_data[caddress]*0.7f), (int)((unsigned char)color_data[caddress+1]*0.7f), (int)((unsigned char)color_data[caddress+2]*0.7f));
-				//c  = PIXRGB(clamp_flt(fabsf(vx[y][x]), 0.0f, 8.0f),//vx adds red
-				//	clamp_flt(hv[y][x], 0.0f, 1600.0f),//heat adds green
-				//	clamp_flt(fabsf(vy[y][x]), 0.0f, 8.0f));//vy adds blue
+				if (aheat_enable)
+				{
+					float ttemp = hv[y][x]+(-MIN_TEMP);
+					int caddress = restrict_flt((int)( restrict_flt(ttemp, 0.0f, MAX_TEMP+(-MIN_TEMP)) / ((MAX_TEMP+(-MIN_TEMP))/1024) ) *3, 0.0f, (1024.0f*3)-3);
+					c = PIXRGB((int)((unsigned char)color_data[caddress]*0.7f), (int)((unsigned char)color_data[caddress+1]*0.7f), (int)((unsigned char)color_data[caddress+2]*0.7f));
+					//c  = PIXRGB(clamp_flt(fabsf(vx[y][x]), 0.0f, 8.0f),//vx adds red
+					//	clamp_flt(hv[y][x], 0.0f, 1600.0f),//heat adds green
+					//	clamp_flt(fabsf(vy[y][x]), 0.0f, 8.0f));//vy adds blue
+				}
+				else
+					c = PIXRGB(0,0,0);
 			}
 			else if (display_mode & DISPLAY_AIRC)
 			{
@@ -2105,7 +2129,7 @@ void render_parts(pixel *vid)
 					fireg = graphicscache[t].fireg;
 					fireb = graphicscache[t].fireb;
 				}
-				else
+				else if(!(colour_mode & COLOUR_BASC))	//Don't get special effects for BASIC colour mode
 				{
 					if (ptypes[t].graphics_func)
 					{
@@ -2184,18 +2208,16 @@ void render_parts(pixel *vid)
 					cola = 255;
 					if(pixel_mode & (FIREMODE | PMODE_GLOW)) pixel_mode = (pixel_mode & ~(FIREMODE|PMODE_GLOW)) | PMODE_BLUR;
 				}
-				else if (colour_mode & COLOUR_GRAD)
+				else if (colour_mode & COLOUR_BASC)
 				{
-					float frequency = 0.05;
-					int q = parts[i].temp-40;
-					colr = sin(frequency*q) * 16 + colr;
-					colg = sin(frequency*q) * 16 + colg;
-					colb = sin(frequency*q) * 16 + colb;
-					if(pixel_mode & (FIREMODE | PMODE_GLOW)) pixel_mode = (pixel_mode & ~(FIREMODE|PMODE_GLOW)) | PMODE_BLUR;
+					colr = PIXR(ptypes[t].pcolors);
+					colg = PIXG(ptypes[t].pcolors);
+					colb = PIXB(ptypes[t].pcolors);
+					pixel_mode = PMODE_FLAT;
 				}
 
 				//Apply decoration colour
-				if(!colour_mode)
+				if(!(colour_mode & ~COLOUR_GRAD))
 				{
 					if(!(pixel_mode & NO_DECO) && decorations_enable)
 					{
@@ -2212,6 +2234,16 @@ void render_parts(pixel *vid)
 					}
 				}
 
+				if (colour_mode & COLOUR_GRAD)
+				{
+					float frequency = 0.05;
+					int q = parts[i].temp-40;
+					colr = sin(frequency*q) * 16 + colr;
+					colg = sin(frequency*q) * 16 + colg;
+					colb = sin(frequency*q) * 16 + colb;
+					if(pixel_mode & (FIREMODE | PMODE_GLOW)) pixel_mode = (pixel_mode & ~(FIREMODE|PMODE_GLOW)) | PMODE_BLUR;
+				}
+
 	#ifndef OGLR
 				//All colours are now set, check ranges
 				if(colr>255) colr = 255;
@@ -2225,6 +2257,11 @@ void render_parts(pixel *vid)
 	#endif
 
 				//Pixel rendering
+				if (t==PT_SOAP)
+				{
+					if ((parts[i].ctype&7) == 7)
+						draw_line(vid, nx, ny, (int)(parts[parts[i].tmp].x+0.5f), (int)(parts[parts[i].tmp].y+0.5f), 245, 245, 220, XRES+BARSIZE);
+				}
 				if(pixel_mode & PSPEC_STICKMAN)
 				{
 					char buff[20];  //Buffer for HP
@@ -2745,9 +2782,9 @@ void render_parts(pixel *vid)
 					for (r = 0; r < 4; r++) {
 						ddist = ((float)orbd[r])/16.0f;
 						drad = (M_PI * ((float)orbl[r]) / 180.0f)*1.41f;
-						nxo = ddist*cos(drad);
-						nyo = ddist*sin(drad);
-						if (ny+nyo>0 && ny+nyo<YRES && nx+nxo>0 && nx+nxo<XRES)
+						nxo = (int)(ddist*cos(drad));
+						nyo = (int)(ddist*sin(drad));
+						if (ny+nyo>0 && ny+nyo<YRES && nx+nxo>0 && nx+nxo<XRES && (pmap[ny+nyo][nx+nxo]&0xFF) != PT_PRTI)
 							addpixel(vid, nx+nxo, ny+nyo, colr, colg, colb, 255-orbd[r]);
 					}
 				}
@@ -2763,10 +2800,29 @@ void render_parts(pixel *vid)
 					for (r = 0; r < 4; r++) {
 						ddist = ((float)orbd[r])/16.0f;
 						drad = (M_PI * ((float)orbl[r]) / 180.0f)*1.41f;
-						nxo = ddist*cos(drad);
-						nyo = ddist*sin(drad);
-						if (ny+nyo>0 && ny+nyo<YRES && nx+nxo>0 && nx+nxo<XRES)
+						nxo = (int)(ddist*cos(drad));
+						nyo = (int)(ddist*sin(drad));
+						if (ny+nyo>0 && ny+nyo<YRES && nx+nxo>0 && nx+nxo<XRES && (pmap[ny+nyo][nx+nxo]&0xFF) != PT_PRTO)
 							addpixel(vid, nx+nxo, ny+nyo, colr, colg, colb, 255-orbd[r]);
+					}
+				}
+				if ((pixel_mode & EFFECT_LINES) && DEBUG_MODE)
+				{
+					if (mousex==(nx) && mousey==(ny))//draw lines connecting wifi/portal channels
+					{
+						int z;
+						int type = parts[i].type;
+						if (type == PT_PRTI)
+							type = PT_PRTO;
+						else if (type == PT_PRTO)
+							type = PT_PRTI;
+						for (z = 0; z<NPART; z++) {
+							if (parts[z].type)
+							{
+								if (parts[z].type==type&&parts[z].tmp==parts[i].tmp)
+									xor_line(nx,ny,(int)(parts[z].x+0.5f),(int)(parts[z].y+0.5f),vid);
+							}
+						}
 					}
 				}
 				//Fire effects
@@ -3313,7 +3369,7 @@ void flood_decorations(int x, int y, int currR, int currG, int currB, int click,
 }
 void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 {
-	int rp, tr,tg,tb;
+	int rp, tr = 0, tg = 0, tb = 0;
 	rp = pmap[y][x];
     if (tool == DECO_BACK)
     {
@@ -3424,6 +3480,31 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 		tg = rand()%256;
 		tb = rand()%256;
 		parts[rp>>8].dcolour = ((255)<<24|(tr)<<16|(tg)<<8|(tb));
+	}
+	else if (tool == DECO_SMUDGE)
+	{
+		int rx, ry, num = 0, ta = 0;
+		for (rx=-2; rx<3; rx++)
+			for (ry=-2; ry<3; ry++)
+			{
+				if ((pmap[y+ry][x+rx]&0xFF) && parts[pmap[y+ry][x+rx]>>8].dcolour)
+				{
+					num++;
+					ta += (parts[pmap[y+ry][x+rx]>>8].dcolour>>24)&0xFF;
+					tr += (parts[pmap[y+ry][x+rx]>>8].dcolour>>16)&0xFF;
+					tg += (parts[pmap[y+ry][x+rx]>>8].dcolour>>8)&0xFF;
+					tb += (parts[pmap[y+ry][x+rx]>>8].dcolour)&0xFF;
+				}
+			}
+		if (num == 0)
+			return;
+		ta = fminf(255,(int)((float)ta/num+.5));
+		tr = fminf(255,(int)((float)tr/num+.5));
+		tg = fminf(255,(int)((float)tg/num+.5));
+		tb = fminf(255,(int)((float)tb/num+.5));
+		if (!parts[rp>>8].dcolour)
+			ta = fmaxf(0,ta-3);
+		parts[rp>>8].dcolour = ((ta<<24)|(tr<<16)|(tg<<8)|tb);
 	}
 }
 void line_decorations(int x1, int y1, int x2, int y2, int rx, int ry, int r, int g, int b, int click, int tool)
@@ -3543,15 +3624,18 @@ void render_signs(pixel *vid_buf)
 			//Displaying special information
 			if (strcmp(signs[i].text, "{p}")==0)
 			{
-				sprintf(buff, "Pressure: %3.2f", pv[signs[i].y/CELL][signs[i].x/CELL]);  //...pressure
+				float pressure = 0.0f;
+				if (signs[i].x>=0 && signs[i].x<XRES && signs[i].y>=0 && signs[i].y<YRES)
+					pressure = pv[signs[i].y/CELL][signs[i].x/CELL];
+				sprintf(buff, "Pressure: %3.2f", pressure);  //...pressure
 				drawtext(vid_buf, x+3, y+3, buff, 255, 255, 255, 255);
 			}
 			if (strcmp(signs[i].text, "{t}")==0)
 			{
-				if (pmap[signs[i].y][signs[i].x])
-					sprintf(buff, "Temp: %4.2f", parts[pmap[signs[i].y][signs[i].x]>>8].temp-273.15);  //...tempirature
+				if (signs[i].x>=0 && signs[i].x<XRES && signs[i].y>=0 && signs[i].y<YRES && pmap[signs[i].y][signs[i].x])
+					sprintf(buff, "Temp: %4.2f", parts[pmap[signs[i].y][signs[i].x]>>8].temp-273.15);  //...temperature
 				else
-					sprintf(buff, "Temp: 0.00");  //...tempirature
+					sprintf(buff, "Temp: 0.00");  //...temperature
 				drawtext(vid_buf, x+3, y+3, buff, 255, 255, 255, 255);
 			}
 
@@ -3655,8 +3739,8 @@ void render_fire(pixel *vid)
 			g = fire_g[j][i];
 			b = fire_b[j][i];
 			if (r || g || b)
-				for (y=-CELL+1; y<2*CELL; y++)
-					for (x=-CELL+1; x<2*CELL; x++)
+				for (y=-CELL; y<2*CELL; y++)
+					for (x=-CELL; x<2*CELL; x++)
 						addpixel(vid, i*CELL+x, j*CELL+y, r, g, b, fire_alpha[y+CELL][x+CELL]);
 			r *= 8;
 			g *= 8;
@@ -3973,198 +4057,6 @@ void render_zoom(pixel *img) //draws the zoom box
 #endif
 }
 
-//gets the thumbnail preview for stamps
-pixel *prerender_save(void *save, int size, int *width, int *height)
-{
-	unsigned char *d,*c=save;
-	int i,j,k,x,y,rx,ry,p=0;
-	int bw,bh,w,h,new_format = 0;
-	pixel *fb;
-
-	if (size<16)
-		return NULL;
-	if (!(c[2]==0x43 && c[1]==0x75 && c[0]==0x66) && !(c[2]==0x76 && c[1]==0x53 && c[0]==0x50))
-		return NULL;
-	if (c[2]==0x43 && c[1]==0x75 && c[0]==0x66) {
-		new_format = 1;
-	}
-	if (c[4]>SAVE_VERSION)
-		return NULL;
-
-	bw = c[6];
-	bh = c[7];
-	w = bw*CELL;
-	h = bh*CELL;
-
-	if (c[5]!=CELL)
-		return NULL;
-
-	i = (unsigned)c[8];
-	i |= ((unsigned)c[9])<<8;
-	i |= ((unsigned)c[10])<<16;
-	i |= ((unsigned)c[11])<<24;
-	d = malloc(i);
-	if (!d)
-		return NULL;
-	fb = calloc(w*h, PIXELSIZE);
-	if (!fb)
-	{
-		free(d);
-		return NULL;
-	}
-
-	if (BZ2_bzBuffToBuffDecompress((char *)d, (unsigned *)&i, (char *)(c+12), size-12, 0, 0))
-		goto corrupt;
-	size = i;
-
-	if (size < bw*bh)
-		goto corrupt;
-
-	k = 0;
-	for (y=0; y<bh; y++)
-		for (x=0; x<bw; x++)
-		{
-			rx = x*CELL;
-			ry = y*CELL;
-			switch (d[p])
-			{
-			case 1:
-				for (j=0; j<CELL; j++)
-					for (i=0; i<CELL; i++)
-						fb[(ry+j)*w+(rx+i)] = PIXPACK(0x808080);
-				break;
-			case 2:
-				for (j=0; j<CELL; j+=2)
-					for (i=(j>>1)&1; i<CELL; i+=2)
-						fb[(ry+j)*w+(rx+i)] = PIXPACK(0x808080);
-				break;
-			case 3:
-				for (j=0; j<CELL; j++)
-					for (i=0; i<CELL; i++)
-						if (!(j%2) && !(i%2))
-							fb[(ry+j)*w+(rx+i)] = PIXPACK(0xC0C0C0);
-				break;
-			case 4:
-				for (j=0; j<CELL; j+=2)
-					for (i=(j>>1)&1; i<CELL; i+=2)
-						fb[(ry+j)*w+(rx+i)] = PIXPACK(0x8080FF);
-				k++;
-				break;
-			case 6:
-				for (j=0; j<CELL; j+=2)
-					for (i=(j>>1)&1; i<CELL; i+=2)
-						fb[(ry+j)*w+(rx+i)] = PIXPACK(0xFF8080);
-				break;
-			case 7:
-				for (j=0; j<CELL; j++)
-					for (i=0; i<CELL; i++)
-						if (!(i&j&1))
-							fb[(ry+j)*w+(rx+i)] = PIXPACK(0x808080);
-				break;
-			case 8:
-				for (j=0; j<CELL; j++)
-					for (i=0; i<CELL; i++)
-						if (!(j%2) && !(i%2))
-							fb[(ry+j)*w+(rx+i)] = PIXPACK(0xC0C0C0);
-						else
-							fb[(ry+j)*w+(rx+i)] = PIXPACK(0x808080);
-				break;
-			case WL_WALL:
-				for (j=0; j<CELL; j++)
-					for (i=0; i<CELL; i++)
-						fb[(ry+j)*w+(rx+i)] = PIXPACK(0x808080);
-				break;
-			case WL_DESTROYALL:
-				for (j=0; j<CELL; j+=2)
-					for (i=(j>>1)&1; i<CELL; i+=2)
-						fb[(ry+j)*w+(rx+i)] = PIXPACK(0x808080);
-				break;
-			case WL_ALLOWLIQUID:
-				for (j=0; j<CELL; j++)
-					for (i=0; i<CELL; i++)
-						if (!(j%2) && !(i%2))
-							fb[(ry+j)*w+(rx+i)] = PIXPACK(0xC0C0C0);
-				break;
-			case WL_FAN:
-				for (j=0; j<CELL; j+=2)
-					for (i=(j>>1)&1; i<CELL; i+=2)
-						fb[(ry+j)*w+(rx+i)] = PIXPACK(0x8080FF);
-				k++;
-				break;
-			case WL_DETECT:
-				for (j=0; j<CELL; j+=2)
-					for (i=(j>>1)&1; i<CELL; i+=2)
-						fb[(ry+j)*w+(rx+i)] = PIXPACK(0xFF8080);
-				break;
-			case WL_EWALL:
-				for (j=0; j<CELL; j++)
-					for (i=0; i<CELL; i++)
-						if (!(i&j&1))
-							fb[(ry+j)*w+(rx+i)] = PIXPACK(0x808080);
-				break;
-			case WL_WALLELEC:
-				for (j=0; j<CELL; j++)
-					for (i=0; i<CELL; i++)
-						if (!(j%2) && !(i%2))
-							fb[(ry+j)*w+(rx+i)] = PIXPACK(0xC0C0C0);
-						else
-							fb[(ry+j)*w+(rx+i)] = PIXPACK(0x808080);
-				break;
-			}
-			p++;
-		}
-	p += 2*k;
-	if (p>=size)
-		goto corrupt;
-
-	for (y=0; y<h; y++)
-		for (x=0; x<w; x++)
-		{
-			if (p >= size)
-				goto corrupt;
-			j=d[p++];
-			if (j<PT_NUM && j>0)
-			{
-				if (j==PT_STKM || j==PT_STKM2 || j==PT_FIGH)
-				{
-					pixel lc, hc=PIXRGB(255, 224, 178);
-					if (j==PT_STKM || j==PT_FIGH) lc = PIXRGB(255, 255, 255);
-					else lc = PIXRGB(100, 100, 255);
-					//only need to check upper bound of y coord - lower bounds and x<w are checked in draw_line
-					draw_line(fb , x-2, y-2, x+2, y-2, PIXR(hc), PIXG(hc), PIXB(hc), w);
-					if (y+2<h)
-					{
-						draw_line(fb , x-2, y+2, x+2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), w);
-						draw_line(fb , x-2, y-2, x-2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), w);
-						draw_line(fb , x+2, y-2, x+2, y+2, PIXR(hc), PIXG(hc), PIXB(hc), w);
-					}
-					if (y+6<h)
-					{
-						draw_line(fb , x, y+3, x-1, y+6, PIXR(lc), PIXG(lc), PIXB(lc), w);
-						draw_line(fb , x, y+3, x+1, y+6, PIXR(lc), PIXG(lc), PIXB(lc), w);
-					}
-					if (y+12<h)
-					{
-						draw_line(fb , x-1, y+6, x-3, y+12, PIXR(lc), PIXG(lc), PIXB(lc), w);
-						draw_line(fb , x+1, y+6, x+3, y+12, PIXR(lc), PIXG(lc), PIXB(lc), w);
-					}
-				}
-				else
-					fb[y*w+x] = ptypes[j].pcolors;
-			}
-		}
-
-	free(d);
-	*width = w;
-	*height = h;
-	return fb;
-
-corrupt:
-	free(d);
-	free(fb);
-	return NULL;
-}
-
 int render_thumb(void *thumb, int size, int bzip2, pixel *vid_buf, int px, int py, int scl)
 {
 	unsigned char *d,*c=thumb;
@@ -4300,46 +4192,37 @@ void render_cursor(pixel *vid, int x, int y, int t, int rx, int ry)
 	if (t<PT_NUM||(t&0xFF)==PT_LIFE||(t&0xFF)==PT_NBLE||t==SPC_AIR||t==SPC_HEAT||t==SPC_COOL||t==SPC_VACUUM||t==SPC_WIND||t==SPC_PGRV||t==SPC_NGRV)
 	{
 		if (rx<=0)
-			xor_pixel(x, y, vid);
-		else if (ry<=0)
-			xor_pixel(x, y, vid);
-		if (rx+ry<=0)
-			xor_pixel(x, y, vid);
-		else if (CURRENT_BRUSH==SQUARE_BRUSH)
+			for (j = y - ry; j <= y + ry; j++)
+				xor_pixel(x, j, vid);
+		else
 		{
-			for (j=0; j<=ry; j++)
-				for (i=0; i<=rx; i++)
-					if (i*j<=ry*rx && ((i+1)>rx || (j+1)>ry))
-					{
-						xor_pixel(x+i, y+j, vid);
-						xor_pixel(x-i, y-j, vid);
-						if (i&&j)xor_pixel(x+i, y-j, vid);
-						if (i&&j)xor_pixel(x-i, y+j, vid);
-					}
-		}
-		else if (CURRENT_BRUSH==CIRCLE_BRUSH)
-		{
-			for (j=0; j<=ry; j++)
-				for (i=0; i<=rx; i++)
-					if (pow(i,2)*pow(ry,2)+pow(j,2)*pow(rx,2)<=pow(rx,2)*pow(ry,2) &&
-					  (pow(i+1,2)*pow(ry,2)+pow(j,2)*pow(rx,2)>pow(rx,2)*pow(ry,2) ||
-					   pow(i,2)*pow(ry,2)+pow(j+1,2)*pow(rx,2)>pow(rx,2)*pow(ry,2)))
-					{
-						xor_pixel(x+i, y+j, vid);
-						if (j) xor_pixel(x+i, y-j, vid);
-						if (i) xor_pixel(x-i, y+j, vid);
-						if (i&&j) xor_pixel(x-i, y-j, vid);
-					}
-		}
-		else if (CURRENT_BRUSH==TRI_BRUSH)
- 		{
-			for (j=-ry; j<=ry; j++)
-				for (i=-rx; i<=0; i++)
-					if ((j <= ry ) && ( j >= (((-2.0*ry)/(rx))*i)-ry ) && (j+1>ry || ( j-1 < (((-2.0*ry)/(rx))*i)-ry )) )
-						{
-							xor_pixel(x+i, y+j, vid);
-							if (i) xor_pixel(x-i, y+j, vid);
-						}
+			int tempy = y, i, j, oldy;
+			if (CURRENT_BRUSH == TRI_BRUSH)
+				tempy = y + ry;
+			for (i = x - rx; i <= x; i++) {
+				oldy = tempy;
+				if (!InCurrentBrush(i-x,tempy-y,rx,ry))
+					continue;
+				while (InCurrentBrush(i-x,tempy-y,rx,ry))
+					tempy = tempy - 1;
+				tempy = tempy + 1;
+				if (oldy != tempy && CURRENT_BRUSH != SQUARE_BRUSH)
+					oldy--;
+				if (CURRENT_BRUSH == TRI_BRUSH)
+					oldy = tempy;
+				for (j = tempy; j <= oldy; j++) {
+					int i2 = 2*x-i, j2 = 2*y-j;
+					if (CURRENT_BRUSH == TRI_BRUSH)
+						j2 = y+ry;
+					xor_pixel(i, j, vid);
+					if (i2 != i)
+						xor_pixel(i2, j, vid);
+					if (j2 != j)
+						xor_pixel(i, j2, vid);
+					if (i2 != i && j2 != j)
+						xor_pixel(i2, j2, vid);
+				}
+			}
 		}
 	}
 	else //wall cursor
@@ -4374,12 +4257,38 @@ void render_cursor(pixel *vid, int x, int y, int t, int rx, int ry)
 int sdl_opened = 0;
 int sdl_open(void)
 {
+#ifdef WIN32
+	SDL_SysWMinfo SysInfo;
+	HWND WindowHandle;
+	HICON hIconSmall;
+	HICON hIconBig;
+#elif defined(LIN32) || defined(LIN64)
+	SDL_Surface *icon;
+#endif
 	int status;
 	if (SDL_Init(SDL_INIT_VIDEO)<0)
 	{
 		fprintf(stderr, "Initializing SDL: %s\n", SDL_GetError());
 		return 0;
 	}
+	
+#ifdef WIN32
+	SDL_VERSION(&SysInfo.version);
+	if(SDL_GetWMInfo(&SysInfo) <= 0) {
+	    printf("%s : %d\n", SDL_GetError(), SysInfo.window);
+	    exit(-1);
+	}
+	WindowHandle = SysInfo.window;
+	hIconSmall = (HICON)LoadImage(&__ImageBase, MAKEINTRESOURCE(101), IMAGE_ICON, 16, 16, LR_SHARED);
+	hIconBig = (HICON)LoadImage(&__ImageBase, MAKEINTRESOURCE(101), IMAGE_ICON, 32, 32, LR_SHARED);
+	SendMessage(WindowHandle, WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall);
+	SendMessage(WindowHandle, WM_SETICON, ICON_BIG, (LPARAM)hIconBig);
+#elif defined(LIN32) || defined(LIN64)
+	icon = SDL_CreateRGBSurfaceFrom(app_icon, 16, 16, 32, 64, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+	SDL_WM_SetIcon(icon, NULL);
+#endif
+	SDL_WM_SetCaption("The Powder Toy", "Powder Toy");
+	
 	atexit(SDL_Quit);
 #if defined(OGLR)
 	sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,32,SDL_OPENGL);

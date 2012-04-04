@@ -49,37 +49,38 @@ int update_CBNW(UPDATE_FUNC_ARGS)
                     {
                         pv[y/CELL][x/CELL] += 0.5f;
                         part_change_type(i,x,y,PT_CO2);
-                    }
-                }
-                if ((r&0xFF)==PT_CBNW)
-                {
-                    if(!parts[i].tmp && parts[r>>8].tmp)
-                    {
-                        parts[i].tmp = parts[r>>8].tmp;
-                        if((r>>8)>i) //If the other particle hasn't been life updated
-                            parts[i].tmp--;
-                    }
-                    else if(parts[i].tmp && !parts[r>>8].tmp)
-                    {
-                        parts[r>>8].tmp = parts[i].tmp;
-                        if((r>>8)>i) //If the other particle hasn't been life updated
-                            parts[r>>8].tmp++;
-                    }
-                }
-                if (((r&0xFF)==PT_RBDM||(r&0xFF)==PT_LRBD) && (legacy_enable||parts[i].temp>(273.15f+12.0f)) && 1>(rand()%500))
-                {
-                    part_change_type(i,x,y,PT_FIRE);
-                    parts[i].life = 4;
-                }
-                if ((r&0xFF)==PT_FIRE)
-                {
-                    kill_part(r>>8);
-                    if(1>(rand()%150))
-                    {
-                        kill_part(i);
-                        return 1;
-                    }
-                }
-            }
-    return 0;
+                       	parts[i].ctype = 5;
+                    	pv[y/CELL][x/CELL] += 0.2f;
+					}
+				}
+				if ((r&0xFF)==PT_CBNW)
+				{
+					if(!parts[i].tmp && parts[r>>8].tmp)
+					{
+						parts[i].tmp = parts[r>>8].tmp;
+						if((r>>8)>i) //If the other particle hasn't been life updated
+							parts[i].tmp--;
+					}
+					else if(parts[i].tmp && !parts[r>>8].tmp)
+					{
+						parts[r>>8].tmp = parts[i].tmp;
+						if((r>>8)>i) //If the other particle hasn't been life updated
+							parts[r>>8].tmp++;
+					}
+				}
+				if (((r&0xFF)==PT_RBDM||(r&0xFF)==PT_LRBD) && (legacy_enable||parts[i].temp>(273.15f+12.0f)) && 1>(rand()%500))
+				{
+					part_change_type(i,x,y,PT_FIRE);
+					parts[i].life = 4;
+					parts[i].ctype = PT_WATR;
+				}
+				if ((r&0xFF)==PT_FIRE && parts[r>>8].ctype!=PT_WATR){
+					kill_part(r>>8);
+						if(1>(rand()%150)){
+							kill_part(i);
+							return 1;
+						}
+				}
+			}
+	return 0;
 }
