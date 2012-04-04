@@ -6908,6 +6908,15 @@ void drawIcon(pixel * vid_buf, int x, int y, int cmode)
 		drawtext(vid_buf, x, y, "\xD4", 255, 55, 55, 255);
 		drawtext(vid_buf, x, y, "\xD5", 55, 255, 55, 255);
 		break;
+	case 0xE2:
+		drawtext(vid_buf, x, y, "\xE2", 255, 255, 200, 255);
+		break;
+	case 0xE3:
+		drawtext(vid_buf, x, y, "\xE3", 255, 255, 200, 255);
+		break;
+	case 0xE4:
+		drawtext(vid_buf, x, y, "\xE4", 255, 255, 200, 255);
+		break;
 	}
 }
 
@@ -7025,7 +7034,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 
 		clearrect(vid_buf, xcoord-2, ycoord-2, xsize+4, ysize+4);
 		drawrect(vid_buf, xcoord, ycoord, xsize, ysize, 192, 192, 192, 255);
-		
+
 		changed = 0;
 		for(i = 0; i < render_optioncount; i++)
 		{
@@ -7061,7 +7070,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 				}
 			}
 		}
-		
+
 		changed = 0;
 		for(i = 0; i < display_optioncount; i++)
 		{
@@ -7116,7 +7125,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 				}
 			}
 		}
-		
+
 		changed = 0;
 		for(i = 0; i < colour_optioncount; i++)
 		{
@@ -7164,9 +7173,9 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 		if (b && !bq && (mx < xcoord || mx > xcoord+xsize || my < ycoord || my > ycoord+ysize))
 			break;
 	}
-	
+
 	free(colour_cb);
-	
+
 	free(render_cb);
 
 	free(display_cb);
@@ -7184,7 +7193,7 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 void simulation_ui(pixel * vid_buf)
 {
 	int xsize = 300;
-	int ysize = 246;
+	int ysize = 270;
 	int x0=(XRES-xsize)/2,y0=(YRES-MENUSIZE-ysize)/2,b=1,bq,mx,my;
 	int new_scale, new_kiosk;
 	ui_checkbox cb;
@@ -7193,6 +7202,7 @@ void simulation_ui(pixel * vid_buf)
 	ui_checkbox cb4;
 	ui_checkbox cb5;
 	ui_checkbox cb6;
+	ui_checkbox cb7;
 	char * airModeList[] = {"On", "Pressure Off", "Velocity Off", "Off", "No Update"};
 	int airModeListCount = 5;
 	char * gravityModeList[] = {"Vertical", "Off", "Radial"};
@@ -7211,12 +7221,12 @@ void simulation_ui(pixel * vid_buf)
 	cb2.checked = ngrav_enable;
 
 	cb3.x = x0+xsize-16;	//Large window
-	cb3.y = y0+199;
+	cb3.y = y0+223;
 	cb3.focus = 0;
 	cb3.checked = (sdl_scale==2)?1:0;
 
 	cb4.x = x0+xsize-16;	//Fullscreen
-	cb4.y = y0+213;
+	cb4.y = y0+237;
 	cb4.focus = 0;
 	cb4.checked = (kiosk_enable==1)?1:0;
 
@@ -7231,7 +7241,7 @@ void simulation_ui(pixel * vid_buf)
 	cb6.checked = water_equal_test;
 	
 	list.x = x0+xsize-76;	//Air Mode
-	list.y = y0+135;
+	list.y = y0+159;
 	list.w = 72;
 	list.h = 16;
 	list.def = "[air mode]";
@@ -7240,7 +7250,7 @@ void simulation_ui(pixel * vid_buf)
 	list.count = airModeListCount;
 	
 	list2.x = x0+xsize-76;	//Gravity Mode
-	list2.y = y0+163;
+	list2.y = y0+187;
 	list2.w = 72;
 	list2.h = 16;
 	list2.def = "[gravity mode]";
@@ -7248,6 +7258,10 @@ void simulation_ui(pixel * vid_buf)
 	list2.items = gravityModeList;
 	list2.count = gravityModeListCount;
 
+	cb7.x = x0+xsize-16;	//chem
+	cb7.y = y0+131;
+	cb7.focus = 0;
+	cb7.checked = chem;
 	while (!sdl_poll())
 	{
 		b = SDL_GetMouseState(&mx, &my);
@@ -7282,19 +7296,23 @@ void simulation_ui(pixel * vid_buf)
 		drawtext(vid_buf, x0+12+textwidth("Water Equalization Test"), y0+110, "Introduced in version 61.", 255, 255, 255, 180);
 		drawtext(vid_buf, x0+12, y0+124, "May lag with lots of water.", 255, 255, 255, 120);
 		
-		drawtext(vid_buf, x0+8, y0+138, "Air Simulation Mode", 255, 255, 255, 255);
-		drawtext(vid_buf, x0+12, y0+152, "airMode", 255, 255, 255, 120);
+		drawtext(vid_buf, x0+8, y0+134, "Scientific Name", 255, 255, 255, 255);
+		drawtext(vid_buf, x0+12+textwidth("Scientific Name"), y0+134, "Introduced in version 1.4", 255, 255, 255, 180);
+		drawtext(vid_buf, x0+12, y0+148, "Change element names to the scientific forumla", 255, 255, 255, 120);
+
+		drawtext(vid_buf, x0+8, y0+162, "Air Simulation Mode", 255, 255, 255, 255);
+		drawtext(vid_buf, x0+12, y0+176, "airMode", 255, 255, 255, 120);
 		
-		drawtext(vid_buf, x0+8, y0+166, "Gravity Simulation Mode", 255, 255, 255, 255);
-		drawtext(vid_buf, x0+12, y0+180, "gravityMode", 255, 255, 255, 120);
+		drawtext(vid_buf, x0+8, y0+190, "Gravity Simulation Mode", 255, 255, 255, 255);
+		drawtext(vid_buf, x0+12, y0+204, "gravityMode", 255, 255, 255, 120);
 		
-		draw_line(vid_buf, x0, y0+194, x0+xsize, y0+194, 150, 150, 150, XRES+BARSIZE);
+		draw_line(vid_buf, x0, y0+218, x0+xsize, y0+218, 150, 150, 150, XRES+BARSIZE);
 		
-		drawtext(vid_buf, x0+8, y0+200, "Large window", 255, 255, 255, 255);
-		drawtext(vid_buf, x0+12+textwidth("Large window"), y0+200, "Double window size for small screens", 255, 255, 255, 180);
-		
-		drawtext(vid_buf, x0+8, y0+214, "Fullscreen", 255, 255, 255, 255);
-		drawtext(vid_buf, x0+12+textwidth("Fullscreen"), y0+214, "Fill the entire screen", 255, 255, 255, 180);
+		drawtext(vid_buf, x0+8, y0+224, "Large window", 255, 255, 255, 255);
+		drawtext(vid_buf, x0+12+textwidth("Large window"), y0+224, "Double window size for small screens", 255, 255, 255, 180);
+
+		drawtext(vid_buf, x0+8, y0+238, "Fullscreen", 255, 255, 255, 255);
+		drawtext(vid_buf, x0+12+textwidth("Fullscreen"), y0+238, "Fill the entire screen", 255, 255, 255, 180);
 
 		//TODO: Options for Air and Normal gravity
 		//Maybe save/load defaults too.
@@ -7308,6 +7326,7 @@ void simulation_ui(pixel * vid_buf)
 		ui_checkbox_draw(vid_buf, &cb4);
 		ui_checkbox_draw(vid_buf, &cb5);
 		ui_checkbox_draw(vid_buf, &cb6);
+		ui_checkbox_draw(vid_buf, &cb7);
 		ui_list_draw(vid_buf, &list);
 		ui_list_draw(vid_buf, &list2);
 		sdl_blit(0, 0, (XRES+BARSIZE), YRES+MENUSIZE, vid_buf, (XRES+BARSIZE));
@@ -7317,6 +7336,7 @@ void simulation_ui(pixel * vid_buf)
 		ui_checkbox_process(mx, my, b, bq, &cb4);
 		ui_checkbox_process(mx, my, b, bq, &cb5);
 		ui_checkbox_process(mx, my, b, bq, &cb6);
+		ui_checkbox_process(mx, my, b, bq, &cb7);
 		ui_list_process(vid_buf, mx, my, b, &list);
 		ui_list_process(vid_buf, mx, my, b, &list2);
 
@@ -7329,6 +7349,7 @@ void simulation_ui(pixel * vid_buf)
 			break;
 	}
 
+	chem = cb7.checked;
 	water_equal_test = cb6.checked;
 	legacy_enable = !cb.checked;
 	aheat_enable = cb5.checked;
@@ -7479,7 +7500,7 @@ void cfancy_ui(pixel *vid_buf)
     if (gc>255) gc=255;
     if (bc<0) bc=0;
     if (bc>255) bc=255;
-    gradCol = ((255<<24)|(rc<<16)|(gc<<8)|bc);
+    gradCol = PIXRGB(rc,gc,bc);
     free(rt);
     free(gt);
     free(bt);
