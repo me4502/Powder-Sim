@@ -91,7 +91,7 @@ void init_display_modes()
 	display_modes[0] = 0;
 	render_modes[0] = RENDER_FIRE;
 	render_modes[1] = 0;
-	
+
 	update_display_modes();
 }
 
@@ -637,7 +637,7 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 		}
 		if (chem)
 			drawtext(vid_buf, x+14-textwidth((char *)nmenu[(b>>8)&0xFF].sname)/2, y+4, (char *)nmenu[(b>>8)&0xFF].sname, c, c, c, 255);
-		else 
+		else
 			drawtext(vid_buf, x+14-textwidth((char *)nmenu[(b>>8)&0xFF].name)/2, y+4, (char *)nmenu[(b>>8)&0xFF].name, c, c, c, 255);
 
 	}
@@ -844,9 +844,9 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 		{
 			c = 0;
 		}
-		if (chem) 		
-			drawtext(vid_buf, x+14-textwidth((char *)ptypes[b].sname)/2, y+4, (char *)ptypes[b].sname, c, c, c, 255);
-		else 
+		//if (chem)
+		//	drawtext(vid_buf, x+14-textwidth((char *)ptypes[b].sname)/2, y+4, (char *)ptypes[b].sname, c, c, c, 255);
+		//else
 			drawtext(vid_buf, x+14-textwidth((char *)ptypes[b].name)/2, y+4, (char *)ptypes[b].name, c, c, c, 255);
 	}
 	return 26;
@@ -4278,7 +4278,7 @@ int sdl_open(void)
 		fprintf(stderr, "Initializing SDL: %s\n", SDL_GetError());
 		return 0;
 	}
-	
+
 #ifdef WIN32
 	SDL_VERSION(&SysInfo.version);
 	if(SDL_GetWMInfo(&SysInfo) <= 0) {
@@ -4295,7 +4295,7 @@ int sdl_open(void)
 	SDL_WM_SetIcon(icon, NULL);
 #endif
 	SDL_WM_SetCaption("The Powder Toy", "Powder Toy");
-	
+
 	atexit(SDL_Quit);
 #if defined(OGLR)
 	sdl_scrn=SDL_SetVideoMode(XRES*sdl_scale + BARSIZE*sdl_scale,YRES*sdl_scale + MENUSIZE*sdl_scale,32,SDL_OPENGL);
