@@ -11,17 +11,17 @@
 #define MT
 
 //VersionInfoStart
-#define SAVE_VERSION 74
-#define MINOR_VERSION 1
+#define SAVE_VERSION 1
+#define MINOR_VERSION 3
 #define PS_VERSION 1
 #define PS_MINOR_VERSION 3
-//#define BETA
+#define BETA
 #define BUILD_NUM 3
 //VersionInfoEnd
 
 #define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter
 
-#define SERVER "localhost:8080"//"powdertoy.co.uk"
+#define SERVER "localhost:80"//"powdertoy.co.uk"
 
 #define MTOS_EXPAND(str) #str
 #define MTOS(str) MTOS_EXPAND(str)
@@ -99,6 +99,7 @@ extern unsigned char ZSIZE;
 #define NNBLALT 7
 
 #define REALISTIC
+#define SAVE_OPS
 
 #define NGOL 25
 #define NGOLALT 24 //NGOL should be 24, but use this var until I find out why
@@ -168,6 +169,7 @@ int GRAV_R2;
 int GRAV_G2;
 int GRAV_B2;
 
+extern int chem;
 extern int legacy_enable;
 extern int sound_enable;
 extern int kiosk_enable;
