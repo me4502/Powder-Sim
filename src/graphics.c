@@ -635,7 +635,11 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 		{
 			c = 0;
 		}
-		drawtext(vid_buf, x+14-textwidth((char *)nmenu[(b>>8)&0xFF].name)/2, y+4, (char *)nmenu[(b>>8)&0xFF].name, c, c, c, 255);
+		if (chem)
+			drawtext(vid_buf, x+14-textwidth((char *)nmenu[(b>>8)&0xFF].sname)/2, y+4, (char *)nmenu[(b>>8)&0xFF].sname, c, c, c, 255);
+		else 
+			drawtext(vid_buf, x+14-textwidth((char *)nmenu[(b>>8)&0xFF].name)/2, y+4, (char *)nmenu[(b>>8)&0xFF].name, c, c, c, 255);
+
 	}
 	else if (b>=UI_WALLSTART)
 	{
@@ -840,7 +844,10 @@ int draw_tool_xy(pixel *vid_buf, int x, int y, int b, unsigned pc)
 		{
 			c = 0;
 		}
-		drawtext(vid_buf, x+14-textwidth((char *)ptypes[b].name)/2, y+4, (char *)ptypes[b].name, c, c, c, 255);
+		if (chem) 		
+			drawtext(vid_buf, x+14-textwidth((char *)ptypes[b].sname)/2, y+4, (char *)ptypes[b].sname, c, c, c, 255);
+		else 
+			drawtext(vid_buf, x+14-textwidth((char *)ptypes[b].name)/2, y+4, (char *)ptypes[b].name, c, c, c, 255);
 	}
 	return 26;
 }
@@ -3376,7 +3383,7 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
         if (click == 4)
             decolour[x][y] = 0;
         else
-            decolour[x][y] = ((255<<24)|(r<<16)|(g<<8)|b);
+            decolour[x][y] = PIXRGB(r,g,b);
         update_back(vid_buf,1,x,y);
     }
     else if (tool == DECO_BLIGHTEN)
@@ -3432,24 +3439,24 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 		if (click == 4)
 			parts[rp>>8].dcolour = 0;
 		else
-			parts[rp>>8].dcolour = ((255<<24)|(r<<16)|(g<<8)|b);
+			parts[rp>>8].dcolour = PIXRGB(r,g,b);
 	}
 	else if (tool == DECO_LIGHTEN)
 	{//maybe get a better lighten/darken?
 		if (parts[rp>>8].dcolour == 0)
 			return;
-		tr = (parts[rp>>8].dcolour>>16)&0xFF;
-		tg = (parts[rp>>8].dcolour>>8)&0xFF;
-		tb = (parts[rp>>8].dcolour)&0xFF;
+		tr = PIXR(parts[rp>>8].dcolour);
+		tg = PIXG(parts[rp>>8].dcolour);
+		tb = PIXB(parts[rp>>8].dcolour);
 		parts[rp>>8].dcolour = ((parts[rp>>8].dcolour&0xFF000000)|(clamp_flt(tr+(255-tr)*0.02+1, 0,255)<<16)|(clamp_flt(tg+(255-tg)*0.02+1, 0,255)<<8)|clamp_flt(tb+(255-tb)*0.02+1, 0,255));
 	}
 	else if (tool == DECO_DARKEN)
 	{
 		if (parts[rp>>8].dcolour == 0)
 			return;
-		tr = (parts[rp>>8].dcolour>>16)&0xFF;
-		tg = (parts[rp>>8].dcolour>>8)&0xFF;
-		tb = (parts[rp>>8].dcolour)&0xFF;
+		tr = PIXR(parts[rp>>8].dcolour);
+		tg = PIXG(parts[rp>>8].dcolour);
+		tb = PIXB(parts[rp>>8].dcolour);
 		parts[rp>>8].dcolour = ((parts[rp>>8].dcolour&0xFF000000)|(clamp_flt(tr-(tr)*0.02, 0,255)<<16)|(clamp_flt(tg-(tg)*0.02, 0,255)<<8)|clamp_flt(tb-(tb)*0.02, 0,255));
 	}
 	else if (tool == DECO_INVERT)
@@ -3457,29 +3464,29 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 		if (parts[rp>>8].dcolour == 0)
 		{
 		    int t = parts[rp>>8].type;
-		    tr = (ptypes[t].pcolors>>16)&0xFF;
-            tg = (ptypes[t].pcolors>>8)&0xFF;
-            tb = (ptypes[t].pcolors)&0xFF;
+		    tr = PIXR(ptypes[t].pcolors);
+            tg = PIXG(ptypes[t].pcolors);
+            tb = PIXB(ptypes[t].pcolors);
             tr = 0x000000FF & (0xFF - tr);
             tg = 0x000000FF & (0xFF - tg);
             tb = 0x000000FF & (0xFF - tb);
-            parts[rp>>8].dcolour = ((255)<<24|(tr)<<16|(tg)<<8|(tb));
+            parts[rp>>8].dcolour = PIXRGB(tr,tg,tb);
 		    return;
 		}
-		tr = (parts[rp>>8].dcolour>>16)&0xFF;
-		tg = (parts[rp>>8].dcolour>>8)&0xFF;
-		tb = (parts[rp>>8].dcolour)&0xFF;
+		tr = PIXR(parts[rp>>8].dcolour);
+		tg = PIXG(parts[rp>>8].dcolour);
+		tb = PIXB(parts[rp>>8].dcolour);
 		tr = 0x000000FF & (0xFF - tr);
         tg = 0x000000FF & (0xFF - tg);
         tb = 0x000000FF & (0xFF - tb);
-		parts[rp>>8].dcolour = ((parts[rp>>8].dcolour&0xFF000000)|(tr)<<16|(tg)<<8|(tb));
+		parts[rp>>8].dcolour = PIXRGB(tr,tg,tb);
 	}
     else if (tool == DECO_NOISE)
 	{
 		tr = rand()%256;
 		tg = rand()%256;
 		tb = rand()%256;
-		parts[rp>>8].dcolour = ((255)<<24|(tr)<<16|(tg)<<8|(tb));
+		parts[rp>>8].dcolour = PIXRGB(tr,tg,tb);
 	}
 	else if (tool == DECO_SMUDGE)
 	{
