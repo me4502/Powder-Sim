@@ -11,25 +11,19 @@
 #define MT
 
 //VersionInfoStart
-<<<<<<< HEAD
-<<<<<<< HEAD
 #define SAVE_VERSION 1
 #define MINOR_VERSION 3
-=======
-=======
->>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 #define SAVE_VERSION 70
 #define MINOR_VERSION 1
->>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 #define PS_VERSION 1
 #define PS_MINOR_VERSION 3
 #define BETA
 #define BUILD_NUM 3
 //VersionInfoEnd
 
-#define IDENT_VERSION "G" //Change this if you're not Simon! It should be a single letter
+#define IDENT_VERSION "P" //Change this if you're not Simon! It should be a single letter
 
-#define SERVER "localhost:80"//"powdertoy.co.uk"
+#define SERVER "127.0.0.1:80"//"powdertoy.co.uk"
 
 #define MTOS_EXPAND(str) #str
 #define MTOS(str) MTOS_EXPAND(str)
@@ -105,15 +99,9 @@ extern unsigned char ZSIZE;
 #define NNBL 8
 #define NNBLALT 7
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 #define REALISTIC
 #define SAVE_OPS
 
-=======
->>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
-=======
->>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 #define NGOL 25
 #define NGOLALT 24 //NGOL should be 24, but use this var until I find out why
 
