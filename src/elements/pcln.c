@@ -11,7 +11,7 @@ int update_PCLN(UPDATE_FUNC_ARGS) {
 				r = pmap[y+ry][x+rx];
 				if (!r)
 					continue;
-				if ((r&0xFF)==PT_SPRK && parts[r>>8].life>0 && parts[r>>8].life<4)
+				if ((r&0xFF)==PT_SPRK)
 				{
 					if (parts[r>>8].ctype==PT_PSCN)
 						parts[i].life = 10;
@@ -52,21 +52,11 @@ int update_PCLN(UPDATE_FUNC_ARGS) {
 	if (parts[i].ctype>0 && parts[i].ctype<PT_NUM && parts[i].life==10) {
 		if (parts[i].ctype==PT_PHOT) {//create photons a different way
 			for (rx=-1; rx<2; rx++) {
-				for (ry=-1; ry<2; ry++)
-				{
-					if (rx || ry)
-					{
-						int r = create_part(-1, x+rx, y+ry, parts[i].ctype);
-						if (r!=-1)
-						{
-							parts[r].vx = rx*3;
-							parts[r].vy = ry*3;
-							if (r>i)
-							{
-								// Make sure movement doesn't happen until next frame, to avoid gaps in the beams of photons produced
-								parts[r].flags |= FLAG_SKIPMOVE;
-							}
-						}
+				for (ry=-1; ry<2; ry++) {
+					int r = create_part(-1, x+rx, y+ry, parts[i].ctype);
+					if (r!=-1) {
+						parts[r].vx = rx*3;
+						parts[r].vy = ry*3;
 					}
 				}
 			}
