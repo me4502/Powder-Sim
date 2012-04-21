@@ -39,10 +39,6 @@ void luacon_open(){
 		{"reset_spark", &luatpt_reset_spark},
 		{"set_property", &luatpt_set_property},
 		{"get_property", &luatpt_get_property},
-		{"set_wallmap", &luatpt_set_wallmap},
-		{"get_wallmap", &luatpt_get_wallmap},
-		{"set_elecmap", &luatpt_set_elecmap},
-		{"get_elecmap", &luatpt_get_elecmap},
 		{"drawpixel", &luatpt_drawpixel},
 		{"drawrect", &luatpt_drawrect},
 		{"gradrect", &luatpt_fillgradrect},
@@ -461,7 +457,7 @@ int luacon_transitionwrite(lua_State* l){
 	}
 	return 0;
 }
-int luacon_element_getproperty(char * key, int * format, unsigned int * modified_stuff)
+int luacon_element_getproperty(char * key, int * format)
 {
 	int offset;
 	if (strcmp(key, "name")==0){
@@ -471,14 +467,10 @@ int luacon_element_getproperty(char * key, int * format, unsigned int * modified
 	else if (strcmp(key, "color")==0){
 		offset = offsetof(part_type, pcolors);
 		*format = 0;
-		if (modified_stuff)
-			*modified_stuff |= LUACON_EL_MODIFIED_GRAPHICS;
 	}
 	else if (strcmp(key, "colour")==0){
 		offset = offsetof(part_type, pcolors);
 		*format = 0;
-		if (modified_stuff)
-			*modified_stuff |= LUACON_EL_MODIFIED_GRAPHICS;
 	}
 	else if (strcmp(key, "advection")==0){
 		offset = offsetof(part_type, advection);
@@ -535,8 +527,6 @@ int luacon_element_getproperty(char * key, int * format, unsigned int * modified
 	else if (strcmp(key, "menu")==0){
 		offset = offsetof(part_type, menu);
 		*format = 0;
-		if (modified_stuff)
-			*modified_stuff |= LUACON_EL_MODIFIED_MENUS;
 	}
 	else if (strcmp(key, "enabled")==0){
 		offset = offsetof(part_type, enabled);
@@ -545,14 +535,10 @@ int luacon_element_getproperty(char * key, int * format, unsigned int * modified
 	else if (strcmp(key, "weight")==0){
 		offset = offsetof(part_type, weight);
 		*format = 0;
-		if (modified_stuff)
-			*modified_stuff |= LUACON_EL_MODIFIED_CANMOVE;
 	}
 	else if (strcmp(key, "menusection")==0){
 		offset = offsetof(part_type, menusection);
 		*format = 0;
-		if (modified_stuff)
-			*modified_stuff |= LUACON_EL_MODIFIED_MENUS;
 	}
 	else if (strcmp(key, "heat")==0){
 		offset = offsetof(part_type, heat);
@@ -569,8 +555,6 @@ int luacon_element_getproperty(char * key, int * format, unsigned int * modified
 	else if (strcmp(key, "properties")==0){
 		offset = offsetof(part_type, properties);
 		*format = 0;
-		if (modified_stuff)
-			*modified_stuff |= LUACON_EL_MODIFIED_GRAPHICS | LUACON_EL_MODIFIED_CANMOVE;
 	}
 	else if (strcmp(key, "description")==0){
 		offset = offsetof(part_type, descs);
@@ -588,7 +572,7 @@ int luacon_elementread(lua_State* l){
 	float tempfloat;
 	int i;
 	char * key = mystrdup(luaL_optstring(l, 2, ""));
-	offset = luacon_element_getproperty(key, &format, NULL);
+	offset = luacon_element_getproperty(key, &format);
 	free(key);
 
 	//Get Raw Index value for element
@@ -630,9 +614,8 @@ int luacon_elementwrite(lua_State* l){
 	int tempinteger;
 	float tempfloat;
 	int i;
-	unsigned int modified_stuff = 0;
 	char * key = mystrdup(luaL_optstring(l, 2, ""));
-	offset = luacon_element_getproperty(key, &format, &modified_stuff);
+	offset = luacon_element_getproperty(key, &format);
 
 	//Get Raw Index value for element
 	lua_pushstring(l, "id");
@@ -682,15 +665,6 @@ int luacon_elementwrite(lua_State* l){
 	case 3:
 		*((unsigned char*)(((void*)&ptypes[i])+offset)) = luaL_optinteger(l, 3, 0);
 		break;
-	}
-	if (modified_stuff)
-	{
-		if (modified_stuff & LUACON_EL_MODIFIED_MENUS)
-			menu_count();
-		if (modified_stuff & LUACON_EL_MODIFIED_CANMOVE)
-			init_can_move();
-		if (modified_stuff & LUACON_EL_MODIFIED_GRAPHICS)
-			memset(graphicscache, 0, sizeof(gcache_item)*PT_NUM);
 	}
 	free(key);
 	return 0;
@@ -1134,120 +1108,6 @@ int luatpt_reset_spark(lua_State* l)
 	return 0;
 }
 
-int luatpt_set_wallmap(lua_State* l)
-{
-	int nx, ny, acount;
-	int x1, y1, width, height;
-	float value;
-	acount = lua_gettop(l);
-	
-	x1 = abs(luaL_optint(l, 1, 0));
-	y1 = abs(luaL_optint(l, 2, 0));
-	width = abs(luaL_optint(l, 3, XRES/CELL));
-	height = abs(luaL_optint(l, 4, YRES/CELL));
-	value = (float)luaL_optint(l, acount, 0);
-	
-	if(acount==5)	//Draw rect
-	{
-		if(x1 > (XRES/CELL))
-			x1 = (XRES/CELL);
-		if(y1 > (YRES/CELL))
-			y1 = (YRES/CELL);
-		if(x1+width > (XRES/CELL))
-			width = (XRES/CELL)-x1;
-		if(y1+height > (YRES/CELL))
-			height = (YRES/CELL)-y1;
-		for (nx = x1; nx<x1+width; nx++)
-			for (ny = y1; ny<y1+height; ny++)
-			{
-				bmap[ny][nx] = value;
-			}
-	}
-	else	//Set point
-	{
-		if(x1 > (XRES/CELL))
-			x1 = (XRES/CELL);
-		if(y1 > (YRES/CELL))
-			y1 = (YRES/CELL);
-		bmap[y1][x1] = value;
-	}
-	return 0;
-}
-
-int luatpt_get_wallmap(lua_State* l)
-{
-	int nx, ny, acount;
-	int x1, y1, width, height;
-	float value;
-	acount = lua_gettop(l);
-	
-	x1 = abs(luaL_optint(l, 1, 0));
-	y1 = abs(luaL_optint(l, 2, 0));
-
-	if(x1 > (XRES/CELL) || y1 > (YRES/CELL))
-		return luaL_error(l, "Out of range");
-
-	lua_pushinteger(l, bmap[y1][x1]);
-	return 1;
-}
-
-int luatpt_set_elecmap(lua_State* l)
-{
-	int nx, ny, acount;
-	int x1, y1, width, height;
-	float value;
-	acount = lua_gettop(l);
-	
-	x1 = abs(luaL_optint(l, 1, 0));
-	y1 = abs(luaL_optint(l, 2, 0));
-	width = abs(luaL_optint(l, 3, XRES/CELL));
-	height = abs(luaL_optint(l, 4, YRES/CELL));
-	value = (float)luaL_optint(l, acount, 0);
-	
-	if(acount==5)	//Draw rect
-	{
-		if(x1 > (XRES/CELL))
-			x1 = (XRES/CELL);
-		if(y1 > (YRES/CELL))
-			y1 = (YRES/CELL);
-		if(x1+width > (XRES/CELL))
-			width = (XRES/CELL)-x1;
-		if(y1+height > (YRES/CELL))
-			height = (YRES/CELL)-y1;
-		for (nx = x1; nx<x1+width; nx++)
-			for (ny = y1; ny<y1+height; ny++)
-			{
-				emap[ny][nx] = value;
-			}
-	}
-	else	//Set point
-	{
-		if(x1 > (XRES/CELL))
-			x1 = (XRES/CELL);
-		if(y1 > (YRES/CELL))
-			y1 = (YRES/CELL);
-		emap[y1][x1] = value;
-	}
-	return 0;
-}
-
-int luatpt_get_elecmap(lua_State* l)
-{
-	int nx, ny, acount;
-	int x1, y1, width, height;
-	float value;
-	acount = lua_gettop(l);
-	
-	x1 = abs(luaL_optint(l, 1, 0));
-	y1 = abs(luaL_optint(l, 2, 0));
-
-	if(x1 > (XRES/CELL) || y1 > (YRES/CELL))
-		return luaL_error(l, "Out of range");
-
-	lua_pushinteger(l, emap[y1][x1]);
-	return 1;
-}
-
 int luatpt_set_property(lua_State* l)
 {
 	char *prop, *name;
@@ -1358,9 +1218,9 @@ int luatpt_set_property(lua_State* l)
 				}
 				i = r>>8;
 				if(format==2){
-					*((float*)(((char*)&parts[i])+offset)) = f;
+					*((float*)(((void*)&parts[i])+offset)) = f;
 				} else {
-					*((int*)(((char*)&parts[i])+offset)) = t;
+					*((int*)(((void*)&parts[i])+offset)) = t;
 				}
 			}
 	} else {
@@ -1382,9 +1242,9 @@ int luatpt_set_property(lua_State* l)
 		if (partsel && partsel != parts[i].type)
 			return 0;
 		if(format==2){
-			*((float*)(((char*)&parts[i])+offset)) = f;
+			*((float*)(((void*)&parts[i])+offset)) = f;
 		} else {
-			*((int*)(((char*)&parts[i])+offset)) = t;
+			*((int*)(((void*)&parts[i])+offset)) = t;
 		}
 	}
 	return 0;

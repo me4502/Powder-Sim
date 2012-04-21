@@ -3,8 +3,15 @@
 int update_H2(UPDATE_FUNC_ARGS)
 {
 	int r,rx,ry,rt;
+<<<<<<< HEAD
     if (pv[y/CELL][x/CELL]>80.0f && parts[i].ctype==0)
         parts[i].ctype = 1;
+=======
+    if (pv[y/CELL][x/CELL]>80.0f)
+        parts[i].ctype = 1;
+    else
+        parts[i].ctype = 0;
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
     for (rx=-2; rx<3; rx++)
         for (ry=-2; ry<3; ry++)
             if (x+rx>=0 && y+ry>=0 && x+rx<XRES && y+ry<YRES && (rx || ry))
@@ -13,6 +20,7 @@ int update_H2(UPDATE_FUNC_ARGS)
                 rt = (r&0xFF);
                 if (!r)
                     continue;
+<<<<<<< HEAD
                 if (parts[i].ctype==0||parts[i].ctype==1)
                 {
                     if (pv[y/CELL][x/CELL] > 8.0f && rt == PT_DESL) // This will not work. DESL turns to fire above 5.0 pressure
@@ -60,4 +68,26 @@ int update_H2(UPDATE_FUNC_ARGS)
             }
     return 0;
 
+=======
+                if (pv[y/CELL][x/CELL] > 8.0f && rt == PT_DESL) // This will not work. DESL turns to fire above 5.0 pressure
+                {
+                    part_change_type(r>>8,x+rx,y+ry,PT_WATR);
+                    part_change_type(i,x,y,PT_OIL);
+                }
+                if ((r&0xFF)==PT_FIRE)
+                {
+                    parts[r>>8].temp=2473.15;
+                    if(parts[r>>8].tmp&0x02)
+                        parts[r>>8].temp=3473;
+                    parts[r>>8].tmp |= 1;
+                }
+                if ((r&0xFF)==PT_FIRE || (r&0xFF)==PT_PLSM || (r&0xFF)==PT_LAVA)
+                {
+                    create_part(i,x,y,PT_FIRE);
+                    parts[i].temp+=(rand()/(RAND_MAX/100));
+                    parts[i].tmp |= 1;
+                }
+            }
+    return 0;
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 }

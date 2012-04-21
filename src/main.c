@@ -60,7 +60,6 @@
 #ifdef LUACONSOLE
 #include "luaconsole.h"
 #endif
-#include "save.h"
 
 pixel *vid_buf;
 
@@ -154,42 +153,7 @@ static const char *it_msg =
     "\bgSimon Robertshaw, Skresanov Savely, cracker64, Catelite,\n Bryan Hoyle, Nathan Cousins, jacksonmj,"
 	"\bgLieuwe Mosch, Anthony Boot,\n Matthew \"me4502\", MaksProg\n"
     "\n"
-    "\bgTo use online features such as saving, you need to register at: \brhttp://powdertoy.co.uk/Register.html\n"
-	"\n"
-	"\bt" MTOS(SAVE_VERSION) "." MTOS(MINOR_VERSION) "." MTOS(BUILD_NUM) " "
-#ifdef X86
-	"X86 "
-#endif
-#ifdef X86_SSE
-	"X86_SSE "
-#endif
-#ifdef X86_SSE2
-	"X86_SSE2 "
-#endif
-#ifdef X86_SSE3
-	"X86_SSE3 "
-#endif
-#ifdef LIN32
-	"LIN32 "
-#endif
-#ifdef LIN64
-	"LIN64 "
-#endif
-#ifdef WIN32
-	"WIN32 "
-#endif
-#ifdef MACOSX
-	"MACOSX "
-#endif
-#ifdef LUACONSOLE
-	"LUACONSOLE "
-#endif
-#ifdef GRAVFFT
-	"GRAVFFT "
-#endif
-#ifdef REALISTIC
-	"REALISTIC"
-#endif
+    "\bgTo use online features such as saving, you need to register at:\n \brhttp://powdertoy.co.uk/Register.html"
     ;
 
 typedef struct
@@ -323,6 +287,798 @@ void dump_frame(pixel *src, int w, int h, int pitch)
  *                    STATE MANAGEMENT                     *
  ***********************************************************/
 
+void *build_thumb(int *size, int bzip2)
+{
+	unsigned char *d=calloc(1,XRES*YRES), *c;
+	int i,j,x,y;
+	for (i=0; i<NPART; i++)
+		if (parts[i].type)
+		{
+			x = (int)(parts[i].x+0.5f);
+			y = (int)(parts[i].y+0.5f);
+			if (x>=0 && x<XRES && y>=0 && y<YRES)
+				d[x+y*XRES] = parts[i].type;
+		}
+	for (y=0; y<YRES/CELL; y++)
+		for (x=0; x<XRES/CELL; x++)
+			if (bmap[y][x])
+				for (j=0; j<CELL; j++)
+					for (i=0; i<CELL; i++)
+						d[x*CELL+i+(y*CELL+j)*XRES] = 0xFF;
+	j = XRES*YRES;
+
+	if (bzip2)
+	{
+		i = (j*101+99)/100 + 608;
+		c = malloc(i);
+
+		c[0] = 0x53;
+		c[1] = 0x68;
+		c[2] = 0x49;
+		c[3] = 0x74;
+		c[4] = PT_NUM;
+		c[5] = CELL;
+		c[6] = XRES/CELL;
+		c[7] = YRES/CELL;
+
+		i -= 8;
+
+		if (BZ2_bzBuffToBuffCompress((char *)(c+8), (unsigned *)&i, (char *)d, j, 9, 0, 0) != BZ_OK)
+		{
+			free(d);
+			free(c);
+			return NULL;
+		}
+		free(d);
+		*size = i+8;
+		return c;
+	}
+
+	*size = j;
+	return d;
+}
+
+//the saving function
+void *build_save(int *size, int orig_x0, int orig_y0, int orig_w, int orig_h, unsigned char bmap[YRES/CELL][XRES/CELL], float fvx[YRES/CELL][XRES/CELL], float fvy[YRES/CELL][XRES/CELL], sign signs[MAXSIGNS], void* partsptr)
+{
+	unsigned char *d=calloc(1,3*(XRES/CELL)*(YRES/CELL)+(XRES*YRES)*15+MAXSIGNS*262), *c;
+	int i,j,x,y,p=0,*m=calloc(XRES*YRES, sizeof(int));
+	int x0, y0, w, h, bx0=orig_x0/CELL, by0=orig_y0/CELL, bw, bh;
+	particle *parts = partsptr;
+	bw=(orig_w+orig_x0-bx0*CELL+CELL-1)/CELL;
+	bh=(orig_h+orig_y0-by0*CELL+CELL-1)/CELL;
+	printf("bw %i bh %i \n", bw, bh);
+
+	// normalize coordinates
+	x0 = bx0*CELL;
+	y0 = by0*CELL;
+	w  = bw *CELL;
+	h  = bh *CELL;
+	printf("w %i h %i x0 %i y0 %i \n", w, h, x0, y0);
+
+	// save the required air state
+	for (y=by0; y<by0+bh; y++)
+		for (x=bx0; x<bx0+bw; x++)
+			d[p++] = bmap[y][x];
+	for (y=by0; y<by0+bh; y++)
+		for (x=bx0; x<bx0+bw; x++)
+			if (bmap[y][x]==WL_FAN||bmap[y][x]==4)
+			{
+				i = (int)(fvx[y][x]*64.0f+127.5f);
+				if (i<0) i=0;
+				if (i>255) i=255;
+				d[p++] = i;
+			}
+	for (y=by0; y<by0+bh; y++)
+		for (x=bx0; x<bx0+bw; x++)
+			if (bmap[y][x]==WL_FAN||bmap[y][x]==4)
+			{
+				i = (int)(fvy[y][x]*64.0f+127.5f);
+				if (i<0) i=0;
+				if (i>255) i=255;
+				d[p++] = i;
+			}
+
+	// save the particle map
+	for (i=0; i<NPART; i++)
+		if (parts[i].type)
+		{
+			x = (int)(parts[i].x+0.5f);
+			y = (int)(parts[i].y+0.5f);
+			if (x>=orig_x0 && x<orig_x0+orig_w && y>=orig_y0 && y<orig_y0+orig_h) {
+				if (!m[(x-x0)+(y-y0)*w] ||
+				        parts[m[(x-x0)+(y-y0)*w]-1].type == PT_PHOT ||
+				        parts[m[(x-x0)+(y-y0)*w]-1].type == PT_NEUT)
+					m[(x-x0)+(y-y0)*w] = i+1;
+			}
+		}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i)
+			d[p++] = parts[i-1].type;
+		else
+			d[p++] = 0;
+	}
+
+	// save particle properties
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i)
+		{
+			i--;
+			x = (int)(parts[i].vx*16.0f+127.5f);
+			y = (int)(parts[i].vy*16.0f+127.5f);
+			if (x<0) x=0;
+			if (x>255) x=255;
+			if (y<0) y=0;
+			if (y>255) y=255;
+			d[p++] = x;
+			d[p++] = y;
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i) {
+			//Everybody loves a 16bit int
+			//d[p++] = (parts[i-1].life+3)/4;
+			int ttlife = (int)parts[i-1].life;
+			d[p++] = ((ttlife&0xFF00)>>8);
+			d[p++] = (ttlife&0x00FF);
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i) {
+			//Now saving tmp!
+			//d[p++] = (parts[i-1].life+3)/4;
+			int tttmp = (int)parts[i-1].tmp;
+			d[p++] = ((tttmp&0xFF00)>>8);
+			d[p++] = (tttmp&0x00FF);
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i && (parts[i-1].type==PT_PBCN)) {
+			//Save tmp2
+			d[p++] = parts[i-1].tmp2;
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i) {
+			//Save colour (ALPHA)
+			d[p++] = (parts[i-1].dcolour&0xFF000000)>>24;
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i) {
+			//Save colour (RED)
+			d[p++] = (parts[i-1].dcolour&0x00FF0000)>>16;
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i) {
+			//Save colour (GREEN)
+			d[p++] = (parts[i-1].dcolour&0x0000FF00)>>8;
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i) {
+			//Save colour (BLUE)
+			d[p++] = (parts[i-1].dcolour&0x000000FF);
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i)
+		{
+			//New Temperature saving uses a 16bit unsigned int for temperatures, giving a precision of 1 degree versus 36 for the old format
+			int tttemp = (int)parts[i-1].temp;
+			d[p++] = ((tttemp&0xFF00)>>8);
+			d[p++] = (tttemp&0x00FF);
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i && (parts[i-1].type==PT_CLNE || parts[i-1].type==PT_PCLN || parts[i-1].type==PT_BCLN || parts[i-1].type==PT_SPRK || parts[i-1].type==PT_LAVA || parts[i-1].type==PT_PIPE || parts[i-1].type==PT_LIFE || parts[i-1].type==PT_PBCN || parts[i-1].type==PT_WIRE || parts[i-1].type==PT_STOR || parts[i-1].type==PT_CONV || parts[i-1].type==PT_NBLE || parts[i-1].type==PT_FIRE || parts[i-1].type==PT_GAS))
+			d[p++] = parts[i-1].ctype;
+	}
+
+	j = 0;
+	for (i=0; i<MAXSIGNS; i++)
+		if (signs[i].text[0] &&
+		        signs[i].x>=x0 && signs[i].x<x0+w &&
+		        signs[i].y>=y0 && signs[i].y<y0+h)
+			j++;
+	d[p++] = j;
+	for (i=0; i<MAXSIGNS; i++)
+		if (signs[i].text[0] &&
+		        signs[i].x>=x0 && signs[i].x<x0+w &&
+		        signs[i].y>=y0 && signs[i].y<y0+h)
+		{
+			d[p++] = (signs[i].x-x0);
+			d[p++] = (signs[i].x-x0)>>8;
+			d[p++] = (signs[i].y-y0);
+			d[p++] = (signs[i].y-y0)>>8;
+			d[p++] = signs[i].ju;
+			x = strlen(signs[i].text);
+			d[p++] = x;
+			memcpy(d+p, signs[i].text, x);
+			p+=x;
+		}
+
+	i = (p*101+99)/100 + 612;
+	c = malloc(i);
+
+	//New file header uses PSv, replacing fuC. This is to detect if the client uses a new save format for temperatures
+	//This creates a problem for old clients, that display and "corrupt" error instead of a "newer version" error
+
+	c[0] = 0x50;	//0x66;
+	c[1] = 0x53;	//0x75;
+	c[2] = 0x76;	//0x43;
+	c[3] = legacy_enable|((sys_pause<<1)&0x02)|((gravityMode<<2)&0x0C)|((airMode<<4)&0x70)|((ngrav_enable<<7)&0x80);
+	c[4] = SAVE_VERSION;
+	c[5] = CELL;
+	c[6] = bw;
+	c[7] = bh;
+	c[8] = p;
+	c[9] = p >> 8;
+	c[10] = p >> 16;
+	c[11] = p >> 24;
+	i -= 12;
+
+	if (BZ2_bzBuffToBuffCompress((char *)(c+12), (unsigned *)&i, (char *)d, p, 9, 0, 0) != BZ_OK)
+	{
+		free(d);
+		free(c);
+		free(m);
+		return NULL;
+	}
+	free(d);
+	free(m);
+
+	*size = i + 12;
+	return c;
+}
+
+int parse_save(void *save, int size, int replace, int x0, int y0, unsigned char bmap[YRES/CELL][XRES/CELL], float fvx[YRES/CELL][XRES/CELL], float fvy[YRES/CELL][XRES/CELL], sign signs[MAXSIGNS], void* partsptr, unsigned pmap[YRES][XRES])
+{
+	unsigned char *d=NULL,*c=save;
+	int q,i,j,k,x,y,p=0,*m=NULL, ver, pty, ty, legacy_beta=0, tempGrav = 0;
+	int bx0=x0/CELL, by0=y0/CELL, bw, bh, w, h;
+	int nf=0, new_format = 0, ttv = 0;
+	particle *parts = partsptr;
+	int *fp = malloc(NPART*sizeof(int));
+
+	//New file header uses PSv, replacing fuC. This is to detect if the client uses a new save format for temperatures
+	//This creates a problem for old clients, that display and "corrupt" error instead of a "newer version" error
+
+	if (size<16)
+		return 1;
+	if (!(c[2]==0x43 && c[1]==0x75 && c[0]==0x66) && !(c[2]==0x76 && c[1]==0x53 && c[0]==0x50))
+		return 1;
+	if (c[2]==0x76 && c[1]==0x53 && c[0]==0x50)
+		new_format = 1;
+	if (c[4]>SAVE_VERSION)
+		return 2;
+    ver = c[4];
+
+    legacy_enable = c[3]&0x01;
+    if (!sys_pause) {
+        sys_pause = (c[3]>>1)&0x01;
+    }
+    if (replace) {
+        gravityMode = ((c[3]>>2)&0x03);// | ((c[3]>>2)&0x01);
+        airMode = ((c[3]>>4)&0x07);// | ((c[3]>>4)&0x02) | ((c[3]>>4)&0x01);
+        tempGrav = ((c[3]>>7)&0x01);
+    }
+
+	bw = c[6];
+	bh = c[7];
+	if (bx0+bw > XRES/CELL)
+		bx0 = XRES/CELL - bw;
+	if (by0+bh > YRES/CELL)
+		by0 = YRES/CELL - bh;
+	if (bx0 < 0)
+		bx0 = 0;
+	if (by0 < 0)
+		by0 = 0;
+
+	if (c[5]!=CELL || bx0+bw>XRES/CELL || by0+bh>YRES/CELL)
+		return 3;
+	i = (unsigned)c[8];
+	i |= ((unsigned)c[9])<<8;
+	i |= ((unsigned)c[10])<<16;
+	i |= ((unsigned)c[11])<<24;
+	d = malloc(i);
+	if (!d)
+		return 1;
+
+	if (BZ2_bzBuffToBuffDecompress((char *)d, (unsigned *)&i, (char *)(c+12), size-12, 0, 0))
+		return 1;
+	size = i;
+
+	if (size < bw*bh)
+		return 1;
+
+	// normalize coordinates
+	x0 = bx0*CELL;
+	y0 = by0*CELL;
+	w  = bw *CELL;
+	h  = bh *CELL;
+
+	if (replace)
+	{
+		clear_sim();
+	}
+	parts_lastActiveIndex = NPART-1;
+	m = calloc(XRES*YRES, sizeof(int));
+
+	// make a catalog of free parts
+	//memset(pmap, 0, sizeof(pmap)); "Using sizeof for array given as function argument returns the size of pointer."
+	memset(pmap, 0, sizeof(unsigned)*(XRES*YRES));
+	for (i=0; i<NPART; i++)
+		if (parts[i].type)
+		{
+			x = (int)(parts[i].x+0.5f);
+			y = (int)(parts[i].y+0.5f);
+			pmap[y][x] = (i<<8)|1;
+		}
+		else
+			fp[nf++] = i;
+
+	// load the required air state
+	for (y=by0; y<by0+bh; y++)
+		for (x=bx0; x<bx0+bw; x++)
+		{
+			if (d[p])
+			{
+				bmap[y][x] = d[p];
+				if (bmap[y][x]==1)
+					bmap[y][x]=WL_WALL;
+				if (bmap[y][x]==2)
+					bmap[y][x]=WL_DESTROYALL;
+				if (bmap[y][x]==3)
+					bmap[y][x]=WL_ALLOWLIQUID;
+				if (bmap[y][x]==4)
+					bmap[y][x]=WL_FAN;
+				if (bmap[y][x]==5)
+					bmap[y][x]=WL_STREAM;
+				if (bmap[y][x]==6)
+					bmap[y][x]=WL_DETECT;
+				if (bmap[y][x]==7)
+					bmap[y][x]=WL_EWALL;
+				if (bmap[y][x]==8)
+					bmap[y][x]=WL_WALLELEC;
+				if (bmap[y][x]==9)
+					bmap[y][x]=WL_ALLOWAIR;
+				if (bmap[y][x]==10)
+					bmap[y][x]=WL_ALLOWSOLID;
+				if (bmap[y][x]==11)
+					bmap[y][x]=WL_ALLOWALLELEC;
+				if (bmap[y][x]==12)
+					bmap[y][x]=WL_EHOLE;
+				if (bmap[y][x]==13)
+					bmap[y][x]=WL_ALLOWGAS;
+			}
+
+			p++;
+		}
+	for (y=by0; y<by0+bh; y++)
+		for (x=bx0; x<bx0+bw; x++)
+			if (d[(y-by0)*bw+(x-bx0)]==4||d[(y-by0)*bw+(x-bx0)]==WL_FAN)
+			{
+				if (p >= size)
+					goto corrupt;
+				fvx[y][x] = (d[p++]-127.0f)/64.0f;
+			}
+	for (y=by0; y<by0+bh; y++)
+		for (x=bx0; x<bx0+bw; x++)
+			if (d[(y-by0)*bw+(x-bx0)]==4||d[(y-by0)*bw+(x-bx0)]==WL_FAN)
+			{
+				if (p >= size)
+					goto corrupt;
+				fvy[y][x] = (d[p++]-127.0f)/64.0f;
+			}
+
+	// load the particle map
+	i = 0;
+	pty = p;
+	for (y=y0; y<y0+h; y++)
+		for (x=x0; x<x0+w; x++)
+		{
+			if (p >= size)
+				goto corrupt;
+			j=d[p++];
+			if (j >= PT_NUM) {
+				//TODO: Possibly some server side translation
+				j = PT_DUST;//goto corrupt;
+			}
+			gol[x][y]=0;
+			if (j)
+			{
+				if (pmap[y][x])
+				{
+					k = pmap[y][x]>>8;
+				}
+				else if (i<nf)
+				{
+					k = fp[i];
+					i++;
+				}
+				else
+				{
+					m[(x-x0)+(y-y0)*w] = NPART+1;
+					continue;
+				}
+				memset(parts+k, 0, sizeof(particle));
+				parts[k].type = j;
+				if (j == PT_COAL)
+					parts[k].tmp = 50;
+				if (j == PT_FUSE)
+					parts[k].tmp = 50;
+				if (j == PT_PHOT)
+					parts[k].ctype = 0x3fffffff;
+				if (j == PT_SOAP)
+					parts[k].ctype = 0;
+				if (j==PT_BIZR || j==PT_BIZRG || j==PT_BIZRS)
+					parts[k].ctype = 0x47FFFF;
+				parts[k].x = (float)x;
+				parts[k].y = (float)y;
+				m[(x-x0)+(y-y0)*w] = k+1;
+			}
+		}
+
+	// load particle properties
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i)
+		{
+			i--;
+			if (p+1 >= size)
+				goto corrupt;
+			if (i < NPART)
+			{
+				parts[i].vx = (d[p++]-127.0f)/16.0f;
+				parts[i].vy = (d[p++]-127.0f)/16.0f;
+			}
+			else
+				p += 2;
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i)
+		{
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                ttv = (d[p++])<<8;
+                ttv |= (d[p++]);
+                parts[i-1].life = ttv;
+            } else {
+                p+=2;
+            }
+		}
+	}
+    for (j=0; j<w*h; j++)
+    {
+        i = m[j];
+        if (i)
+        {
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                ttv = (d[p++])<<8;
+                ttv |= (d[p++]);
+                parts[i-1].tmp = ttv;
+                if (!parts[i-1].tmp)
+                    for (q = 1; q<=NGOLALT; q++) {
+                        if (parts[i-1].type==goltype[q-1] && grule[q][9]==2)
+                            parts[i-1].tmp = grule[q][9]-1;
+                    }
+            } else {
+                p+=2;
+            }
+        }
+    }
+    for (j=0; j<w*h; j++)
+    {
+        i = m[j];
+        ty = d[pty+j];
+        if (i && ty==PT_PBCN)
+        {
+            if (p >= size)
+                goto corrupt;
+            if (i <= NPART)
+                parts[i-1].tmp2 = d[p++];
+            else
+                p++;
+        }
+    }
+	//Read ALPHA component
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i)
+		{
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                parts[i-1].dcolour = d[p++]<<24;
+            } else {
+                p++;
+            }
+		}
+	}
+	//Read RED component
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i)
+		{
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                parts[i-1].dcolour |= d[p++]<<16;
+            } else {
+                p++;
+            }
+		}
+	}
+	//Read GREEN component
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i)
+		{
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                parts[i-1].dcolour |= d[p++]<<8;
+            } else {
+                p++;
+            }
+		}
+	}
+	//Read BLUE component
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		if (i)
+		{
+            if (p >= size) {
+                goto corrupt;
+            }
+            if (i <= NPART) {
+                parts[i-1].dcolour |= d[p++];
+            } else {
+                p++;
+            }
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		i = m[j];
+		ty = d[pty+j];
+		if (i)
+		{
+			if (legacy_beta==0)
+			{
+				if (p >= size)
+				{
+					goto corrupt;
+				}
+				if (i <= NPART)
+				{
+                    if (new_format) {
+                        ttv = (d[p++])<<8;
+                        ttv |= (d[p++]);
+                        if (parts[i-1].type==PT_PUMP) {
+                            parts[i-1].temp = ttv + 0.15;//fix PUMP saved at 0, so that it loads at 0.
+                        } else {
+                            parts[i-1].temp = ttv;
+                        }
+                    } else {
+                        parts[i-1].temp = (d[p++]*((MAX_TEMP+(-MIN_TEMP))/255))+MIN_TEMP;
+                    }
+				}
+				else
+				{
+					p++;
+					if (new_format) {
+						p++;
+					}
+				}
+			}
+			else
+			{
+				parts[i-1].temp = ptypes[parts[i-1].type].heat;
+			}
+		}
+	}
+	for (j=0; j<w*h; j++)
+	{
+		int gnum = 0;
+		i = m[j];
+		ty = d[pty+j];
+		if (i && (ty==PT_CLNE || ty==PT_PCLN || ty==PT_BCLN || ty==PT_SPRK || ty==PT_LAVA || ty==PT_PIPE || ty==PT_LIFE || ty==PT_PBCN || ty==PT_WIRE || ty==PT_STOR || ty==PT_CONV || ty==PT_NBLE || ty==PT_GAS || ty==PT_FIRE))
+		{
+			if (p >= size)
+				goto corrupt;
+			if (i <= NPART)
+				parts[i-1].ctype = d[p++];
+			else
+				p++;
+		}
+		// no more particle properties to load, so we can change type here without messing up loading
+		if (i && i<=NPART)
+		{
+		    if (ver==0)
+		    {
+		        if (parts[i-1].type == 158)
+                    parts[i-1].type = 161;
+                if (parts[i-1].type==PT_NBLE)
+                    parts[i-1].ctype=NBL_NEON;
+		    }
+			if ((player.spwn == 1 && ty==PT_STKM) || (player2.spwn == 1 && ty==PT_STKM2))
+			{
+				parts[i-1].type = PT_NONE;
+			}
+			else if (parts[i-1].type == PT_STKM)
+			{
+				STKM_init_legs(&player, i-1);
+				player.spwn = 1;
+				player.elem = PT_DUST;
+			}
+			else if (parts[i-1].type == PT_STKM2)
+			{
+				STKM_init_legs(&player2, i-1);
+				player2.spwn = 1;
+				player2.elem = PT_DUST;
+			}
+			else if (parts[i-1].type == PT_FIGH)
+			{
+				unsigned char fcount = 0;
+				while (fcount < 100 && fcount < (fighcount+1) && fighters[fcount].spwn==1) fcount++;
+				if (fcount < 100 && fighters[fcount].spwn==0)
+				{
+					parts[i-1].tmp = fcount;
+					fighters[fcount].spwn = 1;
+					fighters[fcount].elem = PT_DUST;
+					fighcount++;
+					STKM_init_legs(&(fighters[fcount]), i-1);
+				}
+			}
+
+			if (ty==OLD_PT_WIND || (ty==PT_BRAY&&parts[i-1].life==0))
+			{
+				// Replace invisible particles with something sensible and add decoration to hide it
+				x = (int)(parts[i-1].x+0.5f);
+				y = (int)(parts[i-1].y+0.5f);
+				parts[i-1].dcolour = 0xFF000000;
+				parts[i-1].type = PT_DMND;
+			}
+			if(ty==PT_CLNE || ty==PT_PCLN || ty==PT_BCLN){
+				//Replace old GOL ctypes in clone
+				for (gnum = 0; gnum<NGOLALT; gnum++){
+					if (parts[i-1].ctype==goltype[gnum])
+					{
+						parts[i-1].ctype = PT_LIFE;
+						parts[i-1].tmp = gnum;
+					}
+				}
+			}
+			if(ty==PT_LCRY){
+				//New LCRY uses TMP not life
+				if(parts[i-1].life>=10)
+				{
+					parts[i-1].life = 10;
+					parts[i-1].tmp2 = 10;
+					parts[i-1].tmp = 3;
+				}
+				else if(parts[i-1].life<=0)
+				{
+					parts[i-1].life = 0;
+					parts[i-1].tmp2 = 0;
+					parts[i-1].tmp = 0;
+				}
+				else if(parts[i-1].life < 10 && parts[i-1].life > 0)
+				{
+					parts[i-1].tmp = 1;
+				}
+			}
+			if (!ptypes[parts[i-1].type].enabled)
+				parts[i-1].type = PT_NONE;
+		}
+	}
+
+	#ifndef RENDERER
+	//Change the gravity state
+	if(ngrav_enable != tempGrav && replace)
+	{
+		if(tempGrav)
+			start_grav_async();
+		else
+			stop_grav_async();
+	}
+	#endif
+
+	gravity_mask();
+
+	if (p >= size)
+		goto version1;
+	j = d[p++];
+	for (i=0; i<j; i++)
+	{
+		if (p+6 > size)
+			goto corrupt;
+		for (k=0; k<MAXSIGNS; k++)
+			if (!signs[k].text[0])
+				break;
+		x = d[p++];
+		x |= ((unsigned)d[p++])<<8;
+		if (k<MAXSIGNS)
+			signs[k].x = x+x0;
+		x = d[p++];
+		x |= ((unsigned)d[p++])<<8;
+		if (k<MAXSIGNS)
+			signs[k].y = x+y0;
+		x = d[p++];
+		if (k<MAXSIGNS)
+			signs[k].ju = x;
+		x = d[p++];
+		if (p+x > size)
+			goto corrupt;
+		if (k<MAXSIGNS)
+		{
+			memcpy(signs[k].text, d+p, x);
+			signs[k].text[x] = 0;
+			clean_text(signs[k].text, 158-14 /* Current max sign length */);
+		}
+		p += x;
+	}
+
+version1:
+	if (m) free(m);
+	if (d) free(d);
+	if (fp) free(fp);
+
+	return 0;
+
+corrupt:
+	if (m) free(m);
+	if (d) free(d);
+	if (fp) free(fp);
+	if (replace)
+	{
+		legacy_enable = 0;
+		clear_sim();
+	}
+	return 1;
+}
+
 void clear_sim(void)
 {
 	int i, x, y;
@@ -330,7 +1086,6 @@ void clear_sim(void)
 	memset(bmap, 0, sizeof(bmap));
 	memset(emap, 0, sizeof(emap));
 	memset(signs, 0, sizeof(signs));
-	MSIGN = -1;
 	memset(parts, 0, sizeof(particle)*NPART);
 	for (i=0; i<NPART-1; i++)
 		parts[i].life = i+1;
@@ -356,14 +1111,10 @@ void clear_sim(void)
 	memset(fire_r, 0, sizeof(fire_r));
 	memset(fire_g, 0, sizeof(fire_g));
 	memset(fire_b, 0, sizeof(fire_b));
-	if(gravmask)
-		memset(gravmask, 0xFFFFFFFF, (XRES/CELL)*(YRES/CELL)*sizeof(unsigned));
-	if(gravy)
-		memset(gravy, 0, (XRES/CELL)*(YRES/CELL)*sizeof(float));
-	if(gravx)
-		memset(gravx, 0, (XRES/CELL)*(YRES/CELL)*sizeof(float));
-	if(gravp)
-		memset(gravp, 0, (XRES/CELL)*(YRES/CELL)*sizeof(float));
+	memset(gravmask, 0xFFFFFFFF, (XRES/CELL)*(YRES/CELL)*sizeof(unsigned));
+	memset(gravy, 0, (XRES/CELL)*(YRES/CELL)*sizeof(float));
+	memset(gravx, 0, (XRES/CELL)*(YRES/CELL)*sizeof(float));
+	memset(gravp, 0, (XRES/CELL)*(YRES/CELL)*sizeof(float));
 	for(x = 0; x < XRES/CELL; x++){
 		for(y = 0; y < YRES/CELL; y++){
 			hv[y][x] = 273.15f+22.0f; //Set to room temperature
@@ -407,12 +1158,6 @@ void stamp_update(void)
 		if (stamps[i].dodelete!=1)
 		{
 			fwrite(stamps[i].name, 1, 10, f);
-		}
-		else
-		{
-			char name[30] = {0};
-			sprintf(name,"stamps%s%s.stm",PATH_SEP,stamps[i].name);
-			remove(name);
 		}
 	}
 	fclose(f);
@@ -461,9 +1206,7 @@ void stamp_save(int x, int y, int w, int h)
 	FILE *f;
 	int n;
 	char fn[64], sn[16];
-	void *s=build_save(&n, x, y, w, h, bmap, vx, vy, pv, fvx, fvy, signs, parts);
-	if (!s)
-		return;
+	void *s=build_save(&n, x, y, w, h, bmap, fvx, fvy, signs, parts);
 
 #ifdef WIN32
 	_mkdir("stamps");
@@ -686,11 +1429,7 @@ int main(int argc, char *argv[])
 
 	pers_bg = calloc((XRES+BARSIZE)*YRES, PIXELSIZE);
 
-	prepare_alpha(CELL, 1.0f);
-	prepare_graphicscache();
-	flm_data = generate_gradient(flm_data_colours, flm_data_pos, flm_data_points, 200);
-	plasma_data = generate_gradient(plasma_data_colours, plasma_data_pos, plasma_data_points, 200);
-
+	prepare_alpha(4, 1.0f);
 	player.elem = player2.elem = PT_DUST;
 	player.frames = player2.frames = 0;
 
@@ -701,7 +1440,7 @@ int main(int argc, char *argv[])
 	if(load_data && load_size){
 		int parsestate = 0;
 		//parsestate = parse_save(load_data, load_size, 1, 0, 0);
-		parsestate = parse_save(load_data, load_size, 1, 0, 0, bmap, vx, vy, pv, fvx, fvy, signs, parts, pmap);
+		parsestate = parse_save(load_data, load_size, 1, 0, 0, bmap, fvx, fvy, signs, parts, pmap);
 
 		for(i=0; i<30; i++){
 			memset(vid_buf, 0, (XRES+BARSIZE)*YRES*PIXELSIZE);
@@ -845,7 +1584,7 @@ int main(int argc, char *argv[])
 			{
 				svf_last = file_data;
 				svf_lsize = size;
-				if(!parse_save(file_data, size, 1, 0, 0, bmap, fvx, fvy, vx, vy, pv, signs, parts, pmap))
+				if(!parse_save(file_data, size, 1, 0, 0, bmap, fvx, fvy, signs, parts, pmap))
 				{
 					it=0;
 					svf_filename[0] = 0;
@@ -1117,7 +1856,7 @@ int main(int argc, char *argv[])
 
 		gravity_update_async(); //Check for updated velocity maps from gravity thread
 		if (!sys_pause||framerender) //Only update if not paused
-			memset(gravmap, 0, (XRES/CELL)*(YRES/CELL)*sizeof(float)); //Clear the old gravmap
+			memset(gravmap, 0, sizeof(gravmap)); //Clear the old gravmap
 
 		if (framerender) {
 			framerender = 0;
@@ -1881,7 +2620,7 @@ int main(int argc, char *argv[])
                         }
                     }
                 }
-                menu_ui_v3(vid_buf, active_menu, &sl, &sr, &su, &dae, b, bq, x, y); //draw the elements in the current menu
+                menu_ui_v3(vid_buf, active_menu, &sl, &sr, &dae, b, bq, x, y); //draw the elements in the current menu
             }
         } else if (sdl_mod & (KMOD_LCTRL|KMOD_RCTRL) && menu_show)
                 quickoptions_menu(vid_buf, b, bq, x, y);
@@ -2045,10 +2784,7 @@ int main(int argc, char *argv[])
 				sprintf(heattext, "Empty, Pressure: %3.2f", pv[(y/sdl_scale)/CELL][(x/sdl_scale)/CELL]);
 				if (DEBUG_MODE)
 				{
-					if (ngrav_enable)
-						sprintf(coordtext, "X:%d Y:%d. GX: %.2f GY: %.2f", x/sdl_scale, y/sdl_scale, gravx[(((y/sdl_scale)/CELL)*(XRES/CELL))+((x/sdl_scale)/CELL)], gravy[(((y/sdl_scale)/CELL)*(XRES/CELL))+((x/sdl_scale)/CELL)]);
-					else
-						sprintf(coordtext, "X:%d Y:%d", x/sdl_scale, y/sdl_scale);
+					sprintf(coordtext, "X:%d Y:%d. GX: %.2f GY: %.2f", x/sdl_scale, y/sdl_scale, gravx[(((y/sdl_scale)/CELL)*(XRES/CELL))+((x/sdl_scale)/CELL)], gravy[(((y/sdl_scale)/CELL)*(XRES/CELL))+((x/sdl_scale)/CELL)]);
 				}
 			}
 		}
@@ -2120,10 +2856,7 @@ int main(int argc, char *argv[])
 				}
 			}
 			else
-			{
 				free(tmp);
-				old_version = 0;
-			}
 		}
 		if (y>=sdl_scale*(YRES+(MENUSIZE-20))) //mouse checks for buttons at the bottom, to draw mouseover texts
 		{
@@ -2272,7 +3005,7 @@ int main(int argc, char *argv[])
 			if (load_y<0) load_y=0;
 			if (bq==1 && !b)
 			{
-				parse_save(load_data, load_size, 0, load_x, load_y, bmap, vx, vy, pv, fvx, fvy, signs, parts, pmap);
+				parse_save(load_data, load_size, 0, load_x, load_y, bmap, fvx, fvy, signs, parts, pmap);
 				free(load_data);
 				free(load_img);
 				load_mode = 0;
@@ -2314,14 +3047,14 @@ int main(int argc, char *argv[])
 			{
 				if (copy_mode==1)//CTRL-C, copy
 				{
-					clipboard_data=build_save(&clipboard_length, save_x, save_y, save_w, save_h, bmap, vx, vy, pv, fvx, fvy, signs, parts);
+					clipboard_data=build_save(&clipboard_length, save_x, save_y, save_w, save_h, bmap, fvx, fvy, signs, parts);
 					clipboard_ready = 1;
 					save_mode = 0;
 					copy_mode = 0;
 				}
 				else if (copy_mode==2)//CTRL-X, cut
 				{
-					clipboard_data=build_save(&clipboard_length, save_x, save_y, save_w, save_h, bmap, vx, vy, pv, fvx, fvy, signs, parts);
+					clipboard_data=build_save(&clipboard_length, save_x, save_y, save_w, save_h, bmap, fvx, fvy, signs, parts);
 					clipboard_ready = 1;
 					save_mode = 0;
 					copy_mode = 0;
@@ -2458,19 +3191,19 @@ int main(int argc, char *argv[])
 					}
 					if (x>=19 && x<=35 && svf_last && (svf_open || svf_fileopen) && !bq) {
 						//int tpval = sys_pause;
-						parse_save(svf_last, svf_lsize, 1, 0, 0, bmap, vx, vy, pv, fvx, fvy, signs, parts, pmap);
+						parse_save(svf_last, svf_lsize, 1, 0, 0, bmap, fvx, fvy, signs, parts, pmap);
 						//sys_pause = tpval;
 					}
 					if (x>=(XRES+BARSIZE-(510-476)) && x<=(XRES+BARSIZE-(510-491)) && !bq)
 					{
-						render_ui(vid_buf, XRES+BARSIZE-(510-491), YRES-2, 3);
+						render_ui(vid_buf, XRES+BARSIZE-(510-491), YRES+(MENUSIZE-19), 3);
 					}
 					if (x>=(XRES+BARSIZE-(510-494)) && x<=(XRES+BARSIZE-(510-509)) && !bq)
 						sys_pause = !sys_pause;
 					lb = 0;
 				}
 			}
-			else if (y<YRES && x<XRES)// mouse is in playing field
+			else if (y<YRES)// mouse is in playing field
 			{
 				int signi;
 
@@ -2506,7 +3239,8 @@ int main(int argc, char *argv[])
 					if (!bq)
 						add_sign_ui(vid_buf, x, y);
 				}
-				else if (c==PT_FIGH)
+
+				if (c==PT_FIGH)
 				{
 					if (!bq)
 						create_part(-1, x, y, PT_FIGH);
@@ -2607,7 +3341,7 @@ int main(int argc, char *argv[])
 						if (c!=WL_STREAM+100&&c!=SPC_AIR&&c!=SPC_HEAT&&c!=SPC_COOL&&c!=SPC_VACUUM&&!REPLACE_MODE&&c!=SPC_WIND&&c!=SPC_PGRV&&c!=SPC_NGRV)
 							flood_parts(x, y, c, -1, -1, get_brush_flags());
 						if (c==SPC_HEAT || c==SPC_COOL)
-							create_parts(x, y, bsx, bsy, c, get_brush_flags(), 1);
+							create_parts(x, y, bsx, bsy, c, get_brush_flags());
 						lx = x;
 						ly = y;
 						lb = 0;
@@ -2662,7 +3396,7 @@ int main(int argc, char *argv[])
 								cb_bmap[cby][cbx] = bmap[cby][cbx];
 								cb_emap[cby][cbx] = emap[cby][cbx];
 							}
-						create_parts(x, y, bsx, bsy, c, get_brush_flags(), 1);
+						create_parts(x, y, bsx, bsy, c, get_brush_flags());
 						lx = x;
 						ly = y;
 						lb = b;
