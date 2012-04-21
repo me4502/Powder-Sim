@@ -29,3 +29,11 @@ obj/*
 *.bat
 *.o
 *.me
+Libraries/*
+/Release/
+/*.sln
+/*.vcxproj
+/*.vcxproj.filters
+/*.vcxproj.user
+/*.suo
+/*.sdf
