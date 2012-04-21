@@ -118,18 +118,17 @@ int graphics_DUST(GRAPHICS_FUNC_ARGS)
 {
 	if(cpart->life >= 1)
 	{
-		*firea = 120;
-		*firer = *colr = cpart->flags;
-		*fireg = *colg = cpart->tmp;
-		*fireb = *colb = cpart->ctype;
+		*colr = cpart->flags;
+		*colg = cpart->tmp;
+		*colb = cpart->ctype;
 		if (decorations_enable && cpart->dcolour)
 		{
 			int a = (cpart->dcolour>>24)&0xFF;
-			*firer = *colr = (a*((cpart->dcolour>>16)&0xFF) + (255-a)**colr) >> 8;
-			*fireg = *colg = (a*((cpart->dcolour>>8)&0xFF) + (255-a)**colg) >> 8;
-			*fireb = *colb = (a*((cpart->dcolour)&0xFF) + (255-a)**colb) >> 8;
+			*colr = (a*((cpart->dcolour>>16)&0xFF) + (255-a)**colr) >> 8;
+			*colg = (a*((cpart->dcolour>>8)&0xFF) + (255-a)**colg) >> 8;
+			*colb = (a*((cpart->dcolour)&0xFF) + (255-a)**colb) >> 8;
 		}
-		*pixel_mode |= PMODE_GLOW | FIRE_ADD;
+		*pixel_mode |= PMODE_GLOW;
 		/**firea = 255;
 		*firer = *colr;
 		*fireg = *colg;
@@ -179,7 +178,6 @@ int graphics_WIFI(GRAPHICS_FUNC_ARGS)
 	*colr = sin(frequency*q + 0) * 127 + 128;
 	*colg = sin(frequency*q + 2) * 127 + 128;
 	*colb = sin(frequency*q + 4) * 127 + 128;
-	*pixel_mode |= EFFECT_LINES;
 	return 0;
 }
 int graphics_PRTI(GRAPHICS_FUNC_ARGS)
@@ -189,7 +187,6 @@ int graphics_PRTI(GRAPHICS_FUNC_ARGS)
 	*fireg = 0;
 	*fireb = 0;
 	*pixel_mode |= EFFECT_GRAVIN;
-	*pixel_mode |= EFFECT_LINES;
 	*pixel_mode &= ~PMODE;
 	*pixel_mode |= PMODE_ADD;
 	return 1;
@@ -201,7 +198,6 @@ int graphics_PRTO(GRAPHICS_FUNC_ARGS)
 	*fireg = 0;
 	*fireb = 255;
 	*pixel_mode |= EFFECT_GRAVOUT;
-	*pixel_mode |= EFFECT_LINES;
 	*pixel_mode &= ~PMODE;
 	*pixel_mode |= PMODE_ADD;
 	return 1;
