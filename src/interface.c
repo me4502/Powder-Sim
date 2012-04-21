@@ -7148,8 +7148,13 @@ void render_ui(pixel * vid_buf, int xcoord, int ycoord, int orientation)
 void simulation_ui(pixel * vid_buf)
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	int xsize = 300;
 	int ysize = 270;
+=======
+	int xsize = 360;
+	int ysize = 192;
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 =======
 	int xsize = 360;
 	int ysize = 192;
@@ -7163,6 +7168,7 @@ void simulation_ui(pixel * vid_buf)
 	ui_checkbox cb5;
 	ui_checkbox cb6;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	ui_checkbox cb7;
 	char * airModeList[] = {"On", "Pressure Off", "Velocity Off", "Off", "No Update"};
 	int airModeListCount = 5;
@@ -7170,6 +7176,8 @@ void simulation_ui(pixel * vid_buf)
 	int gravityModeListCount = 3;
 	ui_list list;
 	ui_list list2;
+=======
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 =======
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 
@@ -7185,7 +7193,11 @@ void simulation_ui(pixel * vid_buf)
 
 	cb3.x = x0+xsize-16;	//Large window
 <<<<<<< HEAD
+<<<<<<< HEAD
 	cb3.y = y0+223;
+=======
+	cb3.y = y0+143;
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 =======
 	cb3.y = y0+143;
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
@@ -7194,7 +7206,11 @@ void simulation_ui(pixel * vid_buf)
 
 	cb4.x = x0+xsize-16;	//Fullscreen
 <<<<<<< HEAD
+<<<<<<< HEAD
 	cb4.y = y0+237;
+=======
+	cb4.y = y0+157;
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 =======
 	cb4.y = y0+157;
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
@@ -7210,6 +7226,7 @@ void simulation_ui(pixel * vid_buf)
 	cb6.y = y0+107;
 	cb6.focus = 0;
 	cb6.checked = water_equal_test;
+<<<<<<< HEAD
 <<<<<<< HEAD
 	
 	list.x = x0+xsize-76;	//Air Mode
@@ -7229,6 +7246,8 @@ void simulation_ui(pixel * vid_buf)
 	list2.selected = gravityMode;
 	list2.items = gravityModeList;
 	list2.count = gravityModeListCount;
+=======
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 =======
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 
@@ -7270,6 +7289,7 @@ void simulation_ui(pixel * vid_buf)
 		drawtext(vid_buf, x0+12+textwidth("Water Equalization Test"), y0+110, "Introduced in version 61.", 255, 255, 255, 180);
 		drawtext(vid_buf, x0+12, y0+124, "May lag with lots of water.", 255, 255, 255, 120);
 <<<<<<< HEAD
+<<<<<<< HEAD
 		
 		drawtext(vid_buf, x0+8, y0+134, "Scientific Name", 255, 255, 255, 255);
 		drawtext(vid_buf, x0+12+textwidth("Scientific Name"), y0+134, "Introduced in version 1.4", 255, 255, 255, 180);
@@ -7289,6 +7309,8 @@ void simulation_ui(pixel * vid_buf)
 		drawtext(vid_buf, x0+8, y0+238, "Fullscreen", 255, 255, 255, 255);
 		drawtext(vid_buf, x0+12+textwidth("Fullscreen"), y0+238, "Fill the entire screen", 255, 255, 255, 180);
 =======
+=======
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 
 		draw_line(vid_buf, x0, y0+138, x0+xsize, y0+138, 150, 150, 150, XRES+BARSIZE);
 
@@ -7297,6 +7319,9 @@ void simulation_ui(pixel * vid_buf)
 
 		drawtext(vid_buf, x0+8, y0+158, "Fullscreen", 255, 255, 255, 255);
 		drawtext(vid_buf, x0+12+textwidth("Fullscreen"), y0+158, "Fill the entire screen", 255, 255, 255, 180);
+<<<<<<< HEAD
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
+=======
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 
 		//TODO: Options for Air and Normal gravity
@@ -7312,9 +7337,12 @@ void simulation_ui(pixel * vid_buf)
 		ui_checkbox_draw(vid_buf, &cb5);
 		ui_checkbox_draw(vid_buf, &cb6);
 <<<<<<< HEAD
+<<<<<<< HEAD
 		ui_checkbox_draw(vid_buf, &cb7);
 		ui_list_draw(vid_buf, &list);
 		ui_list_draw(vid_buf, &list2);
+=======
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 =======
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 		sdl_blit(0, 0, (XRES+BARSIZE), YRES+MENUSIZE, vid_buf, (XRES+BARSIZE));
@@ -7325,9 +7353,12 @@ void simulation_ui(pixel * vid_buf)
 		ui_checkbox_process(mx, my, b, bq, &cb5);
 		ui_checkbox_process(mx, my, b, bq, &cb6);
 <<<<<<< HEAD
+<<<<<<< HEAD
 		ui_checkbox_process(mx, my, b, bq, &cb7);
 		ui_list_process(vid_buf, mx, my, b, &list);
 		ui_list_process(vid_buf, mx, my, b, &list2);
+=======
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 =======
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 

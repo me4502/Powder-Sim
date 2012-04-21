@@ -4,13 +4,19 @@ int update_H2(UPDATE_FUNC_ARGS)
 {
 	int r,rx,ry,rt;
 <<<<<<< HEAD
+<<<<<<< HEAD
     if (pv[y/CELL][x/CELL]>80.0f && parts[i].ctype==0)
         parts[i].ctype = 1;
 =======
+=======
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
     if (pv[y/CELL][x/CELL]>80.0f)
         parts[i].ctype = 1;
     else
         parts[i].ctype = 0;
+<<<<<<< HEAD
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
+=======
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
     for (rx=-2; rx<3; rx++)
         for (ry=-2; ry<3; ry++)
@@ -20,6 +26,7 @@ int update_H2(UPDATE_FUNC_ARGS)
                 rt = (r&0xFF);
                 if (!r)
                     continue;
+<<<<<<< HEAD
 <<<<<<< HEAD
                 if (parts[i].ctype==0||parts[i].ctype==1)
                 {
@@ -69,6 +76,8 @@ int update_H2(UPDATE_FUNC_ARGS)
     return 0;
 
 =======
+=======
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
                 if (pv[y/CELL][x/CELL] > 8.0f && rt == PT_DESL) // This will not work. DESL turns to fire above 5.0 pressure
                 {
                     part_change_type(r>>8,x+rx,y+ry,PT_WATR);
@@ -89,5 +98,8 @@ int update_H2(UPDATE_FUNC_ARGS)
                 }
             }
     return 0;
+<<<<<<< HEAD
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
+=======
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 }

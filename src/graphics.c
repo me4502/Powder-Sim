@@ -80,9 +80,12 @@ void init_display_modes()
 	render_modes[0] = RENDER_FIRE;
 	render_modes[1] = 0;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	update_display_modes();
 }
+=======
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 =======
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 
@@ -3436,7 +3439,11 @@ void create_decoration(int x, int y, int r, int g, int b, int click, int tool)
 		tr = rand()%256;
 		tg = rand()%256;
 		tb = rand()%256;
+<<<<<<< HEAD
 		parts[rp>>8].dcolour = PIXRGB(tr,tg,tb);
+=======
+		parts[rp>>8].dcolour = ((255)<<24|(tr)<<16|(tg)<<8|(tb));
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 	}
 }
 void line_decorations(int x1, int y1, int x2, int y2, int rx, int ry, int r, int g, int b, int click, int tool)
@@ -4394,6 +4401,7 @@ int sdl_open(void)
 		return 0;
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 #ifdef WIN32
 	SDL_VERSION(&SysInfo.version);
@@ -4412,6 +4420,8 @@ int sdl_open(void)
 #endif
 	SDL_WM_SetCaption("The Powder Toy", "Powder Toy");
 
+=======
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 =======
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 	atexit(SDL_Quit);

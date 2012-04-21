@@ -12,9 +12,12 @@
 
 //VersionInfoStart
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define SAVE_VERSION 1
 #define MINOR_VERSION 3
 =======
+=======
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 #define SAVE_VERSION 70
 #define MINOR_VERSION 1
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
@@ -103,9 +106,12 @@ extern unsigned char ZSIZE;
 #define NNBLALT 7
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define REALISTIC
 #define SAVE_OPS
 
+=======
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 =======
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 #define NGOL 25

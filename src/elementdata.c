@@ -821,6 +821,9 @@ unsigned int platent[PT_NUM] =
 	/*  Ba  */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			725.0f,	PT_LAVA},
 	/* CBTY */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			2273.0f,PT_PLSM},
 	/* VBMB */ {IPL,	NT,			IPH,	NT,			ITL,	NT,			ITL,    NT}
+<<<<<<< HEAD
+>>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
+=======
 >>>>>>> parent of cb20d36... Merge remote-tracking branch 'upstream/master'
 };
 #undef IPL
